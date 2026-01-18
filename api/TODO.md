@@ -739,7 +739,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 5.1 CLI Infrastructure
 
-- [ ] **Create `cli/types.ts`**
+- [x] **Create `cli/types.ts`**
   
   Define TypeScript interfaces:
   - `CliAdapter` interface with methods:
