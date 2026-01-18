@@ -527,13 +527,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement agent service with unit tests`
 
-- [ ] **Create `agent/schemas.ts`**
+- [x] **Create `agent/schemas.ts`**
   
   Define Zod schemas for requests/responses.
   
   Commit: `feat(api): define agent Zod schemas`
 
-- [ ] **Create `agent/routes.ts`**
+- [x] **Create `agent/routes.ts`**
   
   Implement Hono routes:
   - `GET /workspaces/:id/agents` — List agents
@@ -544,7 +544,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement agent routes`
 
-- [ ] **Create `agent/index.ts`**
+- [x] **Create `agent/index.ts`**
   
   Export public API.
   
