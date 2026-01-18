@@ -550,10 +550,10 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): create agent module index exports`
 
-- [ ] **Add integration tests for agent module**
-  
+- [x] **Add integration tests for agent module**
+
   Create `tests/agent/repository.test.ts` and `tests/agent/service.test.ts`.
-  
+
   Commit: `test(api): add agent integration tests`
 
 ### 4.3 Task Module
