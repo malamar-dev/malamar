@@ -486,7 +486,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 4.2 Agent Module
 
-- [ ] **Create `agent/types.ts`**
+- [x] **Create `agent/types.ts`**
   
   Define TypeScript interfaces:
   - `Agent` — Full agent entity
@@ -497,7 +497,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define agent types`
 
-- [ ] **Create `agent/repository.ts` with unit tests**
+- [x] **Create `agent/repository.ts` with unit tests**
   
   Implement database operations:
   - `findByWorkspaceId(workspaceId: string): Agent[]` — Ordered by `order`
@@ -513,7 +513,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement agent repository with unit tests`
 
-- [ ] **Create `agent/service.ts` with unit tests**
+- [x] **Create `agent/service.ts` with unit tests**
   
   Implement business logic:
   - `listAgents(workspaceId: string): Agent[]`
