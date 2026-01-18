@@ -893,11 +893,11 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - `ChatOutput` — Parsed chat CLI output
   - `AgentAction` types (skip, comment, change_status)
   - `ChatAction` types (create_agent, update_agent, etc.)
-  
+
   Commit: `feat(api): define runner types`
 
-- [ ] **Create `runner/subprocess.ts`**
-  
+- [x] **Create `runner/subprocess.ts`**
+
   Implement subprocess tracking:
   - `Map<string, Subprocess>` for task subprocesses (keyed by task ID)
   - `Map<string, Subprocess>` for chat subprocesses (keyed by chat ID)
@@ -906,7 +906,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - `killTaskProcess(taskId: string): void`
   - `killChatProcess(chatId: string): void`
   - `killWorkspaceProcesses(workspaceId: string): void`
-  
+
   Commit: `feat(api): implement subprocess tracking`
 
 - [ ] **Create `runner/input-builder.ts` with unit tests**
