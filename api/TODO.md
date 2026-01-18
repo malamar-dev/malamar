@@ -814,8 +814,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement event emitter singleton`
 
-- [ ] **Create `events/registry.ts`**
-  
+- [x] **Create `events/registry.ts`**
+
   Implement SSE connection registry:
   - `Set<Response>` for active connections
   - `addConnection(res: Response): void`
