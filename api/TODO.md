@@ -924,8 +924,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement CLI input file builders`
 
-- [ ] **Create `runner/output-parser.ts` with unit tests**
-  
+- [x] **Create `runner/output-parser.ts` with unit tests**
+
   Implement output file parsing:
   - `parseTaskOutput(filePath: string): TaskOutput`
     - Read JSON file
@@ -940,7 +940,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
     - Output file empty
     - JSON parse failure
     - Schema validation failure
-  
+
   Commit: `feat(api): implement CLI output parsers`
 
 ### 8.2 Task Worker
