@@ -862,8 +862,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement Mailgun API client`
 
-- [ ] **Create `notifications/service.ts` with unit tests**
-  
+- [x] **Create `notifications/service.ts` with unit tests**
+
   Implement notification service:
   - `notify(event: NotificationEvent, payload: NotificationPayload): Promise<void>`
   - Check if notifications enabled for event
