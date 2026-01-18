@@ -471,17 +471,17 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): create workspace module index exports`
 
-- [ ] **Add integration tests for workspace module**
-  
+- [x] **Add integration tests for workspace module**
+
   Create `tests/workspace/repository.test.ts`:
   - Test CRUD operations with real SQLite (temp file)
   - Test cascade delete behavior
   - Test search functionality
-  
+
   Create `tests/workspace/service.test.ts`:
   - Test service with real repository and DB
   - Test error cases (not found, etc.)
-  
+
   Commit: `test(api): add workspace integration tests`
 
 ### 4.2 Agent Module
