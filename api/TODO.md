@@ -691,53 +691,27 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 4.5 Settings Module
 
-- [ ] **Create `settings/types.ts`**
-  
-  Define TypeScript interfaces:
-  - `Settings` — All settings as typed object
-  - `MailgunSettings`
-  - `CliSettings` — Per-CLI configuration
+- [x] **Create `settings/types.ts`**
   
   Commit: `feat(api): define settings types`
 
-- [ ] **Create `settings/repository.ts` with unit tests**
-  
-  Implement database operations:
-  - `get(key: string): unknown | null`
-  - `set(key: string, value: unknown): void`
-  - `getAll(): Settings`
-  - `setMultiple(settings: Partial<Settings>): void`
+- [x] **Create `settings/repository.ts` with unit tests**
   
   Commit: `feat(api): implement settings repository with unit tests`
 
-- [ ] **Create `settings/service.ts` with unit tests**
-  
-  Implement business logic:
-  - `getSettings(): Settings`
-  - `updateSettings(input): Settings`
-  - `getMailgunSettings(): MailgunSettings | null`
-  - `getCliSettings(cliType: CliType): CliSettings | null`
+- [x] **Create `settings/service.ts` with unit tests**
   
   Commit: `feat(api): implement settings service with unit tests`
 
-- [ ] **Create `settings/schemas.ts`**
-  
-  Define Zod schemas for settings requests/responses.
+- [x] **Create `settings/schemas.ts`**
   
   Commit: `feat(api): define settings Zod schemas`
 
-- [ ] **Create `settings/routes.ts`**
-  
-  Implement Hono routes:
-  - `GET /settings` — Get all settings
-  - `PUT /settings` — Update settings
-  - `POST /settings/test-email` — Send test email
+- [x] **Create `settings/routes.ts`**
   
   Commit: `feat(api): implement settings routes`
 
-- [ ] **Create `settings/index.ts`**
-  
-  Export public API.
+- [x] **Create `settings/index.ts`**
   
   Commit: `chore(api): create settings module index exports`
 
