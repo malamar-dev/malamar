@@ -558,7 +558,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 4.3 Task Module
 
-- [ ] **Create `task/types.ts`**
+- [x] **Create `task/types.ts`**
   
   Define TypeScript interfaces:
   - `Task`, `TaskRow`
@@ -570,7 +570,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define task types`
 
-- [ ] **Create `task/repository.ts` with unit tests**
+- [x] **Create `task/repository.ts` with unit tests**
   
   Implement database operations for tasks:
   - `findByWorkspaceId(workspaceId: string): Task[]`
