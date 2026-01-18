@@ -611,7 +611,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement task queue repository with unit tests`
 
-- [ ] **Create `task/service.ts` with unit tests**
+- [x] **Create `task/service.ts` with unit tests**
   
   Implement business logic:
   - `listTasks(workspaceId: string): Task[]`
@@ -630,13 +630,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement task service with unit tests`
 
-- [ ] **Create `task/schemas.ts`**
+- [x] **Create `task/schemas.ts`**
   
   Define Zod schemas for all task-related requests/responses.
   
   Commit: `feat(api): define task Zod schemas`
 
-- [ ] **Create `task/routes.ts`**
+- [x] **Create `task/routes.ts`**
   
   Implement Hono routes:
   - `GET /workspaces/:id/tasks` — List tasks
@@ -653,7 +653,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement task routes`
 
-- [ ] **Create `task/index.ts`**
+- [x] **Create `task/index.ts`**
   
   Export public API.
   
