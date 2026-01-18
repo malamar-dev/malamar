@@ -463,7 +463,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement workspace routes`
 
-- [ ] **Create `workspace/index.ts`**
+- [x] **Create `workspace/index.ts`**
   
   Export public API:
   - `workspaceRoutes` — Hono router
