@@ -1053,14 +1053,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement CLI health check job`
 
-- [ ] **Create `jobs/index.ts`**
-  
+- [x] **Create `jobs/index.ts`**
+
   Implement job scheduler:
   - `startJobs()` — Start all scheduled jobs
   - `stopJobs()` — Stop all jobs (for shutdown)
   - Use `setInterval` for scheduling
   - Run jobs once immediately on startup
-  
+
   Commit: `feat(api): implement job scheduler`
 
 ---
