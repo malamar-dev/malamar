@@ -779,7 +779,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement Claude Code CLI adapter`
 
-- [ ] **Create `cli/index.ts`**
+- [x] **Create `cli/index.ts`**
   
   Export adapter factory:
   - `getCliAdapter(cliType: CliType): CliAdapter`
