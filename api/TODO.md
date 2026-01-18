@@ -853,8 +853,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define notification types`
 
-- [ ] **Create `notifications/mailgun.ts` with unit tests**
-  
+- [x] **Create `notifications/mailgun.ts` with unit tests**
+
   Implement Mailgun API client:
   - `sendEmail(to: string, subject: string, body: string): Promise<void>`
   - Use fetch API to call Mailgun
