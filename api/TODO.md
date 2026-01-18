@@ -884,8 +884,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 8.1 Runner Infrastructure
 
-- [ ] **Create `runner/types.ts`**
-  
+- [x] **Create `runner/types.ts`**
+
   Define runner types:
   - `TaskContext` — Full context for CLI input
   - `TaskOutput` — Parsed CLI output
