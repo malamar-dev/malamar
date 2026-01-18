@@ -978,8 +978,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 8.3 Chat Worker
 
-- [ ] **Create `runner/chat-worker.ts` with unit tests**
-  
+- [x] **Create `runner/chat-worker.ts` with unit tests**
+
   Implement chat processing logic:
   - `processChat(queueItem: ChatQueueItem): Promise<void>`
   - Fetch chat, workspace, agent (or use Malamar agent)
@@ -992,7 +992,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Handle rename_chat (only on first agent response)
   - Update queue item status
   - Emit SSE events
-  
+
   Commit: `feat(api): implement chat worker`
 
 - [ ] **Create `runner/chat-action-executor.ts` with unit tests**

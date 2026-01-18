@@ -53,3 +53,19 @@ export function getCliAdapter(
 export function isCliAdapterAvailable(cliType: CliType): boolean {
   return cliType === 'claude';
 }
+
+/**
+ * Get the first healthy CLI type
+ *
+ * This function returns the first CLI type that has an implemented adapter.
+ * In the future, this could be expanded to check actual health status.
+ *
+ * @returns The first healthy CLI type, or null if none available
+ */
+export function getFirstHealthyCli(): CliType | null {
+  // Currently only claude is implemented
+  if (isCliAdapterAvailable('claude')) {
+    return 'claude';
+  }
+  return null;
+}
