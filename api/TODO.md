@@ -1067,7 +1067,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 9: CLI Commands
 
-- [ ] **Create `commands/serve.ts`**
+- [x] **Create `commands/serve.ts`**
   
   Implement default serve command:
   - Initialize config
