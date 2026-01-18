@@ -1097,8 +1097,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement help command`
 
-- [ ] **Create `commands/doctor.ts`**
-  
+- [x] **Create `commands/doctor.ts`**
+
   Implement doctor command:
   - Check data directory (exists, writable)
   - Check database (accessible, migrations current)
@@ -1106,7 +1106,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Check CLI health status
   - Print results with ✓/✗ indicators
   - Exit code 0 if critical checks pass, non-zero otherwise
-  
+
   Commit: `feat(api): implement doctor command`
 
 - [ ] **Create `commands/config.ts`**
