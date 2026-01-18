@@ -1080,12 +1080,12 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement serve command`
 
-- [ ] **Create `commands/version.ts`**
-  
+- [x] **Create `commands/version.ts`**
+
   Implement version command:
   - Print version from package.json
   - Exit with code 0
-  
+
   Commit: `feat(api): implement version command`
 
 - [ ] **Create `commands/help.ts`**
