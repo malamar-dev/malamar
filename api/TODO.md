@@ -1013,7 +1013,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 8.4 Runner Loop
 
-- [ ] **Create `runner/index.ts`**
+- [x] **Create `runner/index.ts`**
   
   Implement main runner loop:
   - Poll every `MALAMAR_RUNNER_POLL_INTERVAL` ms
