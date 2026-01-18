@@ -1034,14 +1034,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 8.5 Scheduled Jobs
 
-- [ ] **Create `jobs/cleanup.ts`**
-  
+- [x] **Create `jobs/cleanup.ts`**
+
   Implement cleanup job:
   - Delete completed/failed task queue items > 7 days old
   - Delete completed/failed chat queue items > 7 days old
   - Delete done tasks exceeding workspace retention period
   - Run daily + once on startup
-  
+
   Commit: `feat(api): implement cleanup job`
 
 - [ ] **Create `jobs/health-check.ts`**
