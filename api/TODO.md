@@ -717,35 +717,19 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 4.6 Health Module
 
-- [ ] **Create `health/types.ts`**
-  
-  Define TypeScript interfaces:
-  - `HealthStatus`
-  - `CliHealthStatus`
+- [x] **Create `health/types.ts`**
   
   Commit: `feat(api): define health types`
 
-- [ ] **Create `health/service.ts` with unit tests**
-  
-  Implement health checks:
-  - `getOverallHealth(): HealthStatus`
-  - `getCliHealth(): CliHealthStatus[]`
-  - `refreshCliHealth(): void` — Trigger CLI re-detection
+- [x] **Create `health/service.ts` with unit tests**
   
   Commit: `feat(api): implement health service with unit tests`
 
-- [ ] **Create `health/routes.ts`**
-  
-  Implement Hono routes:
-  - `GET /health` — Overall health
-  - `GET /health/cli` — CLI health status
-  - `POST /health/cli/refresh` — Refresh CLI detection
+- [x] **Create `health/routes.ts`**
   
   Commit: `feat(api): implement health routes`
 
-- [ ] **Create `health/index.ts`**
-  
-  Export public API.
+- [x] **Create `health/index.ts`**
   
   Commit: `chore(api): create health module index exports`
 
