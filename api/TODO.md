@@ -791,7 +791,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 6: Events & SSE
 
-- [ ] **Create `events/types.ts`**
+- [x] **Create `events/types.ts`**
   
   Define event types:
   - `TaskStatusChangedEvent`
