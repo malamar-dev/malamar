@@ -763,7 +763,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 5.2 Claude Code Adapter
 
-- [ ] **Create `cli/adapters/claude.ts` with unit tests**
+- [x] **Create `cli/adapters/claude.ts` with unit tests**
   
   Implement Claude Code adapter:
   - Command template with flags:

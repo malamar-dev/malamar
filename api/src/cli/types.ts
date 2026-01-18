@@ -1,6 +1,11 @@
 import type { CliType } from '../core/types.ts';
 
 /**
+ * Type of invocation for schema selection
+ */
+export type InvocationType = 'task' | 'chat';
+
+/**
  * Options for CLI invocation
  */
 export interface CliInvocationOptions {
@@ -10,6 +15,8 @@ export interface CliInvocationOptions {
   outputPath: string;
   /** Working directory for the CLI process */
   cwd: string;
+  /** Type of invocation - affects which JSON schema is used (default: 'task') */
+  type?: InvocationType;
   /** Optional environment variables to merge with system env */
   env?: Record<string, string>;
   /** Optional custom binary path (overrides PATH lookup) */
