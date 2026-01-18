@@ -1044,13 +1044,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement cleanup job`
 
-- [ ] **Create `jobs/health-check.ts`**
-  
+- [x] **Create `jobs/health-check.ts`**
+
   Implement CLI health check job:
   - Check all supported CLIs
   - Store status and error message in memory
   - Run every 5 minutes + once on startup
-  
+
   Commit: `feat(api): implement CLI health check job`
 
 - [ ] **Create `jobs/index.ts`**
