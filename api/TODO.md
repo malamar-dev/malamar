@@ -1151,12 +1151,12 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement Hono app assembly`
 
-- [ ] **Update `index.ts` entry point**
-  
+- [x] **Update `index.ts` entry point**
+
   Replace placeholder with proper entry point:
   - Import commands dispatcher
   - Run the appropriate command
-  
+
   Commit: `feat(api): update entry point to use command dispatcher`
 
 ---
