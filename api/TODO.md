@@ -945,8 +945,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 8.2 Task Worker
 
-- [ ] **Create `runner/task-worker.ts` with unit tests**
-  
+- [x] **Create `runner/task-worker.ts` with unit tests**
+
   Implement task processing logic:
   - `processTask(queueItem: TaskQueueItem): Promise<void>`
   - Fetch task, workspace, agents
@@ -963,7 +963,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Error handling: add system comment, stop loop
   - Update queue item status
   - Emit SSE events
-  
+
   Commit: `feat(api): implement task worker`
 
 - [ ] **Create `runner/action-executor.ts` with unit tests**
