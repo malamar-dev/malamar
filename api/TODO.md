@@ -909,8 +909,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement subprocess tracking`
 
-- [ ] **Create `runner/input-builder.ts` with unit tests**
-  
+- [x] **Create `runner/input-builder.ts` with unit tests**
+
   Implement input file generation:
   - `buildTaskInput(task: Task, agent: Agent, workspace: Workspace): string`
     - Generate markdown file content per TECHNICAL_DESIGN.md format
@@ -921,7 +921,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
     - Include conversation history in JSONL format
   - `buildChatContext(workspace: Workspace, agents: Agent[]): string`
     - Generate context file with workspace state
-  
+
   Commit: `feat(api): implement CLI input file builders`
 
 - [ ] **Create `runner/output-parser.ts` with unit tests**
