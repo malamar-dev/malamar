@@ -314,7 +314,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define shared cross-cutting types`
 
-- [ ] **Create `core/index.ts` and `shared/index.ts`**
+- [x] **Create `core/index.ts` and `shared/index.ts`**
   
   Export public APIs for both modules:
   - `core/index.ts`: config, logger, db, errors, types
