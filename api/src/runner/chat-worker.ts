@@ -11,6 +11,7 @@ import { emit } from '../events/emitter.ts';
 import * as settingsService from '../settings/service.ts';
 import * as workspaceService from '../workspace/service.ts';
 import type { Workspace } from '../workspace/types.ts';
+import { countSuccessfulActions, executeChatActions } from './chat-action-executor.ts';
 import { buildChatContext, buildChatInput } from './input-builder.ts';
 import { generateErrorComment, parseChatOutputFile } from './output-parser.ts';
 import type {
@@ -357,7 +358,7 @@ async function processChatWithCli(
 
     // Execute actions if present
     if (output.actions && output.actions.length > 0) {
-      actionsExecuted = await executeActions(
+      actionsExecuted = executeActionsWrapper(
         chat,
         workspace,
         output.actions,
@@ -453,11 +454,9 @@ function buildWorkspaceContextData(workspace: Workspace): WorkspaceContext {
 }
 
 /**
- * Execute chat actions
+ * Execute chat actions using the chat action executor
  *
- * This function processes actions from CLI output and executes them.
- * Actions are executed in order. If any action fails, an error message is added
- * but processing continues for remaining actions.
+ * This function is a wrapper that delegates to the chat-action-executor module.
  *
  * @param chat - The chat
  * @param workspace - The workspace
@@ -465,125 +464,14 @@ function buildWorkspaceContextData(workspace: Workspace): WorkspaceContext {
  * @param canRename - Whether rename_chat is allowed (first response only)
  * @returns Number of successfully executed actions
  */
-async function executeActions(
+function executeActionsWrapper(
   chat: Chat,
   workspace: Workspace,
   actions: ChatAction[],
   canRename: boolean
-): Promise<number> {
-  let executedCount = 0;
-  const errors: string[] = [];
-
-  for (const action of actions) {
-    try {
-      const success = await executeAction(chat, workspace, action, canRename);
-      if (success) {
-        executedCount++;
-      }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      errors.push(`${action.type}: ${errorMessage}`);
-      logger.error('Failed to execute chat action', {
-        chatId: chat.id,
-        actionType: action.type,
-        error: errorMessage,
-      });
-    }
-  }
-
-  // Add system message if any actions failed
-  if (errors.length > 0) {
-    const errorSummary = `Some actions failed:\n${errors.map((e) => `- ${e}`).join('\n')}`;
-    chatService.addSystemMessage(chat.id, errorSummary);
-  }
-
-  return executedCount;
-}
-
-/**
- * Execute a single chat action
- */
-async function executeAction(
-  chat: Chat,
-  workspace: Workspace,
-  action: ChatAction,
-  canRename: boolean
-): Promise<boolean> {
-  switch (action.type) {
-    case 'create_agent':
-      agentService.createAgent(workspace.id, {
-        name: action.name,
-        instruction: action.instruction,
-        cliType: action.cliType,
-        order: action.order,
-      });
-      logger.info('Created agent via chat action', {
-        chatId: chat.id,
-        agentName: action.name,
-      });
-      return true;
-
-    case 'update_agent':
-      agentService.updateAgent(action.agentId, {
-        name: action.name,
-        instruction: action.instruction,
-        cliType: action.cliType,
-        order: action.order,
-      });
-      logger.info('Updated agent via chat action', {
-        chatId: chat.id,
-        agentId: action.agentId,
-      });
-      return true;
-
-    case 'delete_agent':
-      agentService.deleteAgent(action.agentId);
-      logger.info('Deleted agent via chat action', {
-        chatId: chat.id,
-        agentId: action.agentId,
-      });
-      return true;
-
-    case 'reorder_agents':
-      agentService.reorderAgents(workspace.id, action.agentIds);
-      logger.info('Reordered agents via chat action', {
-        chatId: chat.id,
-        agentIds: action.agentIds,
-      });
-      return true;
-
-    case 'update_workspace':
-      workspaceService.updateWorkspace(workspace.id, {
-        title: action.title,
-        description: action.description,
-        workingDirectoryPath: action.workingDirectory,
-        notifyOnError: action.notifyOnError,
-        notifyOnInReview: action.notifyOnInReview,
-      });
-      logger.info('Updated workspace via chat action', {
-        chatId: chat.id,
-        workspaceId: workspace.id,
-      });
-      return true;
-
-    case 'rename_chat':
-      if (!canRename) {
-        logger.debug('Skipping rename_chat action - not first response', { chatId: chat.id });
-        return false;
-      }
-      chatService.renameChat(chat.id, action.title);
-      logger.info('Renamed chat via chat action', {
-        chatId: chat.id,
-        newTitle: action.title,
-      });
-      return true;
-
-    default: {
-      // Type exhaustiveness check - will fail at compile time if a new action type is added
-      const _exhaustive: never = action;
-      throw new Error(`Unhandled chat action type: ${(_exhaustive as ChatAction).type}`);
-    }
-  }
+): number {
+  const results = executeChatActions({ chat, workspace, canRename }, actions);
+  return countSuccessfulActions(results);
 }
 
 /**

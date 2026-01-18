@@ -995,8 +995,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement chat worker`
 
-- [ ] **Create `runner/chat-action-executor.ts` with unit tests**
-  
+- [x] **Create `runner/chat-action-executor.ts` with unit tests**
+
   Implement action execution for chats (Malamar agent):
   - `executeChatActions(chatId: string, actions: ChatAction[]): ActionResult[]`
   - Handle actions:
@@ -1008,7 +1008,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
     - `rename_chat` — Rename chat title (first response only)
   - Execute all actions, collect errors
   - Add system message if any action failed
-  
+
   Commit: `feat(api): implement chat action executor`
 
 ### 8.4 Runner Loop
