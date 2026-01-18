@@ -824,8 +824,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement SSE connection registry`
 
-- [ ] **Create `events/routes.ts`**
-  
+- [x] **Create `events/routes.ts`**
+
   Implement SSE endpoint:
   - `GET /events` — SSE stream
   - Send `:ok` comment on connect
