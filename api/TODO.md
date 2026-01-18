@@ -643,10 +643,10 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): create task module index exports`
 
-- [ ] **Add integration tests for task module**
-  
+- [x] **Add integration tests for task module**
+
   Create integration tests for repositories and service.
-  
+
   Commit: `test(api): add task integration tests`
 
 ### 4.4 Chat Module
