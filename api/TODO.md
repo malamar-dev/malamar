@@ -91,7 +91,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 1.1 Dependencies and Tooling
 
-- [ ] **Install core dependencies**
+- [x] **Install core dependencies**
   
   Install production dependencies:
   - `hono` — Web framework
@@ -118,7 +118,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): install dependencies and configure package.json scripts`
 
-- [ ] **Configure TypeScript**
+- [x] **Configure TypeScript**
   
   Update `tsconfig.json` with strict settings:
   - `strict: true`
@@ -129,7 +129,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): configure TypeScript with strict settings`
 
-- [ ] **Configure Prettier**
+- [x] **Configure Prettier**
   
   Create `.prettierrc` with settings:
   - Single quotes
@@ -142,7 +142,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): configure Prettier`
 
-- [ ] **Configure ESLint**
+- [x] **Configure ESLint**
   
   Create `eslint.config.js` (flat config) with:
   - TypeScript ESLint parser and plugin
@@ -153,7 +153,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): configure ESLint with import sorting`
 
-- [ ] **Create initial folder structure**
+- [x] **Create initial folder structure**
   
   Create empty directories with `.gitkeep` files:
   ```
@@ -194,7 +194,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 2.1 Configuration
 
-- [ ] **Create `core/config.ts`**
+- [x] **Create `core/config.ts`**
   
   Implement configuration loading with priority: defaults → CLI flags → env vars.
   
@@ -213,7 +213,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement configuration loading with env vars and CLI flags`
 
-- [ ] **Create `core/logger.ts`**
+- [x] **Create `core/logger.ts`**
   
   Implement simple logger with:
   - Log levels: `debug`, `info`, `warn`, `error`
@@ -227,7 +227,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement logger with text and JSON formats`
 
-- [ ] **Create `core/errors.ts`**
+- [x] **Create `core/errors.ts`**
   
   Implement custom error classes:
   - `AppError` — Base class with `code` and `statusCode`
@@ -245,7 +245,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement custom error classes`
 
-- [ ] **Create `core/types.ts`**
+- [x] **Create `core/types.ts`**
   
   Define shared utility types:
   - `CliType` enum: `claude`, `gemini`, `codex`, `opencode`
@@ -259,7 +259,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 2.2 Database
 
-- [ ] **Create `core/database.ts`**
+- [x] **Create `core/database.ts`**
   
   Implement SQLite database module using `bun:sqlite`:
   - Single `Database` instance (singleton pattern)
@@ -284,7 +284,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 2.3 Shared Utilities
 
-- [ ] **Create `shared/nanoid.ts`**
+- [x] **Create `shared/nanoid.ts`**
   
   Export ID generation function:
   - Use `nanoid` package with default settings (21 chars)
@@ -295,7 +295,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement nanoid ID generation`
 
-- [ ] **Create `shared/datetime.ts`**
+- [x] **Create `shared/datetime.ts`**
   
   Export date/time utilities:
   - `now(): string` — Current ISO timestamp
@@ -305,7 +305,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement datetime utilities`
 
-- [ ] **Create `shared/types.ts`**
+- [x] **Create `shared/types.ts`**
   
   Define cross-cutting types used by multiple modules:
   - Pagination types (if needed later)
