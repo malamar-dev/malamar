@@ -1109,13 +1109,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement doctor command`
 
-- [ ] **Create `commands/config.ts`**
-  
+- [x] **Create `commands/config.ts`**
+
   Implement config command:
   - Print current configuration
   - Show effective values after defaults/flags/env resolution
   - Exit with code 0
-  
+
   Commit: `feat(api): implement config command`
 
 - [ ] **Create `commands/index.ts`**
