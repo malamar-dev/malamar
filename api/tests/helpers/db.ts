@@ -61,6 +61,9 @@ export function cleanupTestDb(): void {
 export function clearTables(): void {
   const db = getTestDb();
   // Clear tables in reverse order of dependencies
+  db.exec('DELETE FROM chat_queue');
+  db.exec('DELETE FROM chat_messages');
+  db.exec('DELETE FROM chats');
   db.exec('DELETE FROM task_queue');
   db.exec('DELETE FROM task_logs');
   db.exec('DELETE FROM task_comments');

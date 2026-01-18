@@ -683,10 +683,10 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `chore(api): create chat module index exports`
 
-- [ ] **Add integration tests for chat module**
-  
+- [x] **Add integration tests for chat module**
+
   Create integration tests for repositories and service.
-  
+
   Commit: `test(api): add chat integration tests`
 
 ### 4.5 Settings Module
