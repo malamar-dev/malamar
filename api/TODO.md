@@ -845,8 +845,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 7: Notifications
 
-- [ ] **Create `notifications/types.ts`**
-  
+- [x] **Create `notifications/types.ts`**
+
   Define notification types:
   - `NotificationEvent` enum: `error_occurred`, `task_in_review`
   - `NotificationPayload` type
