@@ -326,7 +326,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 3: Database Migrations
 
-- [ ] **Create `migrations/001_workspaces_agents.sql`**
+- [x] **Create `migrations/001_workspaces_agents.sql`**
   
   Create tables:
   - `_migrations` (version INTEGER PRIMARY KEY, applied_at DATETIME)
@@ -342,7 +342,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): add migration for workspaces and agents tables`
 
-- [ ] **Create `migrations/002_tasks.sql`**
+- [x] **Create `migrations/002_tasks.sql`**
   
   Create tables:
   - `tasks`:
@@ -364,7 +364,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): add migration for tasks, comments, logs, and queue tables`
 
-- [ ] **Create `migrations/003_chats.sql`**
+- [x] **Create `migrations/003_chats.sql`**
   
   Create tables:
   - `chats`:
@@ -382,7 +382,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): add migration for chats, messages, and chat queue tables`
 
-- [ ] **Create `migrations/004_settings.sql`**
+- [x] **Create `migrations/004_settings.sql`**
   
   Create tables:
   - `settings`:
@@ -400,7 +400,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 4.1 Workspace Module
 
-- [ ] **Create `workspace/types.ts`**
+- [x] **Create `workspace/types.ts`**
   
   Define TypeScript interfaces:
   - `Workspace` — Full workspace entity
@@ -410,7 +410,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define workspace types`
 
-- [ ] **Create `workspace/repository.ts` with unit tests**
+- [x] **Create `workspace/repository.ts` with unit tests**
   
   Implement database operations:
   - `findAll(): Workspace[]`
@@ -425,7 +425,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement workspace repository with unit tests`
 
-- [ ] **Create `workspace/service.ts` with unit tests**
+- [x] **Create `workspace/service.ts` with unit tests**
   
   Implement business logic:
   - `listWorkspaces(): Workspace[]`
@@ -439,7 +439,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement workspace service with unit tests`
 
-- [ ] **Create `workspace/schemas.ts`**
+- [x] **Create `workspace/schemas.ts`**
   
   Define Zod schemas:
   - `createWorkspaceSchema` — title (required), description (optional), etc.
@@ -449,7 +449,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define workspace Zod schemas`
 
-- [ ] **Create `workspace/routes.ts`**
+- [x] **Create `workspace/routes.ts`**
   
   Implement Hono routes:
   - `GET /` — List workspaces (supports `?q=` query)
