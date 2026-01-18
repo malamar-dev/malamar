@@ -651,87 +651,35 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ### 4.4 Chat Module
 
-- [ ] **Create `chat/types.ts`**
-  
-  Define TypeScript interfaces:
-  - `Chat`, `ChatRow`
-  - `ChatMessage`, `ChatMessageRow`
-  - `ChatQueueItem`, `ChatQueueItemRow`
-  - Input types for create/update operations
-  - `MessageRole` enum: `user`, `agent`, `system`
+- [x] **Create `chat/types.ts`**
   
   Commit: `feat(api): define chat types`
 
-- [ ] **Create `chat/repository.ts` with unit tests**
-  
-  Implement database operations for chats:
-  - `findByWorkspaceId(workspaceId: string): Chat[]`
-  - `findById(id: string): Chat | null`
-  - `search(workspaceId: string, query: string): Chat[]`
-  - `create(input): Chat`
-  - `update(id: string, input): Chat`
-  - `delete(id: string): void`
-  - `countAgentMessages(chatId: string): number` — For rename_chat check
+- [x] **Create `chat/repository.ts` with unit tests**
   
   Commit: `feat(api): implement chat repository with unit tests`
 
-- [ ] **Create `chat/message-repository.ts` with unit tests**
+- [x] **Create `chat/message-repository.ts` with unit tests**
   
-  Implement database operations for messages:
-  - `findByChatId(chatId: string): ChatMessage[]`
-  - `create(input): ChatMessage`
-  
-  Commit: `feat(api): implement chat message repository with unit tests`
+  (Consolidated into `chat/repository.ts`)
 
-- [ ] **Create `chat/queue-repository.ts` with unit tests**
+- [x] **Create `chat/queue-repository.ts` with unit tests**
   
-  Implement database operations for chat queue:
-  - `findQueued(): ChatQueueItem[]`
-  - `findByChatId(chatId: string): ChatQueueItem | null`
-  - `create(input): ChatQueueItem`
-  - `updateStatus(id: string, status: QueueStatus): void`
-  - `deleteOlderThan(days: number): void`
-  
-  Commit: `feat(api): implement chat queue repository with unit tests`
+  (Consolidated into `chat/repository.ts`)
 
-- [ ] **Create `chat/service.ts` with unit tests**
-  
-  Implement business logic:
-  - `listChats(workspaceId: string): Chat[]`
-  - `searchChats(workspaceId: string, query: string): Chat[]`
-  - `getChat(id: string): Chat` — Include messages
-  - `createChat(workspaceId: string, input): Chat`
-  - `updateChat(id: string, input): Chat`
-  - `deleteChat(id: string): void` — Kill subprocess first (placeholder)
-  - `sendMessage(chatId: string, content: string): ChatMessage` — Creates queue item
-  - `cancelProcessing(chatId: string): void` — Kill subprocess
-  - `getMessages(chatId: string): ChatMessage[]`
+- [x] **Create `chat/service.ts` with unit tests**
   
   Commit: `feat(api): implement chat service with unit tests`
 
-- [ ] **Create `chat/schemas.ts`**
-  
-  Define Zod schemas for all chat-related requests/responses.
+- [x] **Create `chat/schemas.ts`**
   
   Commit: `feat(api): define chat Zod schemas`
 
-- [ ] **Create `chat/routes.ts`**
-  
-  Implement Hono routes:
-  - `GET /workspaces/:id/chats` — List chats (supports `?q=`)
-  - `POST /workspaces/:id/chats` — Create chat
-  - `GET /chats/:id` — Get chat with messages
-  - `PUT /chats/:id` — Update chat
-  - `DELETE /chats/:id` — Delete chat
-  - `POST /chats/:id/messages` — Send message
-  - `POST /chats/:id/cancel` — Cancel processing
-  - `POST /chats/:id/attachments` — Upload attachment
+- [x] **Create `chat/routes.ts`**
   
   Commit: `feat(api): implement chat routes`
 
-- [ ] **Create `chat/index.ts`**
-  
-  Export public API.
+- [x] **Create `chat/index.ts`**
   
   Commit: `chore(api): create chat module index exports`
 
