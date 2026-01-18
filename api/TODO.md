@@ -583,33 +583,17 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement task repository with unit tests`
 
-- [ ] **Create `task/comment-repository.ts` with unit tests**
+- [x] **Create `task/comment-repository.ts` with unit tests**
   
-  Implement database operations for comments:
-  - `findByTaskId(taskId: string): TaskComment[]`
-  - `create(input): TaskComment`
-  
-  Commit: `feat(api): implement task comment repository with unit tests`
+  (Consolidated into `task/repository.ts`)
 
-- [ ] **Create `task/log-repository.ts` with unit tests**
+- [x] **Create `task/log-repository.ts` with unit tests**
   
-  Implement database operations for activity logs:
-  - `findByTaskId(taskId: string): TaskLog[]`
-  - `create(input): TaskLog`
-  
-  Commit: `feat(api): implement task log repository with unit tests`
+  (Consolidated into `task/repository.ts`)
 
-- [ ] **Create `task/queue-repository.ts` with unit tests**
+- [x] **Create `task/queue-repository.ts` with unit tests**
   
-  Implement database operations for task queue:
-  - `findQueued(workspaceId: string): TaskQueueItem[]`
-  - `findByTaskId(taskId: string): TaskQueueItem | null`
-  - `create(input): TaskQueueItem`
-  - `updateStatus(id: string, status: QueueStatus): void`
-  - `setPriority(taskId: string, isPriority: boolean): void`
-  - `deleteOlderThan(days: number): void`
-  
-  Commit: `feat(api): implement task queue repository with unit tests`
+  (Consolidated into `task/repository.ts`)
 
 - [x] **Create `task/service.ts` with unit tests**
   
