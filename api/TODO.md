@@ -805,8 +805,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): define SSE event types`
 
-- [ ] **Create `events/emitter.ts`**
-  
+- [x] **Create `events/emitter.ts`**
+
   Implement event emitter singleton:
   - Create `EventEmitter` instance
   - Export `emit(eventType: string, payload: object): void`
