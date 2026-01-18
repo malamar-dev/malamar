@@ -1132,8 +1132,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 10: Application Assembly
 
-- [ ] **Create `app.ts`**
-  
+- [x] **Create `app.ts`**
+
   Implement Hono app assembly:
   - Create Hono app instance
   - Mount all route modules:
@@ -1148,7 +1148,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Add request logging middleware
   - Static file serving from `public/` (placeholder for now)
   - SPA fallback for non-API routes
-  
+
   Commit: `feat(api): implement Hono app assembly`
 
 - [ ] **Update `index.ts` entry point**
