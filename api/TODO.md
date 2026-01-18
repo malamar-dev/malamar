@@ -872,8 +872,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   
   Commit: `feat(api): implement notification service`
 
-- [ ] **Create `notifications/index.ts`**
-  
+- [x] **Create `notifications/index.ts`**
+
   Export public API.
   
   Commit: `chore(api): create notifications module index exports`
