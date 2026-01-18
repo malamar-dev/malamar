@@ -1088,13 +1088,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement version command`
 
-- [ ] **Create `commands/help.ts`**
-  
+- [x] **Create `commands/help.ts`**
+
   Implement help command:
   - Print usage information
   - List available commands and flags
   - Exit with code 0
-  
+
   Commit: `feat(api): implement help command`
 
 - [ ] **Create `commands/doctor.ts`**
