@@ -966,14 +966,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement task worker`
 
-- [ ] **Create `runner/action-executor.ts` with unit tests**
-  
+- [x] **Create `runner/action-executor.ts` with unit tests**
+
   Implement action execution for tasks:
   - `executeTaskActions(taskId: string, actions: AgentAction[]): void`
   - Handle `skip`, `comment`, `change_status` actions
   - Create activity log entries
   - Update workspace last_activity_at
-  
+
   Commit: `feat(api): implement task action executor`
 
 ### 8.3 Chat Worker
