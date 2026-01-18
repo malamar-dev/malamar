@@ -1118,14 +1118,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `feat(api): implement config command`
 
-- [ ] **Create `commands/index.ts`**
-  
+- [x] **Create `commands/index.ts`**
+
   Implement command dispatcher:
   - Parse `process.argv` to determine command
   - Dispatch to appropriate command handler
   - Default to `serve` if no command specified
   - Handle `--help`, `--version` flags
-  
+
   Commit: `feat(api): implement command dispatcher`
 
 ---
