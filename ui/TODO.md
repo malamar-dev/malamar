@@ -511,7 +511,7 @@ Access the app at `http://localhost:5173`.
 
 ### 4.2 Components
 
-- [ ] **Create WorkspaceCard component**
+- [x] **Create WorkspaceCard component**
   
   Create `src/features/workspace/components/WorkspaceCard.tsx`:
   - Card displaying:
@@ -525,7 +525,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement WorkspaceCard component`
 
-- [ ] **Create WorkspaceForm component**
+- [x] **Create WorkspaceForm component**
   
   Create `src/features/workspace/components/WorkspaceForm.tsx`:
   - Form fields:
@@ -538,7 +538,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement WorkspaceForm component`
 
-- [ ] **Create WorkspaceCreateModal component**
+- [x] **Create WorkspaceCreateModal component**
   
   Create `src/features/workspace/components/WorkspaceCreateModal.tsx`:
   - Modal dialog with WorkspaceForm
@@ -550,7 +550,7 @@ Access the app at `http://localhost:5173`.
 
 ### 4.3 Pages
 
-- [ ] **Create WorkspaceList page**
+- [x] **Create WorkspaceList page**
   
   Create `src/features/workspace/pages/WorkspaceList.tsx`:
   - Search input at top (always visible)
@@ -567,7 +567,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement WorkspaceList page`
 
-- [ ] **Create WorkspaceDetail page wrapper**
+- [x] **Create WorkspaceDetail page wrapper**
   
   Update `WorkspaceLayout` to:
   - Fetch workspace by ID from URL params
@@ -583,7 +583,7 @@ Access the app at `http://localhost:5173`.
 
 ### 4.4 Workspace Settings
 
-- [ ] **Create WorkspaceSettings page**
+- [x] **Create WorkspaceSettings page**
   
   Create `src/features/workspace/pages/WorkspaceSettings.tsx`:
   - Form sections:
