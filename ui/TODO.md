@@ -1188,7 +1188,7 @@ Access the app at `http://localhost:5173`.
 
 ### 10.3 Accessibility
 
-- [ ] **Add skip-to-content link**
+- [x] **Add skip-to-content link**
   
   Update `RootLayout`:
   - Add visually hidden "Skip to main content" link at top
@@ -1212,7 +1212,7 @@ Access the app at `http://localhost:5173`.
 
 ### 10.4 Final Polish
 
-- [ ] **Clean up unused files and code**
+- [x] **Clean up unused files and code**
   
   Remove:
   - Default Vite scaffold files (App.css, react.svg, etc.)

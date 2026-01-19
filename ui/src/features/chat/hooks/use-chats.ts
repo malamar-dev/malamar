@@ -61,13 +61,53 @@ export function useDeleteChat(workspaceId: string) {
   });
 }
 
+interface ChatWithMessages {
+  id: string;
+  messages?: { id: string; role: string; message: string; created_at: string }[];
+  is_processing?: boolean;
+}
+
 export function useSendMessage() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ chatId, message }: { chatId: string; message: string }) =>
       chatApi.sendMessage(chatId, { message }),
-    onSuccess: (_, { chatId }) => {
+    onMutate: async ({ chatId, message }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: chatKeys.detail(chatId) });
+
+      // Snapshot previous value
+      const previousChat = queryClient.getQueryData<ChatWithMessages>(chatKeys.detail(chatId));
+
+      // Optimistically add the user message and set processing state
+      queryClient.setQueryData<ChatWithMessages>(chatKeys.detail(chatId), (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          is_processing: true,
+          messages: [
+            ...(old.messages || []),
+            {
+              id: `temp-${Date.now()}`,
+              role: 'user',
+              message,
+              created_at: new Date().toISOString(),
+            },
+          ],
+        };
+      });
+
+      return { previousChat };
+    },
+    onError: (_, { chatId }, context) => {
+      // Rollback on error
+      if (context?.previousChat) {
+        queryClient.setQueryData(chatKeys.detail(chatId), context.previousChat);
+      }
+    },
+    onSettled: (_, __, { chatId }) => {
+      // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: chatKeys.detail(chatId) });
     },
   });
