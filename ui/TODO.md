@@ -1010,7 +1010,7 @@ Access the app at `http://localhost:5173`.
 
 ### 8.1 Types and API
 
-- [ ] **Define settings types and API**
+- [x] **Define settings types and API**
   
   Create `src/features/settings/types/settings.types.ts`:
   - `Settings` interface (all settings keys)
@@ -1035,7 +1035,7 @@ Access the app at `http://localhost:5173`.
 
 ### 8.2 Global Settings Page
 
-- [ ] **Create CliSettingsSection component**
+- [x] **Create CliSettingsSection component**
   
   Create `src/features/settings/components/CliSettingsSection.tsx`:
   - For each CLI (Claude, Gemini, Codex, OpenCode):
@@ -1047,7 +1047,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement CliSettingsSection component`
 
-- [ ] **Create NotificationSettingsSection component**
+- [x] **Create NotificationSettingsSection component**
   
   Create `src/features/settings/components/NotificationSettingsSection.tsx`:
   - Mailgun configuration:
@@ -1062,7 +1062,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement NotificationSettingsSection component`
 
-- [ ] **Create GlobalSettings page**
+- [x] **Create GlobalSettings page**
   
   Create `src/features/settings/pages/GlobalSettingsPage.tsx`:
   - Single scrollable page with sections:

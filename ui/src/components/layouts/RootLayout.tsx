@@ -4,10 +4,14 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { GlobalSpinner } from '@/components/GlobalSpinner';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
+import { useSSEEvents } from '@/hooks/use-sse-events';
 import { cn } from '@/lib/utils';
 
 export function RootLayout() {
   const location = useLocation();
+
+  // Initialize SSE connection for real-time updates
+  useSSEEvents();
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
