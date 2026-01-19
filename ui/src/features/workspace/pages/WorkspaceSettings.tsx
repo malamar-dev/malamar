@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { FormSkeleton } from '@/components/skeletons/FormSkeleton';
+import { TypeToConfirmDialog } from '@/components/TypeToConfirmDialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -28,7 +30,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 
-import { useUpdateWorkspace, useWorkspace } from '../hooks/use-workspaces';
+import { useDeleteWorkspace, useUpdateWorkspace, useWorkspace } from '../hooks/use-workspaces';
 
 const settingsSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100),
@@ -45,8 +47,11 @@ type SettingsFormValues = z.infer<typeof settingsSchema>;
 
 export function WorkspaceSettings() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
+  const navigate = useNavigate();
   const { data: workspace, isLoading, error } = useWorkspace(workspaceId!);
   const updateWorkspace = useUpdateWorkspace();
+  const deleteWorkspace = useDeleteWorkspace();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(settingsSchema),
@@ -298,6 +303,46 @@ export function WorkspaceSettings() {
           </div>
         </form>
       </Form>
+
+      {/* Danger Zone */}
+      <Card className="mt-6 border-destructive">
+        <CardHeader>
+          <CardTitle className="text-destructive">Danger Zone</CardTitle>
+          <CardDescription>Irreversible and destructive actions</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Delete Workspace</p>
+              <p className="text-sm text-muted-foreground">
+                Permanently delete this workspace and all its tasks, agents, and chats.
+              </p>
+            </div>
+            <Button variant="destructive" onClick={() => setIsDeleteDialogOpen(true)}>
+              Delete Workspace
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <TypeToConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="Delete Workspace"
+        description={`This will permanently delete "${workspace?.title}" and all its tasks, agents, and chats. This action cannot be undone.`}
+        confirmText={workspace?.title || 'delete'}
+        confirmLabel="Delete Workspace"
+        onConfirm={async () => {
+          try {
+            await deleteWorkspace.mutateAsync(workspaceId!);
+            toast.success('Workspace deleted successfully');
+            navigate('/');
+          } catch {
+            toast.error('Failed to delete workspace');
+          }
+        }}
+        isLoading={deleteWorkspace.isPending}
+      />
     </div>
   );
 }

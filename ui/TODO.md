@@ -1121,7 +1121,7 @@ Access the app at `http://localhost:5173`.
 
 ### 9.2 Optimistic Updates
 
-- [ ] **Implement optimistic updates for comments**
+- [x] **Implement optimistic updates for comments**
   
   Update `useAddComment` hook:
   - Optimistically add comment to cache
@@ -1130,7 +1130,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement optimistic updates for task comments`
 
-- [ ] **Implement optimistic updates for chat messages**
+- [x] **Implement optimistic updates for chat messages**
   
   Update `useSendMessage` hook:
   - Optimistically add user message to cache
@@ -1139,7 +1139,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement optimistic updates for chat messages`
 
-- [ ] **Implement optimistic updates for task priority**
+- [x] **Implement optimistic updates for task priority**
   
   Update `usePrioritizeTask` hook:
   - Optimistically toggle priority in cache
