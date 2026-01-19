@@ -4,7 +4,6 @@ import type {
   CliHealthResult,
   CliInvocationOptions,
   CliInvocationResult,
-  InvocationType,
 } from '../types.ts';
 
 /**

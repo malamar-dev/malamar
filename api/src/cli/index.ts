@@ -19,6 +19,13 @@ export { ClaudeAdapter, createClaudeAdapter } from './adapters/claude.ts';
 export { CHAT_OUTPUT_SCHEMA, TASK_OUTPUT_SCHEMA } from './adapters/claude.ts';
 
 // Mock adapter (for testing)
+export type {
+  MockChatResponse,
+  MockHealthConfig,
+  MockInvocationConfig,
+  MockResponse,
+  MockTaskResponse,
+} from './adapters/mock.ts';
 export {
   createFailingAdapter,
   createMockAdapter,
@@ -26,13 +33,6 @@ export {
   createSuccessfulChatAdapter,
   createSuccessfulTaskAdapter,
   MockCliAdapter,
-} from './adapters/mock.ts';
-export type {
-  MockChatResponse,
-  MockHealthConfig,
-  MockInvocationConfig,
-  MockResponse,
-  MockTaskResponse,
 } from './adapters/mock.ts';
 
 /**
