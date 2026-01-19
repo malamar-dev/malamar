@@ -1,111 +1,162 @@
----
-description: Use Bun instead of Node.js, npm, pnpm, or vite.
-globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
-alwaysApply: false
----
+# Malamar API
 
-Default to using Bun instead of Node.js.
+Backend API for Malamar - a tool that combines the strengths of different AI CLIs into autonomous multi-agent workflows.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
-- Use `bun build <file.html|file.ts|file.css>` instead of `webpack` or `esbuild`
-- Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
-- Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
-- Use `bunx <package> <command>` instead of `npx <package> <command>`
-- Bun automatically loads .env, so don't use dotenv.
+## Status
 
-## APIs
+This codebase is feature-complete for v1. When working here:
 
-- `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
-- `bun:sqlite` for SQLite. Don't use `better-sqlite3`.
-- `Bun.redis` for Redis. Don't use `ioredis`.
-- `Bun.sql` for Postgres. Don't use `pg` or `postgres.js`.
-- `WebSocket` is built-in. Don't use `ws`.
-- Prefer `Bun.file` over `node:fs`'s readFile/writeFile
-- Bun.$`ls` instead of execa.
+- Focus on bug fixes, performance improvements, and dependency updates
+- Validate any new feature requests against the specs repository first
+- Don't add features that aren't in the specs without explicit approval
+
+## Tech Stack
+
+Use Bun, not Node.js.
+
+| Use This | Instead Of |
+|----------|------------|
+| `bun <file>` | `node <file>` or `ts-node <file>` |
+| `bun test` | `jest` or `vitest` |
+| `bun install` | `npm install` or `pnpm install` |
+| `bun run <script>` | `npm run <script>` |
+| `bunx <pkg>` | `npx <pkg>` |
+
+**APIs:**
+
+| Use This | Instead Of |
+|----------|------------|
+| `bun:sqlite` | `better-sqlite3` |
+| `Bun.file()` | `node:fs` readFile/writeFile |
+| `Bun.serve()` | `express` |
+| `Bun.spawn()` | `child_process` or `execa` |
+
+Bun auto-loads `.env` files, so don't use `dotenv`.
+
+**Framework stack:**
+
+- **Hono** - web framework (routing, middleware)
+- **Zod** - request validation + type inference
+- **nanoid** - ID generation
+
+## Architecture
+
+Modular monolith pattern. Each domain is a self-contained module with shared core infrastructure.
+
+```
+src/
+├── core/           # Infrastructure (database, config, logger, errors)
+├── shared/         # Cross-cutting utilities (nanoid, datetime)
+│
+├── workspace/      # Workspace CRUD, settings
+├── agent/          # Agent CRUD, reordering
+├── task/           # Task CRUD, comments, activity logs, prioritization
+├── chat/           # Chat CRUD, messages, attachments
+│
+├── settings/       # Global settings (Mailgun, CLI config)
+├── health/         # Health check endpoints
+├── cli/            # CLI adapters (claude, gemini, codex, opencode)
+├── runner/         # Task/chat queue processing, subprocess management
+├── jobs/           # Scheduled jobs (cleanup, health-check)
+├── events/         # SSE subsystem
+├── notifications/  # Email notifications via Mailgun
+├── instructions/   # Sample workspace, Malamar agent prompts
+├── commands/       # CLI commands (serve, version, help, doctor, config)
+│
+├── app.ts          # Hono app assembly, route mounting
+└── index.ts        # Entry point, startup orchestration
+```
+
+## Module Pattern
+
+Each domain module follows a flat structure with standard files:
+
+```
+src/workspace/
+├── index.ts           # Public exports
+├── routes.ts          # Hono route handlers
+├── service.ts         # Business logic
+├── repository.ts      # Database queries
+├── schemas.ts         # Zod request/response schemas
+├── types.ts           # TypeScript types
+└── service.test.ts    # Unit tests (co-located)
+```
+
+Not every module needs all files. Use what makes sense.
+
+## Database
+
+SQLite via `bun:sqlite` with WAL mode for better concurrent read performance.
+
+**Key patterns:**
+
+- Single `Database` instance shared across the app (see `core/database.ts`)
+- Repository pattern for queries (each module has its own `repository.ts`)
+- Transactions for multi-step operations
+- Migrations in `migrations/` folder (numbered SQL files: `001_*.sql`, `002_*.sql`)
+
+**PRAGMAs configured on startup:**
+
+```sql
+PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA busy_timeout = 5000;
+```
 
 ## Testing
 
-Use `bun test` to run tests.
+Three test types with distinct purposes:
 
-```ts#index.test.ts
-import { test, expect } from "bun:test";
+| Type | Location | Command | What it tests |
+|------|----------|---------|---------------|
+| Unit | `src/**/*.test.ts` | `bun run test:unit` | Individual functions, mocked deps |
+| Integration | `tests/` | `bun run test:integration` | Service layers with real DB |
+| E2E | `e2e/` | `bun run test:e2e` | HTTP requests against running server |
 
-test("hello world", () => {
-  expect(1).toBe(1);
-});
+**Running tests:**
+
+```bash
+bun run test:unit              # Unit tests only
+bun run test:integration       # Integration tests only
+bun run test:e2e               # E2E tests only
+bun test src/workspace/        # Single module
+bun test e2e/workspace.test.ts # Single E2E file
 ```
 
-## Frontend
+E2E tests manage their own server lifecycle via `beforeAll`/`afterAll`. They use a separate test data directory (`/tmp/malamar-test`) and never touch `~/.malamar`.
 
-Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
+## Common Commands
 
-Server:
-
-```ts#index.ts
-import index from "./index.html"
-
-Bun.serve({
-  routes: {
-    "/": index,
-    "/api/users/:id": {
-      GET: (req) => {
-        return new Response(JSON.stringify({ id: req.params.id }));
-      },
-    },
-  },
-  // optional websocket support
-  websocket: {
-    open: (ws) => {
-      ws.send("Hello, world!");
-    },
-    message: (ws, message) => {
-      ws.send(message);
-    },
-    close: (ws) => {
-      // handle close
-    }
-  },
-  development: {
-    hmr: true,
-    console: true,
-  }
-})
+```bash
+bun run dev        # Start with watch mode
+bun run start      # Start without watch
+bun run test       # Run all tests
+bun run lint       # ESLint
+bun run format     # Prettier
 ```
 
-HTML files can import .tsx, .jsx or .js files directly and Bun's bundler will transpile & bundle automatically. `<link>` tags can point to stylesheets and Bun's CSS bundler will bundle.
+## Conventions
 
-```html#index.html
-<html>
-  <body>
-    <h1>Hello, world!</h1>
-    <script type="module" src="./frontend.tsx"></script>
-  </body>
-</html>
-```
+**File naming:** kebab-case for everything (`task-worker.ts`, `chat-action-executor.ts`)
 
-With the following `frontend.tsx`:
+**Imports:** Relative paths, no tsconfig aliases. Use `eslint-plugin-simple-import-sort` for automatic sorting (runs on `bun run lint --fix`).
 
-```tsx#frontend.tsx
-import React from "react";
-import { createRoot } from "react-dom/client";
+**Error handling:** Use `AppError` classes from `core/errors.ts`. They include HTTP status codes and error codes for consistent API responses.
 
-// import .css files directly and it works
-import './index.css';
+**SSE:** EventEmitter pattern in `events/` module. Domain modules import `emit()` to broadcast events. The registry tracks active connections.
 
-const root = createRoot(document.body);
+**IDs:** nanoid with default 21-character URL-safe alphabet.
 
-export default function Frontend() {
-  return <h1>Hello, world!</h1>;
-}
+## Specs Reference
 
-root.render(<Frontend />);
-```
+Product requirements and technical design live in a separate specs repository:
 
-Then, run index.ts
+**Location:** `/Users/irvingdinh/Workspace/github.com/malamar-dev/specs`
 
-```sh
-bun --hot ./index.ts
-```
+Key documents:
+- `SPECS.md` - what Malamar does and why
+- `TECHNICAL_DESIGN.md` - how it's implemented
+- `MEETING-MINUTES/SESSION-011.md` - backend implementation details
+- `MEETING-MINUTES/SESSION-012.md` - backend repository structure
 
-For more information, read the Bun API docs in `node_modules/bun-types/docs/**.mdx`.
+Always check specs before implementing new features or making architectural changes.
