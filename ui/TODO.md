@@ -603,7 +603,7 @@ Access the app at `http://localhost:5173`.
 
 ### 5.1 Types and API
 
-- [ ] **Define agent types and API**
+- [x] **Define agent types and API**
   
   Create `src/features/agent/types/agent.types.ts`:
   - `Agent` interface (id, workspace_id, name, instruction, cli_type, order)
@@ -628,7 +628,7 @@ Access the app at `http://localhost:5173`.
 
 ### 5.2 Components
 
-- [ ] **Create AgentCard component**
+- [x] **Create AgentCard component**
   
   Create `src/features/agent/components/AgentCard.tsx`:
   - Displays:
@@ -643,7 +643,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement AgentCard component`
 
-- [ ] **Create AgentForm component**
+- [x] **Create AgentForm component**
   
   Create `src/features/agent/components/AgentForm.tsx`:
   - Form fields:
@@ -656,7 +656,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement AgentForm component`
 
-- [ ] **Create InstructionEditorModal component**
+- [x] **Create InstructionEditorModal component**
   
   Create `src/features/agent/components/InstructionEditorModal.tsx`:
   - Full-screen modal (both mobile and desktop)
@@ -666,7 +666,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement InstructionEditorModal component`
 
-- [ ] **Create AgentModal component (create/edit)**
+- [x] **Create AgentModal component (create/edit)**
   
   Create `src/features/agent/components/AgentModal.tsx`:
   - Modal dialog with AgentForm
@@ -679,7 +679,7 @@ Access the app at `http://localhost:5173`.
 
 ### 5.3 Agent List with Reordering
 
-- [ ] **Create AgentList component with drag-and-drop**
+- [x] **Create AgentList component with drag-and-drop**
   
   Create `src/features/agent/components/AgentList.tsx`:
   - List of AgentCards
