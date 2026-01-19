@@ -70,8 +70,20 @@ chatRoutes.post('/:id/cancel', (c) => {
 chatRoutes.post('/:id/attachments', async (c) => {
   const id = c.req.param('id');
 
+  // Validate chat exists first (throws NotFoundError if not)
+  service.getChat(id);
+
   // Parse multipart form data
-  const formData = await c.req.formData();
+  let formData: FormData;
+  try {
+    formData = await c.req.formData();
+  } catch {
+    return c.json(
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid form data. Use multipart/form-data.' } },
+      400
+    );
+  }
+
   const file = formData.get('file');
 
   if (!file || !(file instanceof File)) {

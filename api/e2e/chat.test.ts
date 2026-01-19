@@ -708,7 +708,7 @@ describe('Chat E2E Tests', () => {
   });
 
   describe('POST /api/chats/:id/attachments', () => {
-    test('should return 501 not implemented', async () => {
+    test('should return 400 for invalid form data (non-multipart request)', async () => {
       const { data: chatData } = await post<ChatResponse>(
         `/api/workspaces/${testWorkspaceId}/chats`,
         {
@@ -716,9 +716,13 @@ describe('Chat E2E Tests', () => {
         }
       );
 
-      const { status } = await post<unknown>(`/api/chats/${chatData.data.id}/attachments`, {});
+      const { status, data } = await post<ErrorResponse>(
+        `/api/chats/${chatData.data.id}/attachments`,
+        {}
+      );
 
-      expect(status).toBe(501);
+      expect(status).toBe(400);
+      expect(data.error.code).toBe('VALIDATION_ERROR');
     });
 
     test('should return 404 for non-existent chat', async () => {
