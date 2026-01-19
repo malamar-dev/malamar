@@ -155,7 +155,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): configure ESLint with import sorting`
 
-- [ ] **Initialize shadcn/ui**
+- [x] **Initialize shadcn/ui**
   
   Run shadcn init:
   ```bash
