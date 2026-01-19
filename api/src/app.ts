@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
 
 import { agentRoutes, workspaceAgentRoutes } from './agent/index.ts';
 import { chatRoutes, workspaceChatRoutes } from './chat/index.ts';
@@ -79,10 +80,34 @@ export function createApp(): Hono {
       return c.json({ error: { code: 'NOT_FOUND', message: 'Not found' } }, 404);
     }
 
-    // For non-API routes, this would serve the SPA fallback
-    // TODO: Implement static file serving and SPA fallback when frontend is added
+    // For non-API routes, return 404 JSON (SPA fallback handled below)
     return c.json({ error: { code: 'NOT_FOUND', message: 'Not found' } }, 404);
   });
+
+  // Static file serving from public/ directory
+  // Files with hash in filename get long-term caching (e.g., main.abc123.js)
+  app.use(
+    '*',
+    serveStatic({
+      root: './public',
+      onFound: (_path, c) => {
+        // Set cache headers for hashed filenames (content-based caching)
+        // Pattern: filename.hash.ext (e.g., main.abc123.js, styles.def456.css)
+        const hashedFilePattern = /\.[a-f0-9]{6,}\.(?:js|css|woff2?|ttf|eot|svg|png|jpg|jpeg|gif|webp|ico)$/i;
+        if (hashedFilePattern.test(c.req.path)) {
+          // Immutable cache for 1 year - hashed files never change
+          c.header('Cache-Control', 'public, max-age=31536000, immutable');
+        } else {
+          // Short-term cache for non-hashed files (HTML, etc.)
+          c.header('Cache-Control', 'public, max-age=0, must-revalidate');
+        }
+      },
+    })
+  );
+
+  // SPA fallback: serve index.html for all non-API routes that don't match static files
+  // This enables client-side routing in the frontend SPA
+  app.get('*', serveStatic({ path: './public/index.html' }));
 
   return app;
 }

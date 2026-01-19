@@ -1338,14 +1338,14 @@ These items are lower priority and can be implemented after the core system is w
 
 ### Static File Serving
 
-- [ ] **Implement static file serving for frontend**
-  
+- [x] **Implement static file serving for frontend**
+
   Update `app.ts`:
   - Serve files from `public/` directory
   - Set appropriate Content-Type headers
   - Set cache headers for hashed filenames
   - SPA fallback (serve index.html for non-API routes)
-  
+
   Commit: `feat(api): implement static file serving`
 
 ---
