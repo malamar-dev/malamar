@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
 import { listAgents } from '../agent/index.ts';
-import { initDb, resetConfig, runMigrations } from '../core/index.ts';
+import { closeDb, initDb, resetConfig, resetDb, runMigrations } from '../core/index.ts';
 import { listWorkspaces } from '../workspace/index.ts';
 import { createSampleWorkspace } from './sample-workspace.ts';
 
@@ -14,8 +14,9 @@ describe('sample-workspace', () => {
   const testDbPath = join(testDataDir, 'test.db');
 
   beforeEach(() => {
-    // Re-establish the singleton to point to our test database
-    initDb(testDbPath);
+    // Close any existing database connection and clear cache
+    closeDb();
+    resetDb();
     resetConfig();
 
     // Create test data directory
@@ -30,6 +31,8 @@ describe('sample-workspace', () => {
   });
 
   afterEach(() => {
+    closeDb();
+    resetDb();
     resetConfig();
     if (existsSync(testDataDir)) {
       rmSync(testDataDir, { recursive: true });

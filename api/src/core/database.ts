@@ -65,15 +65,19 @@ export function getDb(): Database {
   return initDb();
 }
 
-export function closeDb(): void {
-  if (currentDbPath) {
-    const db = dbInstances.get(currentDbPath);
+export function closeDb(dbPath?: string): void {
+  const pathToClose = dbPath ?? currentDbPath;
+  if (pathToClose) {
+    const db = dbInstances.get(pathToClose);
     if (db) {
       db.close();
-      dbInstances.delete(currentDbPath);
+      dbInstances.delete(pathToClose);
       logger.info('Database connection closed');
     }
-    currentDbPath = null;
+    // Only reset currentDbPath if we're closing the current database
+    if (pathToClose === currentDbPath) {
+      currentDbPath = null;
+    }
   }
 }
 

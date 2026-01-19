@@ -5,6 +5,7 @@ import { Database } from 'bun:sqlite';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
 import * as chatRepository from '../chat/repository.ts';
+import { closeDb, resetDb } from '../core/database.ts';
 import { generateId, now } from '../shared/index.ts';
 import * as taskRepository from '../task/repository.ts';
 import * as workspaceRepository from '../workspace/repository.ts';
@@ -38,6 +39,8 @@ describe('cleanup job', () => {
   });
 
   afterEach(() => {
+    closeDb();
+    resetDb();
     db.close();
   });
 

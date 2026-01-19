@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import type { Database } from 'bun:sqlite';
 
-import { initDb, runMigrations } from '../../src/core/database.ts';
+import { closeDb, initDb, resetDb, runMigrations } from '../../src/core/database.ts';
 
 let testDbPath: string | null = null;
 let testDb: Database | null = null;
@@ -41,6 +41,8 @@ export function getTestDb(): Database {
 }
 
 export function cleanupTestDb(): void {
+  closeDb();
+  resetDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     // Also remove WAL and SHM files if they exist

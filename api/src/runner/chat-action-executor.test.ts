@@ -7,7 +7,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import * as agentRepository from '../agent/repository.ts';
 import * as chatRepository from '../chat/repository.ts';
 import type { Chat } from '../chat/types.ts';
-import { initDb, runMigrations } from '../core/database.ts';
+import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import * as workspaceRepository from '../workspace/repository.ts';
 import type { Workspace } from '../workspace/types.ts';
 import {
@@ -34,6 +34,8 @@ function setupTestDb() {
 }
 
 function cleanupTestDb() {
+  closeDb();
+  resetDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     const walPath = `${testDbPath}-wal`;

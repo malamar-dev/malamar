@@ -4,7 +4,7 @@ import { join } from 'node:path';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 
-import { initDb, runMigrations } from '../core/database.ts';
+import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import { NotFoundError } from '../core/errors.ts';
 import * as service from './service.ts';
 
@@ -23,6 +23,8 @@ function setupTestDb() {
 }
 
 function cleanupTestDb() {
+  closeDb();
+  resetDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     const walPath = `${testDbPath}-wal`;

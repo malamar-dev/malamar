@@ -5,15 +5,16 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
 import { createApp } from './app.ts';
-import { initDb, resetConfig, runMigrations } from './core/index.ts';
+import { closeDb, initDb, resetConfig, resetDb, runMigrations } from './core/index.ts';
 
 describe('app', () => {
   const testDataDir = join(tmpdir(), `malamar-app-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const testDbPath = join(testDataDir, 'test.db');
 
   beforeEach(() => {
-    // Re-establish the singleton to point to our test database
-    initDb(testDbPath);
+    // Close any existing database connection and clear cache
+    closeDb();
+    resetDb();
     resetConfig();
 
     // Create test data directory
@@ -28,6 +29,8 @@ describe('app', () => {
   });
 
   afterEach(() => {
+    closeDb();
+    resetDb();
     resetConfig();
     if (existsSync(testDataDir)) {
       rmSync(testDataDir, { recursive: true });

@@ -7,10 +7,10 @@
   "scripts": {
     "dev": "bun --watch index.ts",
     "start": "bun index.ts",
-    "test": "bun test",
+    "test": "bun test --max-concurrency=1",
     "test:unit": "bun test src/ --max-concurrency=1",
-    "test:integration": "bun test tests/",
-    "test:e2e": "bun test e2e/",
+    "test:integration": "bun test tests/ --max-concurrency=1",
+    "test:e2e": "bun test e2e/ --max-concurrency=1",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { Database } from 'bun:sqlite';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
+import { closeDb, resetDb } from '../core/database.ts';
 import { generateId, now } from '../shared/index.ts';
 import * as repository from './repository.ts';
 
@@ -30,6 +31,8 @@ describe('agent repository', () => {
   });
 
   afterEach(() => {
+    closeDb();
+    resetDb();
     db.close();
   });
 
