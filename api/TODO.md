@@ -1242,15 +1242,15 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): implement E2E test helpers`
 
-- [ ] **Create `e2e/workspace.test.ts`**
-  
+- [x] **Create `e2e/workspace.test.ts`**
+
   Implement workspace E2E tests:
   - Create workspace and verify in DB
   - List workspaces
   - Update workspace
   - Delete workspace with cascade
   - Search workspaces
-  
+
   Commit: `test(api): add workspace E2E tests`
 
 - [ ] **Create `e2e/agent.test.ts`**
