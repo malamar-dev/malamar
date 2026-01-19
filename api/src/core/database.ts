@@ -12,6 +12,7 @@ function initializePragmas(db: Database): void {
   db.exec('PRAGMA journal_mode = WAL;');
   db.exec('PRAGMA synchronous = NORMAL;');
   db.exec('PRAGMA busy_timeout = 5000;');
+  db.exec('PRAGMA foreign_keys = ON;');
 }
 
 function ensureDataDirectory(dbPath: string): void {
