@@ -123,8 +123,8 @@ export function getMigrationFiles(migrationsDir: string): MigrationFile[] {
   return files;
 }
 
-export function runMigrations(migrationsDir?: string): void {
-  const db = getDb();
+export function runMigrations(migrationsDir?: string, database?: Database): void {
+  const db = database ?? getDb();
   const dir = migrationsDir ?? join(process.cwd(), 'migrations');
 
   ensureMigrationsTable(db);

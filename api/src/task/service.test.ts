@@ -1,42 +1,77 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import type { Database } from 'bun:sqlite';
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 
-import { initDb, resetDb } from '../core/database.ts';
+import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import { NotFoundError } from '../core/errors.ts';
 import { generateId, now } from '../shared/index.ts';
 import * as service from './service.ts';
 
+let testDbPath: string | null = null;
+let workspaceId: string;
+
+function setupTestDb() {
+  resetDb();
+  const testDir = join(tmpdir(), 'malamar-task-service-test');
+  if (!existsSync(testDir)) {
+    mkdirSync(testDir, { recursive: true });
+  }
+  testDbPath = join(testDir, `test-${Date.now()}-${Math.random().toString(36).slice(2)}.db`);
+  const db = initDb(testDbPath);
+  db.exec('PRAGMA foreign_keys = ON;');
+  runMigrations(join(process.cwd(), 'migrations'), db);
+  return db;
+}
+
+function cleanupTestDb() {
+  closeDb();
+  if (testDbPath && existsSync(testDbPath)) {
+    rmSync(testDbPath, { force: true });
+    const walPath = `${testDbPath}-wal`;
+    const shmPath = `${testDbPath}-shm`;
+    if (existsSync(walPath)) rmSync(walPath, { force: true });
+    if (existsSync(shmPath)) rmSync(shmPath, { force: true });
+  }
+  testDbPath = null;
+  resetDb();
+}
+
+function clearTables() {
+  const db = initDb(testDbPath!);
+  db.exec('DELETE FROM task_queue');
+  db.exec('DELETE FROM task_logs');
+  db.exec('DELETE FROM task_comments');
+  db.exec('DELETE FROM tasks');
+  db.exec('DELETE FROM agents');
+  db.exec('DELETE FROM workspaces');
+}
+
+function createTestWorkspace(db: Database) {
+  workspaceId = generateId();
+  const timestamp = now();
+  db.query(
+    `INSERT INTO workspaces (id, title, description, working_directory_mode, last_activity_at, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`
+  ).run(workspaceId, 'Test Workspace', '', 'temp', timestamp, timestamp, timestamp);
+}
+
 describe('task service', () => {
   let db: Database;
-  let workspaceId: string;
 
-  beforeEach(() => {
-    resetDb();
-    db = initDb(':memory:');
-    // Run migrations
-    const migration001 = readFileSync(
-      join(process.cwd(), 'migrations/001_workspaces_agents.sql'),
-      'utf-8'
-    );
-    const migration002 = readFileSync(join(process.cwd(), 'migrations/002_tasks.sql'), 'utf-8');
-    db.exec(migration001);
-    db.exec(migration002);
-
-    // Create a workspace
-    workspaceId = generateId();
-    const timestamp = now();
-    db.query(
-      `INSERT INTO workspaces (id, title, description, working_directory_mode, last_activity_at, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
-    ).run(workspaceId, 'Test Workspace', '', 'temp', timestamp, timestamp, timestamp);
+  beforeAll(() => {
+    db = setupTestDb();
   });
 
-  afterEach(() => {
-    db.close();
-    resetDb();
+  afterAll(() => {
+    cleanupTestDb();
+  });
+
+  beforeEach(() => {
+    clearTables();
+    createTestWorkspace(db);
   });
 
   describe('createTask', () => {

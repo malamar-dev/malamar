@@ -8,7 +8,7 @@
     "dev": "bun --watch index.ts",
     "start": "bun index.ts",
     "test": "bun test",
-    "test:unit": "bun test src/",
+    "test:unit": "bun test src/ --max-concurrency=1",
     "test:integration": "bun test tests/",
     "test:e2e": "bun test e2e/",
     "lint": "eslint .",

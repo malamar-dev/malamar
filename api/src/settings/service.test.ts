@@ -1,26 +1,56 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import type { Database } from 'bun:sqlite';
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 
-import { initDb, resetDb } from '../core/database.ts';
+import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import * as service from './service.ts';
 
-describe('settings service', () => {
-  let db: Database;
+let testDbPath: string | null = null;
 
-  beforeEach(() => {
-    resetDb();
-    db = initDb(':memory:');
-    // Run migrations
-    const migration004 = readFileSync(join(process.cwd(), 'migrations/004_settings.sql'), 'utf-8');
-    db.exec(migration004);
+function setupTestDb() {
+  resetDb();
+  const testDir = join(tmpdir(), 'malamar-settings-service-test');
+  if (!existsSync(testDir)) {
+    mkdirSync(testDir, { recursive: true });
+  }
+  testDbPath = join(testDir, `test-${Date.now()}-${Math.random().toString(36).slice(2)}.db`);
+  const db = initDb(testDbPath);
+  db.exec('PRAGMA foreign_keys = ON;');
+  runMigrations(join(process.cwd(), 'migrations'), db);
+  return db;
+}
+
+function cleanupTestDb() {
+  closeDb();
+  if (testDbPath && existsSync(testDbPath)) {
+    rmSync(testDbPath, { force: true });
+    const walPath = `${testDbPath}-wal`;
+    const shmPath = `${testDbPath}-shm`;
+    if (existsSync(walPath)) rmSync(walPath, { force: true });
+    if (existsSync(shmPath)) rmSync(shmPath, { force: true });
+  }
+  testDbPath = null;
+  resetDb();
+}
+
+function clearTables() {
+  const db = initDb(testDbPath!);
+  db.exec('DELETE FROM settings');
+}
+
+describe('settings service', () => {
+  beforeAll(() => {
+    setupTestDb();
   });
 
-  afterEach(() => {
-    db.close();
-    resetDb();
+  afterAll(() => {
+    cleanupTestDb();
+  });
+
+  beforeEach(() => {
+    clearTables();
   });
 
   describe('getSettings', () => {
