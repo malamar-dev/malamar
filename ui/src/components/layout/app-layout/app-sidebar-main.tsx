@@ -38,7 +38,7 @@ const items = [
       },
       {
         title: "CLIs",
-        url: "#",
+        url: "/settings/clis",
       },
     ],
   },

@@ -12,4 +12,8 @@ export const router = createBrowserRouter([
     path: "/",
     lazy: lazy(() => import("@/features/dashboard/pages/dashboard-page")),
   },
+  {
+    path: "/settings/clis",
+    lazy: lazy(() => import("@/features/settings/pages/clis-page")),
+  },
 ]);

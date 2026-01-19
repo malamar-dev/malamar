@@ -8,6 +8,7 @@ export interface CliHealthResult {
   error?: string;
   lastCheckedAt: Date;
   binaryPath: string | null;
+  version?: string;
 }
 
 export interface CliAdapter {

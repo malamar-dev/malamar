@@ -1,5 +1,15 @@
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { Fragment } from "react";
 
+import type { BreadcrumbItemType } from "@/components/layout/app-layout/types.ts";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   DropdownMenu,
@@ -11,17 +21,49 @@ import { Separator } from "@/components/ui/separator.tsx";
 import { SidebarTrigger } from "@/components/ui/sidebar.tsx";
 import { useTheme } from "@/hooks/use-theme.ts";
 
-export const AppHeader = () => {
+export const AppHeader = ({
+  breadcrumbItems,
+}: {
+  breadcrumbItems?: BreadcrumbItemType[];
+}) => {
   const { setTheme } = useTheme();
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
       <div className="flex flex-1 items-center gap-2 px-3">
         <SidebarTrigger className="-ml-1" />
+
         <Separator
           orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
         />
+
+        {breadcrumbItems && breadcrumbItems.length > 0 && (
+          <Breadcrumb>
+            <BreadcrumbList>
+              {breadcrumbItems.map((item, index) => {
+                const isLast = index === breadcrumbItems.length - 1;
+
+                return (
+                  <Fragment key={index}>
+                    <BreadcrumbItem className={isLast ? "" : "hidden md:block"}>
+                      {isLast ? (
+                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={item.href}>
+                          {item.label}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {!isLast && (
+                      <BreadcrumbSeparator className="hidden md:block" />
+                    )}
+                  </Fragment>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+        )}
       </div>
 
       <div className="ml-auto px-3">

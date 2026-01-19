@@ -15,6 +15,7 @@ healthRouter.get("/", (c) => {
           error: result.error,
           lastCheckedAt: result.lastCheckedAt.toISOString(),
           binaryPath: result.binaryPath,
+          version: result.version,
         }))
       : [
           {
@@ -23,6 +24,7 @@ healthRouter.get("/", (c) => {
             error: "Health check has not run yet",
             lastCheckedAt: null,
             binaryPath: null,
+            version: null,
           },
         ];
 
