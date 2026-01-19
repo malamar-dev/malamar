@@ -21,7 +21,7 @@ export function useSSE(options: UseSSEOptions = {}) {
   const eventSourceRef = useRef<EventSource | null>(null);
   const handlersRef = useRef<Map<string, Set<SSEEventHandler>>>(new Map());
   const reconnectAttemptsRef = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const shouldConnectRef = useRef(true);
 
   const subscribe = useCallback((eventType: string, handler: SSEEventHandler) => {
@@ -53,7 +53,7 @@ export function useSSE(options: UseSSEOptions = {}) {
 
   const disconnect = useCallback(() => {
     shouldConnectRef.current = false;
-    if (reconnectTimeoutRef.current) {
+    if (reconnectTimeoutRef.current !== null) {
       clearTimeout(reconnectTimeoutRef.current);
     }
     if (eventSourceRef.current) {

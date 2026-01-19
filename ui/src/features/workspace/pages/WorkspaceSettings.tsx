@@ -38,7 +38,7 @@ const settingsSchema = z.object({
   working_directory_mode: z.enum(['static', 'temp']),
   working_directory_path: z.string().optional(),
   auto_delete_done_tasks: z.boolean(),
-  done_task_retention_days: z.coerce.number().min(1).max(365).optional(),
+  done_task_retention_days: z.number().min(1).max(365),
   notify_on_error: z.boolean(),
   notify_on_in_review: z.boolean(),
 });
@@ -242,7 +242,14 @@ export function WorkspaceSettings() {
                     <FormItem>
                       <FormLabel>Retention period (days)</FormLabel>
                       <FormControl>
-                        <Input type="number" min={1} max={365} {...field} />
+                        <Input
+                          type="number"
+                          min={1}
+                          max={365}
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={(e) => field.onChange(e.target.valueAsNumber || 30)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

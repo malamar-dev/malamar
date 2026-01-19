@@ -16,11 +16,11 @@ import type { CliSettings } from '../types/settings.types';
 
 const cliSettingsSchema = z.object({
   binary_path: z.string().optional(),
-  env_vars: z.record(z.string()),
+  env_vars: z.record(z.string(), z.string()),
 });
 
 const settingsSchema = z.object({
-  cli_settings: z.record(cliSettingsSchema),
+  cli_settings: z.record(z.string(), cliSettingsSchema),
   mailgun: z.object({
     api_key: z.string().optional(),
     domain: z.string().optional(),

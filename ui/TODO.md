@@ -1153,7 +1153,7 @@ Access the app at `http://localhost:5173`.
 
 ### 10.1 CLI Health Warnings
 
-- [ ] **Implement CLI health warning banner**
+- [x] **Implement CLI health warning banner**
   
   Update `RootLayout`:
   - Fetch CLI health on mount
@@ -1168,7 +1168,7 @@ Access the app at `http://localhost:5173`.
 
 ### 10.2 Delete Confirmations
 
-- [ ] **Implement delete all done tasks flow**
+- [x] **Implement delete all done tasks flow**
   
   Update `KanbanBoard`:
   - Hamburger menu includes "Delete all done tasks"
@@ -1177,7 +1177,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement delete all done tasks with type-to-confirm`
 
-- [ ] **Implement workspace delete flow**
+- [x] **Implement workspace delete flow**
   
   Update `WorkspaceSettings`:
   - Add "Delete Workspace" button (danger zone section)
@@ -1197,7 +1197,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): add skip-to-content link for accessibility`
 
-- [ ] **Audit and fix accessibility issues**
+- [x] **Audit and fix accessibility issues**
   
   Review all components for:
   - Proper semantic HTML elements
@@ -1223,7 +1223,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): clean up unused files and code`
 
-- [ ] **Create feature index exports**
+- [x] **Create feature index exports**
   
   For each feature, ensure `index.ts` exports:
   - Page components
