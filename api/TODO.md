@@ -1326,14 +1326,14 @@ These items are lower priority and can be implemented after the core system is w
 
 ### File Attachments
 
-- [ ] **Implement chat file attachment handling**
-  
+- [x] **Implement chat file attachment handling**
+
   Update chat module:
   - Handle `POST /chats/:id/attachments` endpoint
   - Store files in `/tmp/malamar_chat_{chat_id}_attachments/`
   - Add system message noting file path
   - Handle duplicate filename overwrites
-  
+
   Commit: `feat(api): implement chat file attachments`
 
 ### Static File Serving

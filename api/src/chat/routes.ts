@@ -66,15 +66,38 @@ chatRoutes.post('/:id/cancel', (c) => {
   return c.json({ success: true });
 });
 
-// POST /chats/:id/attachments - Upload attachment (placeholder)
+// POST /chats/:id/attachments - Upload attachment
 chatRoutes.post('/:id/attachments', async (c) => {
   const id = c.req.param('id');
-  // Verify chat exists
-  service.getChat(id);
 
-  // TODO: Implement file attachment handling
-  // Store files in /tmp/malamar_chat_{chat_id}_attachments/
-  // Add system message noting file path
+  // Parse multipart form data
+  const formData = await c.req.formData();
+  const file = formData.get('file');
 
-  return c.json({ message: 'File attachment support coming soon' }, 501);
+  if (!file || !(file instanceof File)) {
+    return c.json({ error: { code: 'VALIDATION_ERROR', message: 'File is required' } }, 400);
+  }
+
+  // Get filename from form data or use the uploaded file's name
+  const filename = file.name;
+
+  if (!filename || filename.trim() === '') {
+    return c.json({ error: { code: 'VALIDATION_ERROR', message: 'Filename is required' } }, 400);
+  }
+
+  // Read file content
+  const content = await file.arrayBuffer();
+
+  // Upload attachment
+  const result = await service.uploadAttachment(id, filename, content);
+
+  return c.json(
+    {
+      data: {
+        filePath: result.filePath,
+        message: result.message,
+      },
+    },
+    201
+  );
 });

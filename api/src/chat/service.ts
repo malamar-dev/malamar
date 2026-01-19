@@ -1,5 +1,9 @@
+import { mkdir } from 'node:fs/promises';
+import { join } from 'node:path';
+
 import { NotFoundError } from '../core/errors.ts';
 import type { CliType } from '../core/types.ts';
+import { FILE_PATTERNS } from '../runner/types.ts';
 import * as repository from './repository.ts';
 import type { Chat, ChatMessage, CreateChatInput, UpdateChatInput } from './types.ts';
 
@@ -142,4 +146,45 @@ export function setCliOverride(chatId: string, cliType: CliType | null): void {
     throw new NotFoundError(`Chat not found: ${chatId}`);
   }
   repository.update(chatId, { cliType });
+}
+
+/**
+ * Upload a file attachment to a chat.
+ *
+ * Stores the file in /tmp/malamar_chat_{chatId}_attachments/{filename}
+ * and adds a system message noting the file path.
+ *
+ * Duplicate filenames overwrite existing files.
+ * No file size or type restrictions.
+ */
+export async function uploadAttachment(
+  chatId: string,
+  filename: string,
+  content: ArrayBuffer | Uint8Array
+): Promise<{ filePath: string; message: ChatMessage }> {
+  const chat = repository.findById(chatId);
+  if (!chat) {
+    throw new NotFoundError(`Chat not found: ${chatId}`);
+  }
+
+  // Build attachment directory path
+  const attachmentDir = join('/tmp', FILE_PATTERNS.chatAttachments(chatId));
+
+  // Ensure directory exists
+  await mkdir(attachmentDir, { recursive: true });
+
+  // Build full file path
+  const filePath = join(attachmentDir, filename);
+
+  // Write file (overwrites if exists)
+  await Bun.write(filePath, content);
+
+  // Add system message noting the file path
+  const message = repository.createMessage({
+    chatId,
+    role: 'system',
+    message: `User has uploaded ${filePath}`,
+  });
+
+  return { filePath, message };
 }
