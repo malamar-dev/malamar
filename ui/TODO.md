@@ -274,7 +274,7 @@ Access the app at `http://localhost:5173`.
 
 ### 2.3 Routing
 
-- [ ] **Set up React Router**
+- [x] **Set up React Router**
   
   Create `src/routes/index.tsx`:
   - Define route structure with lazy loading:
@@ -299,7 +299,7 @@ Access the app at `http://localhost:5173`.
 
 ### 2.4 Layouts
 
-- [ ] **Create RootLayout**
+- [x] **Create RootLayout**
   
   Create `src/components/layouts/RootLayout.tsx`:
   - Header with:
@@ -313,7 +313,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement RootLayout with header and mobile nav`
 
-- [ ] **Create WorkspaceLayout**
+- [x] **Create WorkspaceLayout**
   
   Create `src/components/layouts/WorkspaceLayout.tsx`:
   - Workspace header with:

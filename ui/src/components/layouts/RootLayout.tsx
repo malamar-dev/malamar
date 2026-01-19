@@ -1,6 +1,7 @@
 import { Home, Settings } from 'lucide-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -16,7 +17,7 @@ export function RootLayout() {
             Malamar
           </Link>
           <div className="flex items-center gap-2">
-            {/* Theme toggle will be added later */}
+            <ThemeToggle />
             <Button variant="ghost" size="icon" asChild className="hidden md:flex">
               <Link to="/settings">
                 <Settings className="h-5 w-5" />
