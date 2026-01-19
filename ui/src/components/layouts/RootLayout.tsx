@@ -1,6 +1,7 @@
 import { Home, Settings } from 'lucide-react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
+import { GlobalSpinner } from '@/components/GlobalSpinner';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -32,6 +33,9 @@ export function RootLayout() {
       <main id="main-content" className="flex-1 pb-16 md:pb-0">
         <Outlet />
       </main>
+
+      {/* Global loading spinner */}
+      <GlobalSpinner />
 
       {/* Mobile bottom navigation */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background md:hidden">

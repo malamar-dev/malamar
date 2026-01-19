@@ -346,7 +346,7 @@ Access the app at `http://localhost:5173`.
 
 ### 2.6 Toast Notifications
 
-- [ ] **Set up toast notifications**
+- [x] **Set up toast notifications**
   
   The `sonner` component is already installed via shadcn.
   
@@ -363,7 +363,7 @@ Access the app at `http://localhost:5173`.
 
 ## Phase 3: Shared Components
 
-- [ ] **Create LoadingSpinner component**
+- [x] **Create LoadingSpinner component**
   
   Create `src/components/LoadingSpinner.tsx`:
   - Centered spinner icon
