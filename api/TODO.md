@@ -1163,30 +1163,30 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 11: First Startup & Sample Data
 
-- [ ] **Create `instructions/sample-workspace.ts`**
-  
+- [x] **Create `instructions/sample-workspace.ts`**
+
   Define sample workspace and agents:
   - Copy content from `APPENDIX_ONBOARDING_RESOURCES.md`
   - Export `createSampleWorkspace(): void`
   - Create workspace with title "Sample: Code Assistant"
   - Create 4 agents: Planner, Implementer, Reviewer, Approver
   - Each with full instructions from appendix
-  
+
   Commit: `feat(api): implement sample workspace creation`
 
-- [ ] **Create `instructions/malamar-agent.ts`**
-  
+- [x] **Create `instructions/malamar-agent.ts`**
+
   Define Malamar agent instruction:
   - Copy content from `APPENDIX_ONBOARDING_RESOURCES.md`
   - Export `getMalamarAgentInstruction(): string`
   - This is hardcoded, not stored in database
-  
+
   Commit: `feat(api): implement Malamar agent instruction`
 
-- [ ] **Create `instructions/index.ts`**
-  
+- [x] **Create `instructions/index.ts`**
+
   Export public API.
-  
+
   Commit: `chore(api): create instructions module index exports`
 
 - [ ] **Implement first startup detection in serve command**
