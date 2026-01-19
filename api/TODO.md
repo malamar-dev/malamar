@@ -1299,13 +1299,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): add settings E2E tests`
 
-- [ ] **Create `e2e/health.test.ts`**
-  
+- [x] **Create `e2e/health.test.ts`**
+
   Implement health E2E tests:
   - Overall health endpoint
   - CLI health endpoint
   - CLI refresh endpoint
-  
+
   Commit: `test(api): add health E2E tests`
 
 - [ ] **Create `e2e/sse.test.ts`**
