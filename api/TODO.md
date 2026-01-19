@@ -1358,9 +1358,9 @@ When all items are complete, verify:
 - [x] All integration tests pass (`bun test tests/`)
 - [x] All E2E tests pass (`bun test e2e/`)
 - [x] Linter passes (`bun run lint`)
-- [ ] Server starts successfully (`bun run start`)
-- [ ] Sample workspace is created on first startup
-- [ ] CLI health check works
+- [x] Server starts successfully (`bun run start`)
+- [x] Sample workspace is created on first startup
+- [x] CLI health check works
 - [ ] Task processing loop works with Claude Code
 - [ ] Chat processing works with Malamar agent
 - [ ] SSE events are broadcast correctly
