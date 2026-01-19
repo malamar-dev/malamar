@@ -1240,19 +1240,19 @@ When all items are complete, verify:
 
 - [x] Linter passes (`bun run lint`)
 - [x] App builds successfully (`bun run build`)
-- [ ] All pages load without errors (requires API running)
-- [ ] Workspace CRUD works (requires API running)
-- [ ] Agent CRUD and reordering works (requires API running)
-- [ ] Task Kanban displays correctly (requires API running)
-- [ ] Task detail modal opens/closes with URL (requires API running)
-- [ ] Comments and activity logs display (requires API running)
-- [ ] Chat list and detail work (requires API running)
-- [ ] Chat with Malamar agent works (requires API running)
-- [ ] File attachments work (requires API running)
-- [ ] Global settings save correctly (requires API running)
-- [ ] CLI health displays correctly (requires API running)
-- [ ] SSE events update UI in real-time (requires API running)
-- [ ] Toasts appear for important events (requires API running)
+- [x] All pages load without errors
+- [x] Workspace CRUD works
+- [x] Agent CRUD and reordering works
+- [x] Task Kanban displays correctly
+- [x] Task detail modal opens/closes with URL
+- [x] Comments and activity logs display
+- [x] Chat list and detail work
+- [x] Chat with Malamar agent works
+- [x] File attachments work
+- [x] Global settings save correctly
+- [x] CLI health displays correctly
+- [x] SSE events update UI in real-time
+- [x] Toasts appear for important events
 - [x] Theme switching works
 - [x] Mobile layout is usable
 - [x] Horizontal scroll on Kanban (mobile) works
