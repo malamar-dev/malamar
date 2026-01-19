@@ -1,7 +1,9 @@
+import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
+
 export default function DashboardPage() {
   return (
-    <div className="p-4">
+    <AppLayout>
       <p>Lorem ipsum dolor sit amet</p>
-    </div>
+    </AppLayout>
   );
 }
