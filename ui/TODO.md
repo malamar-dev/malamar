@@ -885,7 +885,7 @@ Access the app at `http://localhost:5173`.
 
 ### 7.1 Types and API
 
-- [ ] **Define chat types and API**
+- [x] **Define chat types and API**
   
   Create `src/features/chat/types/chat.types.ts`:
   - `Chat` interface (id, workspace_id, agent_id, cli_type, title, created_at, updated_at)
@@ -917,7 +917,7 @@ Access the app at `http://localhost:5173`.
 
 ### 7.2 Chat List
 
-- [ ] **Create ChatListItem component**
+- [x] **Create ChatListItem component**
   
   Create `src/features/chat/components/ChatListItem.tsx`:
   - Displays:
@@ -929,7 +929,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ChatListItem component`
 
-- [ ] **Create ChatList component**
+- [x] **Create ChatList component**
   
   Create `src/features/chat/components/ChatList.tsx`:
   - Search input at top
@@ -948,7 +948,7 @@ Access the app at `http://localhost:5173`.
 
 ### 7.3 Chat Detail
 
-- [ ] **Create ChatMessage component**
+- [x] **Create ChatMessage component**
   
   Create `src/features/chat/components/ChatMessage.tsx`:
   - Different layouts per role:
@@ -960,7 +960,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ChatMessage component`
 
-- [ ] **Create ChatMessageList component**
+- [x] **Create ChatMessageList component**
   
   Create `src/features/chat/components/ChatMessageList.tsx`:
   - Scrollable list of ChatMessages
@@ -969,7 +969,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ChatMessageList component`
 
-- [ ] **Create ChatInput component**
+- [x] **Create ChatInput component**
   
   Create `src/features/chat/components/ChatInput.tsx`:
   - Expandable textarea (grows with content)
@@ -980,7 +980,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ChatInput with expandable textarea and attachments`
 
-- [ ] **Create ChatHeader component**
+- [x] **Create ChatHeader component**
   
   Create `src/features/chat/components/ChatHeader.tsx`:
   - Back button (to chat list)
@@ -992,7 +992,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ChatHeader with agent and CLI switching`
 
-- [ ] **Create ChatDetail page**
+- [x] **Create ChatDetail page**
   
   Create `src/features/chat/pages/ChatDetailPage.tsx`:
   - Full page layout (not modal for chats)
