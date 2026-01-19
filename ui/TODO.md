@@ -372,7 +372,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement LoadingSpinner component`
 
-- [ ] **Create GlobalSpinner component**
+- [x] **Create GlobalSpinner component**
   
   Create `src/components/GlobalSpinner.tsx`:
   - Fixed position spinner in bottom-left corner
@@ -383,7 +383,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement GlobalSpinner for background fetching`
 
-- [ ] **Create ErrorMessage component**
+- [x] **Create ErrorMessage component**
   
   Create `src/components/ErrorMessage.tsx`:
   - Displays error message from API
@@ -393,7 +393,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ErrorMessage component`
 
-- [ ] **Create EmptyState component**
+- [x] **Create EmptyState component**
   
   Create `src/components/EmptyState.tsx`:
   - Centered message with optional icon
@@ -402,7 +402,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement EmptyState component`
 
-- [ ] **Create ConfirmDialog component**
+- [x] **Create ConfirmDialog component**
   
   Create `src/components/ConfirmDialog.tsx`:
   - Uses shadcn Dialog
@@ -412,7 +412,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ConfirmDialog component`
 
-- [ ] **Create TypeToConfirmDialog component**
+- [x] **Create TypeToConfirmDialog component**
   
   Create `src/components/TypeToConfirmDialog.tsx`:
   - Extends ConfirmDialog pattern
@@ -422,7 +422,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement TypeToConfirmDialog component`
 
-- [ ] **Create TimeAgo component**
+- [x] **Create TimeAgo component**
   
   Create `src/lib/date-utils.ts`:
   - `formatRelativeTime(date: Date | string): string`
@@ -436,7 +436,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement TimeAgo component with date utilities`
 
-- [ ] **Create Markdown component**
+- [x] **Create Markdown component**
   
   Create `src/components/Markdown.tsx`:
   - Uses `react-markdown` with:
@@ -450,7 +450,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement Markdown renderer with syntax highlighting`
 
-- [ ] **Create SearchInput component**
+- [x] **Create SearchInput component**
   
   Create `src/components/SearchInput.tsx`:
   - Input with search icon
@@ -460,7 +460,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement SearchInput with debounce`
 
-- [ ] **Create PasswordInput component**
+- [x] **Create PasswordInput component**
   
   Create `src/components/PasswordInput.tsx`:
   - Input with toggle visibility button (eye icon)
@@ -469,7 +469,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement PasswordInput with toggle visibility`
 
-- [ ] **Create skeletons for common patterns**
+- [x] **Create skeletons for common patterns**
   
   Create `src/components/skeletons/`:
   - `CardSkeleton.tsx` — Skeleton for card layouts
@@ -486,7 +486,7 @@ Access the app at `http://localhost:5173`.
 
 ### 4.1 Types and API
 
-- [ ] **Define workspace types and API**
+- [x] **Define workspace types and API**
   
   Create `src/features/workspace/types/workspace.types.ts`:
   - `Workspace` interface (id, title, description, working_directory_mode, etc.)
