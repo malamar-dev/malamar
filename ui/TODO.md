@@ -96,7 +96,7 @@ Access the app at `http://localhost:5173`.
 
 ### 1.1 Dependencies and Tooling
 
-- [ ] **Install core dependencies**
+- [x] **Install core dependencies**
   
   Install production dependencies:
   - `react-router-dom` — Routing
@@ -125,7 +125,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): install core dependencies`
 
-- [ ] **Configure Vite with API proxy**
+- [x] **Configure Vite with API proxy**
   
   Update `vite.config.ts`:
   - Add proxy for `/api/*` to `http://localhost:3456`
@@ -134,7 +134,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): configure Vite with API proxy and path alias`
 
-- [ ] **Configure Prettier**
+- [x] **Configure Prettier**
   
   Create `.prettierrc` with settings:
   - Single quotes
@@ -146,7 +146,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): configure Prettier`
 
-- [ ] **Configure ESLint**
+- [x] **Configure ESLint**
   
   Update `eslint.config.js`:
   - Add `eslint-plugin-simple-import-sort` for import ordering
