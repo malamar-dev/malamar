@@ -2,9 +2,12 @@ import "./styles/globals.css";
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { RouterProvider } from "react-router";
+
+import { router } from "./routes";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <p>Lorem ipsum dolor sit amet</p>
+    <RouterProvider router={router} />
   </StrictMode>,
 );
