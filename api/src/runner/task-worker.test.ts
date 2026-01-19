@@ -5,6 +5,12 @@ import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 
 import * as agentRepository from '../agent/repository.ts';
+import {
+  clearTestAdapter,
+  createMockAdapter,
+  type MockCliAdapter,
+  setTestAdapter,
+} from '../cli/index.ts';
 import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import { clearSubscribers, subscribe } from '../events/emitter.ts';
 import type { SseEventPayloadMap, SseEventType } from '../events/types.ts';
@@ -16,6 +22,7 @@ import { DEFAULT_TASK_WORKER_CONFIG, processTask } from './task-worker.ts';
 // Test database setup
 let testDbPath: string | null = null;
 let testTempDir: string | null = null;
+let mockAdapter: MockCliAdapter;
 
 function setupTestDb() {
   const testDir = join(tmpdir(), 'malamar-task-worker-test');
@@ -137,10 +144,19 @@ describe('task-worker', () => {
     clearTables();
     setupTestTempDir();
     clearSubscribers();
+
+    // Set up mock CLI adapter with default skip response
+    mockAdapter = createMockAdapter();
+    mockAdapter.setInvocationConfig({
+      success: true,
+      response: { type: 'task', actions: [{ type: 'skip' }] },
+    });
+    setTestAdapter(mockAdapter);
   });
 
   afterEach(() => {
     clearSubscribers();
+    clearTestAdapter();
   });
 
   describe('processTask', () => {
@@ -216,16 +232,16 @@ describe('task-worker', () => {
       const task = createTestTask(workspace.id);
       expect(task.status).toBe('todo');
 
-      // Add an agent but the CLI won't work, task will stay in_progress
+      // Add an agent - mock CLI will respond with skip
       createTestAgent(workspace.id);
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
-      // Process will fail since we don't have a real CLI
+      // Mock adapter returns skip, so task should move to in_review after all agents skip
       await processTask(queueItem, { tempDir: testTempDir! });
 
-      // Task should have been moved to in_progress (or stayed there due to error)
+      // Task should have been moved to in_progress and then to in_review (all skipped)
       const updatedTask = taskRepository.findById(task.id);
-      expect(updatedTask?.status).toBe('in_progress');
+      expect(updatedTask?.status).toBe('in_review');
     });
 
     test('does not emit status events when no agents configured', async () => {
@@ -267,6 +283,7 @@ describe('task-worker', () => {
     test('includes comments in context', async () => {
       const workspace = createTestWorkspace();
       const task = createTestTask(workspace.id);
+      createTestAgent(workspace.id);
 
       // Add a comment
       taskRepository.createComment({
@@ -278,17 +295,18 @@ describe('task-worker', () => {
 
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
-      // The function will fail due to no CLI, but we can verify the input file was attempted
-      // For this test, we just verify the flow doesn't crash with comments present
-      await processTask(queueItem, { tempDir: testTempDir! });
+      // Mock adapter succeeds - verify the flow completes with comments present
+      const result = await processTask(queueItem, { tempDir: testTempDir! });
 
-      // No assertion needed - if it doesn't crash, comments are handled
-      expect(true).toBe(true);
+      expect(result.success).toBe(true);
+      // Mock adapter was invoked
+      expect(mockAdapter.getInvocationHistory().length).toBeGreaterThan(0);
     });
 
     test('includes activity logs in context', async () => {
       const workspace = createTestWorkspace();
       const task = createTestTask(workspace.id);
+      createTestAgent(workspace.id);
 
       // Add an activity log
       taskRepository.createLog({
@@ -301,11 +319,12 @@ describe('task-worker', () => {
 
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
-      // The function will fail due to no CLI, but we can verify the input file was attempted
-      await processTask(queueItem, { tempDir: testTempDir! });
+      // Mock adapter succeeds - verify the flow completes with logs present
+      const result = await processTask(queueItem, { tempDir: testTempDir! });
 
-      // No assertion needed - if it doesn't crash, logs are handled
-      expect(true).toBe(true);
+      expect(result.success).toBe(true);
+      // Mock adapter was invoked
+      expect(mockAdapter.getInvocationHistory().length).toBeGreaterThan(0);
     });
   });
 
@@ -316,21 +335,31 @@ describe('task-worker', () => {
       createTestAgent(workspace.id);
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
-      // Use an invalid temp dir to trigger an error
-      const result = await processTask(queueItem, { tempDir: '/nonexistent/path/that/should/fail' });
+      // Configure mock to throw an error
+      mockAdapter.setInvocationConfig({
+        success: false,
+        exitCode: -1,
+        error: 'Unexpected CLI error',
+      });
 
-      // The result might succeed or fail depending on the error type
-      // The important thing is it doesn't crash
+      const result = await processTask(queueItem, { tempDir: testTempDir! });
+
+      // The result should indicate failure
       expect(result).toBeDefined();
+      expect(result.success).toBe(false);
     });
 
-    test('handles CLI not available gracefully', async () => {
+    test('handles CLI error gracefully', async () => {
       const workspace = createTestWorkspace();
       const task = createTestTask(workspace.id);
 
-      // Create an agent with an unsupported CLI type
-      // Note: This would need the agent to use a non-claude CLI type
-      // For now, we test with the claude CLI which won't be installed in test env
+      // Configure mock to fail
+      mockAdapter.setInvocationConfig({
+        success: false,
+        exitCode: 1,
+        error: 'CLI invocation failed',
+      });
+
       createTestAgent(workspace.id);
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
@@ -338,9 +367,10 @@ describe('task-worker', () => {
 
       // Should handle the error gracefully
       expect(result).toBeDefined();
-      // Task should have been moved to in_progress at least
+      expect(result.success).toBe(false);
+      // Task should have been moved to in_progress
       const updatedTask = taskRepository.findById(task.id);
-      expect(updatedTask).not.toBeNull();
+      expect(updatedTask?.status).toBe('in_progress');
     });
   });
 
@@ -349,15 +379,17 @@ describe('task-worker', () => {
       const workspace = workspaceRepository.create({
         title: 'Static Workspace',
         workingDirectoryMode: 'static',
-        workingDirectoryPath: '/custom/path',
+        workingDirectoryPath: testTempDir!, // Use test temp dir as the "static" path
       });
       const task = createTestTask(workspace.id);
       createTestAgent(workspace.id);
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
-      // Process will fail but we verify it doesn't crash
+      // Mock adapter will succeed with skip
       const result = await processTask(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.finalStatus).toBe('in_review');
     });
 
     test('uses temp directory when temp mode', async () => {
@@ -369,9 +401,11 @@ describe('task-worker', () => {
       createTestAgent(workspace.id);
       const queueItem = createTestQueueItem(task.id, workspace.id);
 
-      // Process will fail but we verify it doesn't crash
+      // Mock adapter will succeed with skip
       const result = await processTask(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
+      expect(result.finalStatus).toBe('in_review');
     });
   });
 
@@ -392,12 +426,14 @@ describe('task-worker', () => {
 
       collector.unsubscribe();
 
-      // Check that agent events were emitted
+      // Check that agent events were emitted for all 3 agents
       const agentStartEvents = collector.getByType('agent.execution_started');
+      expect(agentStartEvents.length).toBe(3);
 
-      // At least one agent should have started (even if it failed)
-      // The exact number depends on whether the CLI is available
-      expect(agentStartEvents.length).toBeGreaterThanOrEqual(0);
+      // Verify agents were processed in order (First, Second, Third)
+      type AgentPayload = { agentName: string };
+      const agentNames = agentStartEvents.map((e) => (e.payload as AgentPayload).agentName);
+      expect(agentNames).toEqual(['First Agent', 'Second Agent', 'Third Agent']);
     });
   });
 
