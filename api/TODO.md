@@ -1230,8 +1230,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 13: E2E Tests
 
-- [ ] **Create `e2e/helpers/server.ts`**
-  
+- [x] **Create `e2e/helpers/server.ts`**
+
   Implement E2E test helpers:
   - `TEST_PORT` constant
   - `TEST_DATA_DIR` constant (`/tmp/malamar-test`)
@@ -1239,7 +1239,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - `stopServer()` — Kill server, clean data
   - `getBaseUrl()` — Return test server URL
   - `getDb()` — Return read-only database connection for assertions
-  
+
   Commit: `test(api): implement E2E test helpers`
 
 - [ ] **Create `e2e/workspace.test.ts`**
