@@ -178,7 +178,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): initialize shadcn/ui`
 
-- [ ] **Install shadcn/ui components**
+- [x] **Install shadcn/ui components**
   
   Batch install all needed components:
   ```bash
@@ -187,7 +187,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `chore(ui): install shadcn/ui components`
 
-- [ ] **Create folder structure**
+- [x] **Create folder structure**
   
   Create the feature-based folder structure:
   ```
