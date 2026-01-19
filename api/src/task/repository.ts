@@ -106,10 +106,16 @@ export function updateStatus(id: string, status: TaskStatus, db: Database = getD
 }
 
 export function deleteDoneByWorkspace(workspaceId: string, db: Database = getDb()): number {
-  const result = db
-    .query('DELETE FROM tasks WHERE workspace_id = ? AND status = ?')
-    .run(workspaceId, 'done');
-  return result.changes;
+  // Count tasks first because result.changes includes cascaded deletes
+  const countResult = db
+    .query<{ count: number }, [string]>(
+      'SELECT COUNT(*) as count FROM tasks WHERE workspace_id = ? AND status = ?'
+    )
+    .get(workspaceId, 'done');
+  const count = countResult?.count ?? 0;
+
+  db.query('DELETE FROM tasks WHERE workspace_id = ? AND status = ?').run(workspaceId, 'done');
+  return count;
 }
 
 // ============================================

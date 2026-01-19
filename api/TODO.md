@@ -1265,8 +1265,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): add agent E2E tests`
 
-- [ ] **Create `e2e/task.test.ts`**
-  
+- [x] **Create `e2e/task.test.ts`**
+
   Implement task E2E tests:
   - Create task
   - Update task
@@ -1275,7 +1275,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Get activity logs
   - Prioritize/deprioritize
   - Status transitions
-  
+
   Commit: `test(api): add task E2E tests`
 
 - [ ] **Create `e2e/chat.test.ts`**
