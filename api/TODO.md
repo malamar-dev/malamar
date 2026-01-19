@@ -1290,13 +1290,13 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): add chat E2E tests`
 
-- [ ] **Create `e2e/settings.test.ts`**
-  
+- [x] **Create `e2e/settings.test.ts`**
+
   Implement settings E2E tests:
   - Get settings
   - Update settings
   - Test email endpoint (mock or skip if no Mailgun)
-  
+
   Commit: `test(api): add settings E2E tests`
 
 - [ ] **Create `e2e/health.test.ts`**
