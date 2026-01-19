@@ -258,7 +258,7 @@ Access the app at `http://localhost:5173`.
 
 ### 2.2 React Query Setup
 
-- [ ] **Configure React Query**
+- [x] **Configure React Query**
   
   Create `src/lib/query-client.ts`:
   - Create `QueryClient` with defaults:
