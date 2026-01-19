@@ -1,0 +1,7 @@
+# Bun configuration
+# https://bun.sh/docs/runtime/bunfig
+
+[test]
+# Run tests serially to avoid database singleton conflicts
+# Each test file uses its own database file, but they share the global singleton
+preload = ["./src/test-setup.ts"]

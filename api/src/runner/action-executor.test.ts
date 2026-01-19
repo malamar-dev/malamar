@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 
 import * as agentRepository from '../agent/repository.ts';
-import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
+import { initDb, runMigrations } from '../core/database.ts';
 import { clearSubscribers, subscribe } from '../events/emitter.ts';
 import type { SseEventPayloadMap, SseEventType } from '../events/types.ts';
 import * as taskRepository from '../task/repository.ts';
@@ -22,7 +22,6 @@ import type { TaskAction } from './types.ts';
 let testDbPath: string | null = null;
 
 function setupTestDb() {
-  resetDb();
   const testDir = join(tmpdir(), 'malamar-action-executor-test');
   if (!existsSync(testDir)) {
     mkdirSync(testDir, { recursive: true });
@@ -35,7 +34,6 @@ function setupTestDb() {
 }
 
 function cleanupTestDb() {
-  closeDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     const walPath = `${testDbPath}-wal`;
@@ -44,7 +42,6 @@ function cleanupTestDb() {
     if (existsSync(shmPath)) rmSync(shmPath, { force: true });
   }
   testDbPath = null;
-  resetDb();
 }
 
 function clearTables() {
@@ -127,6 +124,8 @@ describe('action-executor', () => {
   });
 
   beforeEach(() => {
+    // Re-establish the singleton to point to our test database
+    initDb(testDbPath!);
     clearTables();
     clearSubscribers();
   });

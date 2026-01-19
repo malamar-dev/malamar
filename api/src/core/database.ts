@@ -6,7 +6,10 @@ import { Database } from 'bun:sqlite';
 import { getConfig } from './config.ts';
 import { logger } from './logger.ts';
 
-let dbInstance: Database | null = null;
+// Track database instances by path for parallel test support
+// Each test file can have its own database without interfering with others
+const dbInstances = new Map<string, Database>();
+let currentDbPath: string | null = null;
 
 function initializePragmas(db: Database): void {
   db.exec('PRAGMA journal_mode = WAL;');
@@ -29,37 +32,53 @@ export function getDbPath(): string {
 }
 
 export function initDb(dbPath?: string): Database {
-  if (dbInstance) {
-    return dbInstance;
+  const path = dbPath ?? getDbPath();
+
+  // Check if we already have an instance for this path
+  const existing = dbInstances.get(path);
+  if (existing) {
+    currentDbPath = path;
+    return existing;
   }
 
-  const path = dbPath ?? getDbPath();
   ensureDataDirectory(path);
+  const db = new Database(path);
+  initializePragmas(db);
 
-  dbInstance = new Database(path);
-  initializePragmas(dbInstance);
+  dbInstances.set(path, db);
+  currentDbPath = path;
   logger.info('Database initialized', { path });
 
-  return dbInstance;
+  return db;
 }
 
 export function getDb(): Database {
-  if (!dbInstance) {
-    return initDb();
+  // If we have a current path, return that database
+  if (currentDbPath) {
+    const db = dbInstances.get(currentDbPath);
+    if (db) {
+      return db;
+    }
   }
-  return dbInstance;
+
+  // Fall back to initializing with default path
+  return initDb();
 }
 
 export function closeDb(): void {
-  if (dbInstance) {
-    dbInstance.close();
-    dbInstance = null;
-    logger.info('Database connection closed');
+  if (currentDbPath) {
+    const db = dbInstances.get(currentDbPath);
+    if (db) {
+      db.close();
+      dbInstances.delete(currentDbPath);
+      logger.info('Database connection closed');
+    }
+    currentDbPath = null;
   }
 }
 
 export function resetDb(): void {
-  dbInstance = null;
+  currentDbPath = null;
 }
 
 export function transaction<T>(fn: () => T): T {

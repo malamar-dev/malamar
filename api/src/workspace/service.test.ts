@@ -4,14 +4,13 @@ import { join } from 'node:path';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 
-import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
+import { initDb, runMigrations } from '../core/database.ts';
 import { NotFoundError } from '../core/errors.ts';
 import * as service from './service.ts';
 
 let testDbPath: string | null = null;
 
 function setupTestDb() {
-  resetDb();
   const testDir = join(tmpdir(), 'malamar-workspace-service-test');
   if (!existsSync(testDir)) {
     mkdirSync(testDir, { recursive: true });
@@ -24,7 +23,6 @@ function setupTestDb() {
 }
 
 function cleanupTestDb() {
-  closeDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     const walPath = `${testDbPath}-wal`;
@@ -33,10 +31,11 @@ function cleanupTestDb() {
     if (existsSync(shmPath)) rmSync(shmPath, { force: true });
   }
   testDbPath = null;
-  resetDb();
 }
 
 function clearTables() {
+  // Re-establish the singleton to point to our test database
+  // This is necessary because other parallel tests may have switched it
   const db = initDb(testDbPath!);
   db.exec('DELETE FROM agents');
   db.exec('DELETE FROM workspaces');
@@ -52,6 +51,8 @@ describe('workspace service', () => {
   });
 
   beforeEach(() => {
+    // First re-establish the singleton, then clear tables
+    initDb(testDbPath!);
     clearTables();
   });
 

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { Database } from 'bun:sqlite';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
-import { getMigrationFiles, resetDb } from './database.ts';
+import { getMigrationFiles } from './database.ts';
 
 describe('transaction', () => {
   let db: Database;
@@ -17,7 +17,6 @@ describe('transaction', () => {
 
   afterEach(() => {
     db.close();
-    resetDb();
   });
 
   test('commits on success', () => {

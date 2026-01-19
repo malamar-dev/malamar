@@ -4,17 +4,16 @@ import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
-import { resetConfig, resetDb } from '../core/index.ts';
+import { resetConfig } from '../core/index.ts';
 import { clearHealthStatus } from '../jobs/health-check.ts';
 import { runDoctor } from './doctor.ts';
 
 describe('doctor command', () => {
-  const testDataDir = join(tmpdir(), `malamar-doctor-test-${Date.now()}`);
+  const testDataDir = join(tmpdir(), `malamar-doctor-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
   beforeEach(() => {
     // Reset any global state
     resetConfig();
-    resetDb();
     clearHealthStatus();
 
     // Create test data directory
@@ -30,7 +29,6 @@ describe('doctor command', () => {
       rmSync(testDataDir, { recursive: true });
     }
     resetConfig();
-    resetDb();
     clearHealthStatus();
   });
 

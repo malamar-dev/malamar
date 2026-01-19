@@ -5,17 +5,18 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
 import { listAgents } from '../agent/index.ts';
-import { initDb, resetConfig, resetDb, runMigrations } from '../core/index.ts';
+import { initDb, resetConfig, runMigrations } from '../core/index.ts';
 import { listWorkspaces } from '../workspace/index.ts';
 import { createSampleWorkspace } from './sample-workspace.ts';
 
 describe('sample-workspace', () => {
-  const testDataDir = join(tmpdir(), `malamar-sample-workspace-test-${Date.now()}`);
+  const testDataDir = join(tmpdir(), `malamar-sample-workspace-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   const testDbPath = join(testDataDir, 'test.db');
 
   beforeEach(() => {
+    // Re-establish the singleton to point to our test database
+    initDb(testDbPath);
     resetConfig();
-    resetDb();
 
     // Create test data directory
     if (existsSync(testDataDir)) {
@@ -29,7 +30,6 @@ describe('sample-workspace', () => {
   });
 
   afterEach(() => {
-    resetDb();
     resetConfig();
     if (existsSync(testDataDir)) {
       rmSync(testDataDir, { recursive: true });

@@ -7,7 +7,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import * as agentRepository from '../agent/repository.ts';
 import * as chatRepository from '../chat/repository.ts';
 import type { Chat } from '../chat/types.ts';
-import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
+import { initDb, runMigrations } from '../core/database.ts';
 import * as workspaceRepository from '../workspace/repository.ts';
 import type { Workspace } from '../workspace/types.ts';
 import {
@@ -22,7 +22,6 @@ import type { ChatAction } from './types.ts';
 let testDbPath: string | null = null;
 
 function setupTestDb() {
-  resetDb();
   const testDir = join(tmpdir(), 'malamar-chat-action-executor-test');
   if (!existsSync(testDir)) {
     mkdirSync(testDir, { recursive: true });
@@ -35,7 +34,6 @@ function setupTestDb() {
 }
 
 function cleanupTestDb() {
-  closeDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     const walPath = `${testDbPath}-wal`;
@@ -44,7 +42,6 @@ function cleanupTestDb() {
     if (existsSync(shmPath)) rmSync(shmPath, { force: true });
   }
   testDbPath = null;
-  resetDb();
 }
 
 function clearTables() {
@@ -111,6 +108,8 @@ describe('chat-action-executor', () => {
   });
 
   beforeEach(() => {
+    // Re-establish the singleton to point to our test database
+    initDb(testDbPath!);
     clearTables();
   });
 

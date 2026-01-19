@@ -4,15 +4,14 @@ import { join } from 'node:path';
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
-import { resetConfig, resetDb } from '../core/index.ts';
+import { resetConfig } from '../core/index.ts';
 
 describe('serve command', () => {
-  const testDataDir = join(tmpdir(), `malamar-serve-test-${Date.now()}`);
+  const testDataDir = join(tmpdir(), `malamar-serve-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
   beforeEach(() => {
     // Reset any global state
     resetConfig();
-    resetDb();
 
     // Create test data directory
     if (existsSync(testDataDir)) {
@@ -27,7 +26,6 @@ describe('serve command', () => {
       rmSync(testDataDir, { recursive: true });
     }
     resetConfig();
-    resetDb();
   });
 
   describe('createApp', () => {

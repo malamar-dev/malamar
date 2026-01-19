@@ -4,14 +4,13 @@ import { join } from 'node:path';
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, mock, test } from 'bun:test';
 
-import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
+import { initDb, runMigrations } from '../core/database.ts';
 import * as settingsService from '../settings/service.ts';
 import { notify, sendTestEmail } from './service.ts';
 
 let testDbPath: string | null = null;
 
 function setupTestDb() {
-  resetDb();
   const testDir = join(tmpdir(), 'malamar-notifications-service-test');
   if (!existsSync(testDir)) {
     mkdirSync(testDir, { recursive: true });
@@ -24,7 +23,6 @@ function setupTestDb() {
 }
 
 function cleanupTestDb() {
-  closeDb();
   if (testDbPath && existsSync(testDbPath)) {
     rmSync(testDbPath, { force: true });
     const walPath = `${testDbPath}-wal`;
@@ -33,7 +31,6 @@ function cleanupTestDb() {
     if (existsSync(shmPath)) rmSync(shmPath, { force: true });
   }
   testDbPath = null;
-  resetDb();
 }
 
 function clearTables() {
@@ -51,6 +48,8 @@ describe('notifications service', () => {
   });
 
   beforeEach(() => {
+    // Re-establish the singleton to point to our test database
+    initDb(testDbPath!);
     clearTables();
   });
 
