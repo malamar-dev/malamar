@@ -329,7 +329,7 @@ Access the app at `http://localhost:5173`.
 
 ### 2.5 Theme Support
 
-- [ ] **Implement theme switching**
+- [x] **Implement theme switching**
   
   Update `src/App.tsx`:
   - Wrap with `ThemeProvider` from `next-themes`
