@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { createApp } from '../app.ts';
 import { closeDb, getConfig, initDb, logger, runMigrations } from '../core/index.ts';
 import { initSseRegistry, shutdownSseRegistry } from '../events/index.ts';
+import { createSampleWorkspace } from '../instructions/index.ts';
 import { startJobs, stopJobs } from '../jobs/index.ts';
 import { startRunner, stopRunner } from '../runner/index.ts';
 
@@ -22,16 +23,16 @@ function isFirstLaunch(): boolean {
 /**
  * Create sample workspace on first launch
  *
- * This is a placeholder that will be implemented when the instructions module is created.
+ * This creates a sample "Code Assistant" workspace with four agents
+ * (Planner, Implementer, Reviewer, Approver) to help users understand
+ * how Malamar works.
  */
 function createSampleWorkspaceIfNeeded(firstLaunch: boolean): void {
   if (!firstLaunch) {
     return;
   }
 
-  // TODO: Implement when instructions/sample-workspace.ts is created
-  // For now, just log that this is a first launch
-  logger.info('First launch detected, sample workspace creation will be implemented in Phase 11');
+  createSampleWorkspace();
 }
 
 /**
