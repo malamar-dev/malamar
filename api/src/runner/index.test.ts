@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import type { Database } from 'bun:sqlite';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, mock, test } from 'bun:test';
 
+import { clearTestAdapter, createMockAdapter, setTestAdapter } from '../cli/index.ts';
 import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import {
   getRunnerStats,
@@ -87,6 +88,14 @@ describe('runner/index', () => {
     // Reset runner state before each test
     resetRunnerState();
     clearAllTracking();
+
+    // Set up mock CLI adapter to prevent real CLI invocations
+    const mockAdapter = createMockAdapter();
+    mockAdapter.setInvocationConfig({
+      success: true,
+      response: { type: 'task', actions: [{ type: 'skip' }] },
+    });
+    setTestAdapter(mockAdapter);
   });
 
   afterEach(async () => {
@@ -94,6 +103,7 @@ describe('runner/index', () => {
     if (isRunnerRunning()) {
       await stopRunner();
     }
+    clearTestAdapter();
   });
 
   describe('startRunner', () => {
