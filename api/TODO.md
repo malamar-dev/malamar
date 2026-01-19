@@ -1203,8 +1203,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ## Phase 12: Graceful Shutdown
 
-- [ ] **Implement shutdown handlers**
-  
+- [x] **Implement shutdown handlers**
+
   Update `commands/serve.ts`:
   - Register handlers for `SIGTERM` and `SIGINT`
   - On signal:
@@ -1214,16 +1214,16 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
     4. Close SSE connections
     5. Close database connection
     6. Exit process
-  
+
   Commit: `feat(api): implement graceful shutdown`
 
-- [ ] **Implement startup recovery**
-  
+- [x] **Implement startup recovery**
+
   Update runner initialization:
   - Find queue items with status "in_progress"
   - Reset them to "queued"
   - Runner picks them up naturally
-  
+
   Commit: `feat(api): implement startup recovery for interrupted tasks`
 
 ---
