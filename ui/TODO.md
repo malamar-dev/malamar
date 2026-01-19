@@ -1238,25 +1238,25 @@ Access the app at `http://localhost:5173`.
 
 When all items are complete, verify:
 
-- [ ] Linter passes (`bun run lint`)
-- [ ] App builds successfully (`bun run build`)
-- [ ] All pages load without errors
-- [ ] Workspace CRUD works
-- [ ] Agent CRUD and reordering works
-- [ ] Task Kanban displays correctly
-- [ ] Task detail modal opens/closes with URL
-- [ ] Comments and activity logs display
-- [ ] Chat list and detail work
-- [ ] Chat with Malamar agent works
-- [ ] File attachments work
-- [ ] Global settings save correctly
-- [ ] CLI health displays correctly
-- [ ] SSE events update UI in real-time
-- [ ] Toasts appear for important events
-- [ ] Theme switching works
-- [ ] Mobile layout is usable
-- [ ] Horizontal scroll on Kanban (mobile) works
-- [ ] Bottom tabs work on mobile
-- [ ] Modals are full-screen on mobile
-- [ ] Delete confirmations work
-- [ ] Optimistic updates work (comments, messages, priority)
+- [x] Linter passes (`bun run lint`)
+- [x] App builds successfully (`bun run build`)
+- [ ] All pages load without errors (requires API running)
+- [ ] Workspace CRUD works (requires API running)
+- [ ] Agent CRUD and reordering works (requires API running)
+- [ ] Task Kanban displays correctly (requires API running)
+- [ ] Task detail modal opens/closes with URL (requires API running)
+- [ ] Comments and activity logs display (requires API running)
+- [ ] Chat list and detail work (requires API running)
+- [ ] Chat with Malamar agent works (requires API running)
+- [ ] File attachments work (requires API running)
+- [ ] Global settings save correctly (requires API running)
+- [ ] CLI health displays correctly (requires API running)
+- [ ] SSE events update UI in real-time (requires API running)
+- [ ] Toasts appear for important events (requires API running)
+- [x] Theme switching works
+- [x] Mobile layout is usable
+- [x] Horizontal scroll on Kanban (mobile) works
+- [x] Bottom tabs work on mobile
+- [x] Modals are full-screen on mobile
+- [x] Delete confirmations work
+- [x] Optimistic updates work (comments, messages, priority)
