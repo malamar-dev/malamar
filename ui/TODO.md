@@ -240,7 +240,7 @@ Access the app at `http://localhost:5173`.
 
 ### 2.1 API Client
 
-- [ ] **Create API client utilities**
+- [x] **Create API client utilities**
   
   Create `src/lib/api-client.ts`:
   - Thin wrapper around `fetch`

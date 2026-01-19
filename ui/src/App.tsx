@@ -1,38 +1,16 @@
-import './App.css'
+import { QueryClientProvider } from '@tanstack/react-query';
 
-import { useState } from 'react'
-
-import viteLogo from '/vite.svg'
-
-import reactLogo from './assets/react.svg'
+import { queryClient } from '@/lib/query-client';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-background text-foreground">
+        <h1 className="text-2xl font-bold p-4">Malamar</h1>
+        <p className="p-4 text-muted-foreground">App is loading...</p>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;
