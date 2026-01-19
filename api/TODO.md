@@ -1189,14 +1189,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `chore(api): create instructions module index exports`
 
-- [ ] **Implement first startup detection in serve command**
-  
+- [x] **Implement first startup detection in serve command**
+
   Update `commands/serve.ts`:
   - Check if data directory exists
   - If not: `isFirstLaunch = true`, create directory
   - After migrations: if first launch, call `createSampleWorkspace()`
   - Ensure sample workspace is only created once
-  
+
   Commit: `feat(api): implement first startup detection and sample data creation`
 
 ---
