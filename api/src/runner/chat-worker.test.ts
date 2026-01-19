@@ -7,6 +7,12 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import * as agentRepository from '../agent/repository.ts';
 import * as chatRepository from '../chat/repository.ts';
 import type { ChatQueueItem } from '../chat/types.ts';
+import {
+  clearTestAdapter,
+  createMockAdapter,
+  type MockCliAdapter,
+  setTestAdapter,
+} from '../cli/index.ts';
 import { closeDb, initDb, resetDb, runMigrations } from '../core/database.ts';
 import { clearSubscribers, subscribe } from '../events/emitter.ts';
 import type { SseEventPayloadMap, SseEventType } from '../events/types.ts';
@@ -16,6 +22,7 @@ import { DEFAULT_CHAT_WORKER_CONFIG, processChat } from './chat-worker.ts';
 // Test database setup
 let testDbPath: string | null = null;
 let testTempDir: string | null = null;
+let mockAdapter: MockCliAdapter;
 
 function setupTestDb() {
   const testDir = join(tmpdir(), 'malamar-chat-worker-test');
@@ -145,10 +152,19 @@ describe('chat-worker', () => {
     clearTables();
     setupTestTempDir();
     clearSubscribers();
+
+    // Set up mock CLI adapter with default chat response
+    mockAdapter = createMockAdapter();
+    mockAdapter.setInvocationConfig({
+      success: true,
+      response: { type: 'chat', message: 'Mock response', actions: [] },
+    });
+    setTestAdapter(mockAdapter);
   });
 
   afterEach(() => {
     clearSubscribers();
+    clearTestAdapter();
   });
 
   describe('processChat', () => {
@@ -193,8 +209,8 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Process will fail since we don't have a real CLI, but that's ok for this test
-      await processChat(queueItem);
+      // Mock adapter will succeed
+      await processChat(queueItem, { tempDir: testTempDir! });
 
       // Queue status should have been updated
       // findQueueItemByChatId only finds queued items, so it should be null if status changed
@@ -211,11 +227,9 @@ describe('chat-worker', () => {
       // Should not throw, should use Malamar agent
       const result = await processChat(queueItem, { tempDir: testTempDir! });
 
-      // Result may fail due to CLI not being available, but not due to missing agent
+      // Result should succeed with mock adapter
       expect(result).toBeDefined();
-      if (!result.success) {
-        expect(result.error).not.toContain('Agent not found');
-      }
+      expect(result.success).toBe(true);
     });
 
     test('uses chat CLI override when specified', async () => {
@@ -231,9 +245,10 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Process will fail but we verify it doesn't crash
+      // Mock adapter succeeds
       const result = await processChat(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
     });
 
     test('emits processing started event', async () => {
@@ -287,11 +302,12 @@ describe('chat-worker', () => {
 
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // The function will fail due to no CLI, but we verify it doesn't crash
-      await processChat(queueItem, { tempDir: testTempDir! });
+      // Mock adapter succeeds
+      const result = await processChat(queueItem, { tempDir: testTempDir! });
 
-      // No assertion needed - if it doesn't crash, messages are handled
-      expect(true).toBe(true);
+      expect(result.success).toBe(true);
+      // Mock adapter was invoked
+      expect(mockAdapter.getInvocationHistory().length).toBeGreaterThan(0);
     });
 
     test('handles chat with agent', async () => {
@@ -317,18 +333,23 @@ describe('chat-worker', () => {
   });
 
   describe('error handling', () => {
-    test('marks queue as failed on unexpected error', async () => {
+    test('marks queue as failed on CLI error', async () => {
       const workspace = createTestWorkspace();
       const chat = createTestChat(workspace.id);
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Use an invalid temp dir to trigger an error
-      const result = await processChat(queueItem, { tempDir: '/nonexistent/path/that/should/fail' });
+      // Configure mock to fail
+      mockAdapter.setInvocationConfig({
+        success: false,
+        exitCode: 1,
+        error: 'CLI invocation failed',
+      });
 
-      // The result might succeed or fail depending on the error type
-      // The important thing is it doesn't crash
+      const result = await processChat(queueItem, { tempDir: testTempDir! });
+
       expect(result).toBeDefined();
+      expect(result.success).toBe(false);
     });
 
     test('adds system message on error', async () => {
@@ -337,14 +358,19 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Process will fail due to CLI not being available
+      // Configure mock to fail
+      mockAdapter.setInvocationConfig({
+        success: false,
+        exitCode: 1,
+        error: 'CLI error for testing',
+      });
+
       await processChat(queueItem, { tempDir: testTempDir! });
 
       // Check if a system message was added (error message)
       const messages = chatRepository.findMessagesByChatId(chat.id);
-      const _systemMessages = messages.filter((m) => m.role === 'system');
-      // May or may not have system message depending on failure mode
-      expect(messages.length).toBeGreaterThanOrEqual(1);
+      const systemMessages = messages.filter((m) => m.role === 'system');
+      expect(systemMessages.length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -353,15 +379,16 @@ describe('chat-worker', () => {
       const workspace = workspaceRepository.create({
         title: 'Static Workspace',
         workingDirectoryMode: 'static',
-        workingDirectoryPath: '/custom/path',
+        workingDirectoryPath: testTempDir!, // Use test temp dir as "static" path
       });
       const chat = createTestChat(workspace.id);
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Process will fail but we verify it doesn't crash
+      // Mock adapter succeeds
       const result = await processChat(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
     });
 
     test('uses temp directory when temp mode', async () => {
@@ -373,9 +400,10 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Process will fail but we verify it doesn't crash
+      // Mock adapter succeeds
       const result = await processChat(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
     });
   });
 
@@ -386,9 +414,10 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // This will likely fail due to no CLI, but let's check the queue state
-      await processChat(queueItem, { tempDir: testTempDir! });
+      // Mock adapter succeeds
+      const result = await processChat(queueItem, { tempDir: testTempDir! });
 
+      expect(result.success).toBe(true);
       // Queue item should no longer be findable as "queued"
       const found = chatRepository.findQueueItemByChatId(chat.id);
       expect(found).toBeNull();
@@ -436,9 +465,10 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Should use the chat's CLI override
+      // Mock adapter succeeds
       const result = await processChat(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
     });
 
     test('falls back to first healthy CLI when no override', async () => {
@@ -447,9 +477,10 @@ describe('chat-worker', () => {
       createTestMessage(chat.id, 'Hello!', 'user');
       const queueItem = createTestQueueItem(chat.id, workspace.id);
 
-      // Should fall back to first healthy CLI (claude)
+      // Mock adapter succeeds - falls back to first healthy CLI
       const result = await processChat(queueItem, { tempDir: testTempDir! });
       expect(result).toBeDefined();
+      expect(result.success).toBe(true);
     });
   });
 
