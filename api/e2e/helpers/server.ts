@@ -17,11 +17,17 @@ export const TEST_HOST = '127.0.0.1';
 interface ServerState {
   process: Subprocess | null;
   db: Database | null;
+  isStarting: boolean;
+  isStopping: boolean;
+  startCount: number; // Track number of startServer calls for shared server
 }
 
 const state: ServerState = {
   process: null,
   db: null,
+  isStarting: false,
+  isStopping: false,
+  startCount: 0,
 };
 
 /**
@@ -55,7 +61,7 @@ function createTestDataDir(): void {
  * @param maxAttempts Maximum number of health check attempts
  * @param delayMs Delay between attempts in milliseconds
  */
-async function waitForHealthy(maxAttempts: number = 30, delayMs: number = 500): Promise<void> {
+async function waitForHealthy(maxAttempts: number = 60, delayMs: number = 500): Promise<void> {
   const healthUrl = `${getBaseUrl()}/api/health`;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -64,6 +70,8 @@ async function waitForHealthy(maxAttempts: number = 30, delayMs: number = 500): 
       if (response.ok) {
         const data = (await response.json()) as { data: { status: string } };
         if (data.data?.status === 'ok') {
+          // Add a small delay to ensure server is fully initialized
+          await new Promise((resolve) => setTimeout(resolve, 100));
           return;
         }
       }
@@ -78,81 +86,153 @@ async function waitForHealthy(maxAttempts: number = 30, delayMs: number = 500): 
 }
 
 /**
+ * Wait for any pending start/stop operations to complete
+ */
+async function waitForPendingOperations(): Promise<void> {
+  const maxWait = 30000; // 30 seconds max
+  const start = Date.now();
+
+  while (state.isStarting || state.isStopping) {
+    if (Date.now() - start > maxWait) {
+      throw new Error('Timeout waiting for pending server operations');
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
+/**
  * Start the test server
  *
+ * This is reference-counted, so multiple test files can call startServer()
+ * and the server will only be started once. The server is stopped when
+ * the last reference calls stopServer().
+ *
  * This will:
- * 1. Clean the test data directory
+ * 1. Clean the test data directory (only on first start)
  * 2. Create the test data directory
  * 3. Spawn the server process with test configuration
  * 4. Wait for the server to be healthy
  */
 export async function startServer(): Promise<void> {
+  // Wait for any pending operations
+  await waitForPendingOperations();
+
+  // If server is already running, just increment the reference count
   if (state.process) {
-    throw new Error('Test server is already running');
+    state.startCount++;
+    // Verify server is still healthy
+    try {
+      await waitForHealthy(10, 200);
+    } catch {
+      // Server died, need to restart
+      state.process = null;
+      state.startCount = 0;
+    }
+    if (state.process) {
+      return;
+    }
   }
 
-  // Clean and create test data directory
-  cleanTestData();
-  createTestDataDir();
+  state.isStarting = true;
 
-  // Spawn the server process
-  state.process = Bun.spawn(['bun', 'run', 'index.ts'], {
-    cwd: join(import.meta.dir, '../..'),
-    env: {
-      ...process.env,
-      MALAMAR_HOST: TEST_HOST,
-      MALAMAR_PORT: String(TEST_PORT),
-      MALAMAR_DATA_DIR: TEST_DATA_DIR,
-      MALAMAR_LOG_LEVEL: 'warn', // Reduce log noise during tests
-    },
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
-
-  // Wait for the server to be healthy
   try {
+    // Clean and create test data directory
+    cleanTestData();
+    createTestDataDir();
+
+    // Spawn the server process
+    state.process = Bun.spawn(['bun', 'run', 'index.ts'], {
+      cwd: join(import.meta.dir, '../..'),
+      env: {
+        ...process.env,
+        MALAMAR_HOST: TEST_HOST,
+        MALAMAR_PORT: String(TEST_PORT),
+        MALAMAR_DATA_DIR: TEST_DATA_DIR,
+        MALAMAR_LOG_LEVEL: 'warn', // Reduce log noise during tests
+      },
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+
+    // Wait for the server to be healthy
     await waitForHealthy();
+    state.startCount = 1;
   } catch (error) {
-    // If health check fails, stop the server and rethrow
-    await stopServer();
+    // If startup fails, clean up
+    if (state.process) {
+      state.process.kill();
+      state.process = null;
+    }
+    state.startCount = 0;
     throw error;
+  } finally {
+    state.isStarting = false;
   }
 }
 
 /**
  * Stop the test server
  *
+ * This is reference-counted. The server is only stopped when
+ * the last reference calls stopServer().
+ *
  * This will:
- * 1. Kill the server process
- * 2. Close any open database connections
- * 3. Clean the test data directory
+ * 1. Decrement reference count
+ * 2. If count reaches 0:
+ *    - Kill the server process
+ *    - Close any open database connections
+ *    - Clean the test data directory
  */
 export async function stopServer(): Promise<void> {
-  // Close database connection if open
-  if (state.db) {
-    state.db.close();
-    state.db = null;
+  // Wait for any pending operations
+  await waitForPendingOperations();
+
+  // Decrement reference count
+  if (state.startCount > 1) {
+    state.startCount--;
+    return;
   }
 
-  // Kill server process
-  if (state.process) {
-    state.process.kill();
+  state.isStopping = true;
 
-    // Wait for process to exit
-    try {
-      await Promise.race([
-        state.process.exited,
-        new Promise((resolve) => setTimeout(resolve, 5000)),
-      ]);
-    } catch {
-      // Process may already be dead
+  try {
+    // Close database connection if open
+    if (state.db) {
+      try {
+        state.db.close();
+      } catch {
+        // Ignore close errors
+      }
+      state.db = null;
     }
 
-    state.process = null;
-  }
+    // Kill server process
+    if (state.process) {
+      state.process.kill();
 
-  // Clean test data
-  cleanTestData();
+      // Wait for process to exit
+      try {
+        await Promise.race([
+          state.process.exited,
+          new Promise((resolve) => setTimeout(resolve, 5000)),
+        ]);
+      } catch {
+        // Process may already be dead
+      }
+
+      state.process = null;
+    }
+
+    state.startCount = 0;
+
+    // Clean test data
+    cleanTestData();
+
+    // Brief delay to ensure cleanup is complete
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  } finally {
+    state.isStopping = false;
+  }
 }
 
 /**
@@ -164,7 +244,19 @@ export async function stopServer(): Promise<void> {
 export function getDb(): Database {
   if (!state.db) {
     const dbPath = join(TEST_DATA_DIR, 'malamar.db');
-    state.db = new Database(dbPath, { readonly: true });
+
+    // Verify database file exists before trying to open
+    if (!existsSync(dbPath)) {
+      throw new Error(`Database file not found: ${dbPath}. Is the server running?`);
+    }
+
+    try {
+      state.db = new Database(dbPath, { readonly: true });
+    } catch (error) {
+      throw new Error(
+        `Failed to open database: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
   }
   return state.db;
 }
@@ -177,7 +269,11 @@ export function getDb(): Database {
  */
 export function resetDbConnection(): void {
   if (state.db) {
-    state.db.close();
+    try {
+      state.db.close();
+    } catch {
+      // Ignore close errors
+    }
     state.db = null;
   }
 }
