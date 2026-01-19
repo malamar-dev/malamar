@@ -1308,14 +1308,14 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): add health E2E tests`
 
-- [ ] **Create `e2e/sse.test.ts`**
-  
+- [x] **Create `e2e/sse.test.ts`**
+
   Implement SSE E2E tests:
   - Connect to SSE endpoint
   - Verify initial `:ok` comment
   - Trigger event and verify receipt
   - Disconnect handling
-  
+
   Commit: `test(api): add SSE E2E tests`
 
 ---
