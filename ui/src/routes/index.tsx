@@ -10,6 +10,6 @@ const lazy =
 export const router = createBrowserRouter([
   {
     path: "/",
-    lazy: lazy(() => import("@/features/dashboard/pages/DashboardPage")),
+    lazy: lazy(() => import("@/features/dashboard/pages/dashboard-page")),
   },
 ]);
