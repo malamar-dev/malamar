@@ -1079,7 +1079,7 @@ Access the app at `http://localhost:5173`.
 
 ### 9.1 SSE Infrastructure
 
-- [ ] **Create SSE connection hook**
+- [x] **Create SSE connection hook**
   
   Create `src/hooks/use-sse.ts`:
   - Manages EventSource connection to `/api/events`
@@ -1093,7 +1093,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement SSE connection hook`
 
-- [ ] **Create SSE event handlers**
+- [x] **Create SSE event handlers**
   
   Create `src/lib/sse-handlers.ts`:
   - Register handlers for each event type:
@@ -1110,7 +1110,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement SSE event handlers with cache invalidation`
 
-- [ ] **Initialize SSE in RootLayout**
+- [x] **Initialize SSE in RootLayout**
   
   Update `src/components/layouts/RootLayout.tsx`:
   - Call `useSSE()` to establish connection
