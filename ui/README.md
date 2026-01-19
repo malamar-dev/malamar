@@ -1,73 +1,120 @@
-# React + TypeScript + Vite
+# Malamar UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for Malamar — a tool that orchestrates multiple AI coding assistants into autonomous multi-agent workflows.
 
-Currently, two official plugins are available:
+<!-- TODO: Add screenshot or GIF demo here -->
+<!-- ![Malamar UI Screenshot](./docs/screenshot.png) -->
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+| Category | Technology |
+|----------|------------|
+| Runtime | [Bun](https://bun.sh) v1.3.5+ |
+| Framework | React 19 |
+| Build Tool | Vite 7 |
+| Routing | React Router 7 |
+| Server State | TanStack React Query |
+| Client State | Zustand |
+| Styling | Tailwind CSS v4 |
+| Components | shadcn/ui (Radix UI) |
+| Forms | React Hook Form + Zod |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Bun** v1.3.5 or later — [Install Bun](https://bun.sh)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```bash
+# Clone the repository (if not already)
+git clone https://github.com/malamar-dev/malamar.git
+cd malamar/ui
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The dev server starts at `http://localhost:5173` with API requests proxied to `http://localhost:3456`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+ui/
+├── src/
+│   ├── components/      # Shared UI components
+│   │   ├── ui/          # shadcn/ui primitives (don't edit directly)
+│   │   ├── layouts/     # RootLayout, WorkspaceLayout
+│   │   └── skeletons/   # Loading skeletons
+│   ├── features/        # Feature modules
+│   │   ├── workspace/   # Workspace management
+│   │   ├── task/        # Kanban board, task details
+│   │   ├── chat/        # Chat interface
+│   │   ├── agent/       # Agent configuration
+│   │   └── settings/    # Global settings
+│   ├── hooks/           # Shared hooks (SSE, etc.)
+│   ├── lib/             # Utilities (api-client, query-client)
+│   ├── routes/          # React Router configuration
+│   ├── stores/          # Zustand stores
+│   ├── types/           # Shared TypeScript types
+│   ├── App.tsx          # Root component with providers
+│   └── main.tsx         # Application entry point
+├── public/              # Static assets
+└── index.html           # HTML template
+```
+
+For detailed architecture documentation, see [`CLAUDE.md`](./CLAUDE.md).
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `VITE_API_BASE_URL` | `http://localhost:3456` | Backend API URL (used by Vite proxy in development) |
+
+Copy `.env.example` to `.env.local` for local overrides (if needed).
+
+## Development
+
+```bash
+# Start dev server with hot reload
+bun run dev
+
+# Build for production
+bun run build
+
+# Preview production build
+bun run preview
+
+# Lint code
+bun run lint
+
+# Format code
+bun run format
+```
+
+## Specs & Documentation
+
+Product requirements and technical design live in a separate specs repository:
+
+| Document | Description |
+|----------|-------------|
+| [`SPECS.md`](https://github.com/malamar-dev/specs/blob/main/SPECS.md) | Product specifications — what Malamar does and why |
+| [`TECHNICAL_DESIGN.md`](https://github.com/malamar-dev/specs/blob/main/TECHNICAL_DESIGN.md) | Technical design — how Malamar is implemented |
+| `SESSION-013.md` | Frontend repository structure and conventions |
+
+Local specs path: `/Users/irvingdinh/Workspace/github.com/malamar-dev/specs`
+
+## Contributing
+
+1. Check the specs before implementing new features
+2. Follow the coding conventions in [`CLAUDE.md`](./CLAUDE.md)
+3. Ensure `bun run lint` and `bun run format` pass before committing
+4. Create feature branches from `main`
+
+## License
+
+This project is proprietary. See the root repository for license details.
