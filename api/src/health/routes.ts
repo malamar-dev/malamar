@@ -1,7 +1,30 @@
 import { Hono } from "hono";
 
+import { getAllCliHealth } from "../cli";
+
 export const healthRouter = new Hono();
 
 healthRouter.get("/", (c) => {
-  return c.json({ status: "ok" });
+  const cliResults = getAllCliHealth();
+
+  const clis =
+    cliResults.length > 0
+      ? cliResults.map((result) => ({
+          type: result.type,
+          status: result.status,
+          error: result.error,
+          lastCheckedAt: result.lastCheckedAt.toISOString(),
+          binaryPath: result.binaryPath,
+        }))
+      : [
+          {
+            type: "claude",
+            status: "unhealthy",
+            error: "Health check has not run yet",
+            lastCheckedAt: null,
+            binaryPath: null,
+          },
+        ];
+
+  return c.json({ status: "ok", clis });
 });
