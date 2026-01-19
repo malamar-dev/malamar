@@ -701,7 +701,7 @@ Access the app at `http://localhost:5173`.
 
 ### 6.1 Types and API
 
-- [ ] **Define task types and API**
+- [x] **Define task types and API**
   
   Create `src/features/task/types/task.types.ts`:
   - `Task` interface (id, workspace_id, summary, description, status, created_at, updated_at)
@@ -740,7 +740,7 @@ Access the app at `http://localhost:5173`.
 
 ### 6.2 Kanban Components
 
-- [ ] **Create TaskCard component**
+- [x] **Create TaskCard component**
   
   Create `src/features/task/components/TaskCard.tsx`:
   - Displays:
@@ -755,7 +755,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement TaskCard component`
 
-- [ ] **Create KanbanColumn component**
+- [x] **Create KanbanColumn component**
   
   Create `src/features/task/components/KanbanColumn.tsx`:
   - Column header with status name and count
@@ -765,7 +765,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement KanbanColumn component`
 
-- [ ] **Create KanbanBoard component**
+- [x] **Create KanbanBoard component**
   
   Create `src/features/task/components/KanbanBoard.tsx`:
   - Header with:
@@ -779,7 +779,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement KanbanBoard with horizontal scroll on mobile`
 
-- [ ] **Create KanbanBoardPage wrapper**
+- [x] **Create KanbanBoardPage wrapper**
   
   Create `src/features/task/pages/KanbanBoardPage.tsx`:
   - Fetches tasks for current workspace
@@ -791,7 +791,7 @@ Access the app at `http://localhost:5173`.
 
 ### 6.3 Task Detail Modal
 
-- [ ] **Create TaskForm component**
+- [x] **Create TaskForm component**
   
   Create `src/features/task/components/TaskForm.tsx`:
   - Form fields:
@@ -802,7 +802,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement TaskForm component`
 
-- [ ] **Create TaskCreateModal component**
+- [x] **Create TaskCreateModal component**
   
   Create `src/features/task/components/TaskCreateModal.tsx`:
   - Modal with TaskForm
@@ -812,7 +812,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement TaskCreateModal component`
 
-- [ ] **Create CommentList component**
+- [x] **Create CommentList component**
   
   Create `src/features/task/components/CommentList.tsx`:
   - List of comments
@@ -826,7 +826,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement CommentList component`
 
-- [ ] **Create CommentInput component**
+- [x] **Create CommentInput component**
   
   Create `src/features/task/components/CommentInput.tsx`:
   - Expandable textarea
@@ -836,7 +836,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement CommentInput component`
 
-- [ ] **Create ActivityLog component**
+- [x] **Create ActivityLog component**
   
   Create `src/features/task/components/ActivityLog.tsx`:
   - List of activity log entries
@@ -849,7 +849,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement ActivityLog component`
 
-- [ ] **Create TaskDetailModal component**
+- [x] **Create TaskDetailModal component**
   
   Create `src/features/task/components/TaskDetailModal.tsx`:
   - Full-screen modal on mobile, centered dialog on desktop
@@ -869,7 +869,7 @@ Access the app at `http://localhost:5173`.
   
   Commit: `feat(ui): implement TaskDetailModal component`
 
-- [ ] **Create TaskDetailPage (route wrapper)**
+- [x] **Create TaskDetailPage (route wrapper)**
   
   Create `src/features/task/pages/TaskDetailPage.tsx`:
   - Reads task ID from URL params
