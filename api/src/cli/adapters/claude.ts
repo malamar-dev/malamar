@@ -279,6 +279,9 @@ export class ClaudeAdapter implements CliAdapter {
 
   /**
    * Build command arguments for Claude CLI invocation
+   *
+   * Note: Claude CLI uses positional argument for prompt, not --prompt flag.
+   * The format is: claude --print [options] "prompt"
    */
   private buildCommandArgs(binaryPath: string, options: CliInvocationOptions): string[] {
     const prompt = `Read the file at ${options.inputPath} and follow the instruction autonomously. Write your response as JSON to: ${options.outputPath}`;
@@ -288,13 +291,13 @@ export class ClaudeAdapter implements CliAdapter {
 
     return [
       binaryPath,
+      '--print',
       '--dangerously-skip-permissions',
       '--output-format',
       'json',
       '--json-schema',
       JSON.stringify(schema),
-      '--prompt',
-      prompt,
+      prompt, // Prompt is a positional argument, not a flag
     ];
   }
 

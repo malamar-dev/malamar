@@ -1361,7 +1361,7 @@ When all items are complete, verify:
 - [x] Server starts successfully (`bun run start`)
 - [x] Sample workspace is created on first startup
 - [x] CLI health check works
-- [ ] Task processing loop works with Claude Code
-- [ ] Chat processing works with Malamar agent
-- [ ] SSE events are broadcast correctly
-- [ ] Graceful shutdown works
+- [x] Task processing loop works with Claude Code
+- [x] Chat processing works with Malamar agent
+- [x] SSE events are broadcast correctly
+- [x] Graceful shutdown works
