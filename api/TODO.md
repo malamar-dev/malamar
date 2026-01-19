@@ -1278,8 +1278,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): add task E2E tests`
 
-- [ ] **Create `e2e/chat.test.ts`**
-  
+- [x] **Create `e2e/chat.test.ts`**
+
   Implement chat E2E tests:
   - Create chat
   - Send message
@@ -1287,7 +1287,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Update chat (title, agent, CLI)
   - Delete chat
   - Search chats
-  
+
   Commit: `test(api): add chat E2E tests`
 
 - [ ] **Create `e2e/settings.test.ts`**
