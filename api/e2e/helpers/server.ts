@@ -96,7 +96,7 @@ export async function startServer(): Promise<void> {
   createTestDataDir();
 
   // Spawn the server process
-  state.process = Bun.spawn(['bun', 'run', 'src/index.ts'], {
+  state.process = Bun.spawn(['bun', 'run', 'index.ts'], {
     cwd: join(import.meta.dir, '../..'),
     env: {
       ...process.env,
