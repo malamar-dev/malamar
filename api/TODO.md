@@ -1354,10 +1354,10 @@ These items are lower priority and can be implemented after the core system is w
 
 When all items are complete, verify:
 
-- [ ] All unit tests pass (`bun test src/`)
-- [ ] All integration tests pass (`bun test tests/`)
-- [ ] All E2E tests pass (`bun test e2e/`)
-- [ ] Linter passes (`bun run lint`)
+- [x] All unit tests pass (`bun test src/`)
+- [x] All integration tests pass (`bun test tests/`)
+- [x] All E2E tests pass (`bun test e2e/`)
+- [x] Linter passes (`bun run lint`)
 - [ ] Server starts successfully (`bun run start`)
 - [ ] Sample workspace is created on first startup
 - [ ] CLI health check works
