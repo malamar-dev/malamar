@@ -1253,8 +1253,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
 
   Commit: `test(api): add workspace E2E tests`
 
-- [ ] **Create `e2e/agent.test.ts`**
-  
+- [x] **Create `e2e/agent.test.ts`**
+
   Implement agent E2E tests:
   - Create agent in workspace
   - List agents (verify order)
@@ -1262,7 +1262,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   - Delete agent
   - Reorder agents
   - Unique name validation
-  
+
   Commit: `test(api): add agent E2E tests`
 
 - [ ] **Create `e2e/task.test.ts`**
