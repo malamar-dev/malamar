@@ -3,7 +3,7 @@ import {
   Settings2Icon,
   SquareTerminalIcon,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 import {
   Collapsible,
@@ -29,13 +29,9 @@ const items = [
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings2Icon,
     items: [
-      {
-        title: "General",
-        url: "#",
-      },
       {
         title: "CLIs",
         url: "/settings/clis",
@@ -44,12 +40,34 @@ const items = [
   },
 ];
 
+function shouldDefaultOpened(pathname: string, item: (typeof items)[number]) {
+  if (
+    item.items?.some(
+      (subItem) =>
+        subItem.url !== "#" &&
+        subItem.url !== "/" &&
+        pathname.startsWith(subItem.url),
+    )
+  ) {
+    return true;
+  }
+
+  return item.url !== "#" && item.url !== "/" && pathname.startsWith(item.url);
+}
+
 export const AppSidebarMain = () => {
+  const { pathname } = useLocation();
+
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild>
+          <Collapsible
+            key={item.title}
+            asChild
+            defaultOpen={shouldDefaultOpened(pathname, item)}
+            className="group/collapsible"
+          >
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
                 <Link to={item.url}>

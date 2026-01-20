@@ -40,7 +40,7 @@ function CliCard({
             </div>
 
             <div>
-              <Input value={cli?.binaryPath ?? "Unknown"} disabled />
+              <Input value={cli?.binaryPath ?? "Unknown"} readOnly />
             </div>
           </div>
 
@@ -50,7 +50,7 @@ function CliCard({
             </div>
 
             <div>
-              <Input value={cli?.version ?? "Unknown"} disabled />
+              <Input value={cli?.version ?? "Unknown"} readOnly />
             </div>
           </div>
         </div>
