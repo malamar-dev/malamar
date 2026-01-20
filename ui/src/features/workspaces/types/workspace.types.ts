@@ -10,3 +10,8 @@ export interface Workspace {
 export interface WorkspacesResponse {
   workspaces: Workspace[];
 }
+
+export interface CreateWorkspaceInput {
+  title: string;
+  description?: string;
+}

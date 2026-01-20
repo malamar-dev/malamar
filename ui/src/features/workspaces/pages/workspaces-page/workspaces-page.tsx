@@ -1,8 +1,10 @@
-import { AlertCircleIcon, InboxIcon } from "lucide-react";
+import { AlertCircleIcon, InboxIcon, PlusIcon } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardDescription,
@@ -11,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { CreateWorkspaceDialog } from "@/features/workspaces/pages/workspaces-page/create-workspace-dialog.tsx";
 import { formatRelativeTime } from "@/lib/date-utils.ts";
 
 import { useWorkspaces } from "../../hooks/use-workspaces.ts";
@@ -52,8 +55,16 @@ function EmptyState() {
 const WorkspacesPage = () => {
   const { data, isLoading, isError, error } = useWorkspaces();
 
+  const [open, setOpen] = useState(false);
+
   return (
     <AppLayout breadcrumbItems={[{ label: "Workspaces" }]}>
+      <div className="mb-4 flex justify-end">
+        <Button onClick={() => setOpen(true)}>
+          <PlusIcon /> Workspace
+        </Button>
+      </div>
+
       {isLoading ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <Skeleton className="h-48" />
@@ -77,6 +88,8 @@ const WorkspacesPage = () => {
           ))}
         </div>
       )}
+
+      <CreateWorkspaceDialog open={open} setOpen={setOpen} />
     </AppLayout>
   );
 };
