@@ -1,0 +1,75 @@
+import { getDatabase } from "../core";
+import type { Workspace, WorkspaceRow } from "./types";
+
+/**
+ * Convert a database row to a Workspace entity.
+ */
+function rowToWorkspace(row: WorkspaceRow): Workspace {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    lastActivityAt: new Date(row.last_activity_at),
+    createdAt: new Date(row.created_at),
+    updatedAt: new Date(row.updated_at),
+  };
+}
+
+/**
+ * Find all workspaces, optionally filtered by search query.
+ * Results are sorted by last_activity_at DESC.
+ */
+export function findAll(searchQuery?: string): Workspace[] {
+  const db = getDatabase();
+
+  if (searchQuery) {
+    const rows = db
+      .query<
+        WorkspaceRow,
+        [string]
+      >(`SELECT * FROM workspaces WHERE title LIKE ? ORDER BY last_activity_at DESC`)
+      .all(`%${searchQuery}%`);
+    return rows.map(rowToWorkspace);
+  }
+
+  const rows = db
+    .query<
+      WorkspaceRow,
+      []
+    >(`SELECT * FROM workspaces ORDER BY last_activity_at DESC`)
+    .all();
+  return rows.map(rowToWorkspace);
+}
+
+/**
+ * Find a workspace by ID.
+ * Returns null if not found.
+ */
+export function findById(id: string): Workspace | null {
+  const db = getDatabase();
+  const row = db
+    .query<WorkspaceRow, [string]>(`SELECT * FROM workspaces WHERE id = ?`)
+    .get(id);
+  return row ? rowToWorkspace(row) : null;
+}
+
+/**
+ * Create a new workspace in the database.
+ */
+export function create(workspace: Workspace): Workspace {
+  const db = getDatabase();
+  db.prepare(
+    `
+    INSERT INTO workspaces (id, title, description, last_activity_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `,
+  ).run(
+    workspace.id,
+    workspace.title,
+    workspace.description,
+    workspace.lastActivityAt.toISOString(),
+    workspace.createdAt.toISOString(),
+    workspace.updatedAt.toISOString(),
+  );
+  return workspace;
+}

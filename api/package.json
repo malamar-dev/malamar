@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "hono": "^4.7.4",
+    "nanoid": "^5.1.6",
     "zod": "^3.24.1"
   },
   "devDependencies": {

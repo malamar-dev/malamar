@@ -1,14 +1,17 @@
 import { app } from "./app";
-import { loadConfig } from "./core";
+import { closeDatabase, initDatabase, loadConfig } from "./core";
 import { startBackgroundJobs, stopBackgroundJobs } from "./jobs";
 
 const config = loadConfig();
+
+await initDatabase();
 
 startBackgroundJobs();
 
 function shutdown() {
   console.log("Shutting down...");
   stopBackgroundJobs();
+  closeDatabase();
   process.exit(0);
 }
 
