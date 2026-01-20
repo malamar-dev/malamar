@@ -10,8 +10,14 @@ const lazy =
 export const router = createBrowserRouter([
   {
     path: "/",
-    lazy: lazy(() => import("@/features/dashboard/pages/dashboard-page")),
+    loader: () => redirect("/workspaces"),
   },
+  // Workspaces
+  {
+    path: "/workspaces",
+    lazy: lazy(() => import("@/features/workspaces/pages/workspaces-page")),
+  },
+  // Settings
   {
     path: "/settings",
     loader: () => redirect("/settings/clis"),

@@ -23,8 +23,8 @@ import {
 
 const items = [
   {
-    title: "Dashboard",
-    url: "/",
+    title: "Workspaces",
+    url: "/workspaces",
     icon: SquareTerminalIcon,
   },
   {

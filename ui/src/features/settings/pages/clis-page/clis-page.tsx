@@ -65,24 +65,25 @@ export const ClisPage = () => {
   const claudeCli = data?.clis.find((cli) => cli.type === "claude");
 
   return (
-    <AppLayout breadcrumbItems={[{ label: "Settings" }, { label: "CLIs" }]}>
-      <div className="mx-auto w-full max-w-xl">
-        {isLoading ? (
-          <Skeleton className="h-32" />
-        ) : isError ? (
-          <Alert variant="destructive">
-            <AlertCircleIcon />
-            <AlertTitle>Something went wrong</AlertTitle>
-            <AlertDescription>
-              <p>{error?.message ?? "An unexpected error occurred"}</p>
-            </AlertDescription>
-          </Alert>
-        ) : (
-          <Fragment>
-            <CliCard displayName="Claude Code" cli={claudeCli} />
-          </Fragment>
-        )}
-      </div>
+    <AppLayout
+      breadcrumbItems={[{ label: "Settings" }, { label: "CLIs" }]}
+      variant="sm"
+    >
+      {isLoading ? (
+        <Skeleton className="h-32" />
+      ) : isError ? (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle>Something went wrong</AlertTitle>
+          <AlertDescription>
+            <p>{error?.message ?? "An unexpected error occurred"}</p>
+          </AlertDescription>
+        </Alert>
+      ) : (
+        <Fragment>
+          <CliCard displayName="Claude Code" cli={claudeCli} />
+        </Fragment>
+      )}
     </AppLayout>
   );
 };
