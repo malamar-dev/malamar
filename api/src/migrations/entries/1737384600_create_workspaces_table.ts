@@ -14,11 +14,12 @@ const migration: Migration = {
         last_activity_at DATETIME NOT NULL,
         created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE INDEX idx_workspaces_title ON workspaces(title);
-      CREATE INDEX idx_workspaces_last_activity_at ON workspaces(last_activity_at);
+      )
     `);
+    db.run(`CREATE INDEX idx_workspaces_title ON workspaces(title)`);
+    db.run(
+      `CREATE INDEX idx_workspaces_last_activity_at ON workspaces(last_activity_at)`,
+    );
   },
 };
 

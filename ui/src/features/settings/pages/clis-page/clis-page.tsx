@@ -67,7 +67,7 @@ export const ClisPage = () => {
   return (
     <AppLayout
       breadcrumbItems={[{ label: "Settings" }, { label: "CLIs" }]}
-      variant="sm"
+      variant="xs"
     >
       {isLoading ? (
         <Skeleton className="h-32" />

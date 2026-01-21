@@ -12,7 +12,8 @@ const appLayoutVariants = cva("mx-auto w-full", {
     variant: {
       fluid: "",
       md: "max-w-7xl p-4",
-      sm: "max-w-xl p-4",
+      sm: "max-w-3xl p-4",
+      xs: "max-w-xl p-4",
     },
   },
   defaultVariants: {
