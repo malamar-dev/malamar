@@ -6,6 +6,7 @@ interface WorkspaceResponse {
   id: string;
   title: string;
   description: string;
+  workingDirectory: string | null;
   lastActivityAt: string;
   createdAt: string;
   updatedAt: string;
@@ -308,5 +309,135 @@ describe("Workspace endpoints", () => {
     const body = (await response.json()) as ErrorResponse;
     expect(body.error.code).toBe("NOT_FOUND");
     expect(body.error.message).toBe("Workspace not found");
+  });
+
+  // Working Directory tests
+  test("POST /api/workspaces creates workspace with valid workingDirectory", async () => {
+    const response = await fetch(`${getBaseUrl()}/api/workspaces`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "Workspace with Working Directory",
+        workingDirectory: "/tmp",
+      }),
+    });
+
+    expect(response.status).toBe(201);
+    const body = (await response.json()) as WorkspaceResponse;
+
+    expect(body.title).toBe("Workspace with Working Directory");
+    expect(body.workingDirectory).toBe("/tmp");
+  });
+
+  test("POST /api/workspaces creates workspace with null workingDirectory", async () => {
+    const response = await fetch(`${getBaseUrl()}/api/workspaces`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "Workspace without Working Directory",
+        workingDirectory: null,
+      }),
+    });
+
+    expect(response.status).toBe(201);
+    const body = (await response.json()) as WorkspaceResponse;
+
+    expect(body.title).toBe("Workspace without Working Directory");
+    expect(body.workingDirectory).toBeNull();
+  });
+
+  test("POST /api/workspaces returns 400 for non-existent workingDirectory", async () => {
+    const response = await fetch(`${getBaseUrl()}/api/workspaces`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "Workspace with Invalid Path",
+        workingDirectory: "/nonexistent/path/abc123",
+      }),
+    });
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as ErrorResponse;
+    expect(body.error.message).toBe(
+      "The specified path does not exist or is not a valid directory",
+    );
+  });
+
+  test("POST /api/workspaces returns 400 when workingDirectory is a file", async () => {
+    const response = await fetch(`${getBaseUrl()}/api/workspaces`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "Workspace with File Path",
+        workingDirectory: "/etc/passwd",
+      }),
+    });
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as ErrorResponse;
+    expect(body.error.message).toBe(
+      "The specified path does not exist or is not a valid directory",
+    );
+  });
+
+  test("PUT /api/workspaces/:id updates workingDirectory", async () => {
+    const response = await fetch(
+      `${getBaseUrl()}/api/workspaces/${createdWorkspaceId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Both Updated",
+          description: "Both fields updated",
+          workingDirectory: "/tmp",
+        }),
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as WorkspaceResponse;
+
+    expect(body.workingDirectory).toBe("/tmp");
+  });
+
+  test("PUT /api/workspaces/:id clears workingDirectory with null", async () => {
+    const response = await fetch(
+      `${getBaseUrl()}/api/workspaces/${createdWorkspaceId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Both Updated",
+          description: "Both fields updated",
+          workingDirectory: null,
+        }),
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as WorkspaceResponse;
+
+    expect(body.workingDirectory).toBeNull();
+  });
+
+  test("PUT /api/workspaces/:id returns 400 for invalid workingDirectory", async () => {
+    const response = await fetch(
+      `${getBaseUrl()}/api/workspaces/${createdWorkspaceId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Valid Title",
+          description: "Valid description",
+          workingDirectory: "/nonexistent/path/xyz789",
+        }),
+      },
+    );
+
+    expect(response.status).toBe(400);
+    const body = (await response.json()) as ErrorResponse;
+    expect(body.error.message).toBe(
+      "The specified path does not exist or is not a valid directory",
+    );
   });
 });

@@ -19,6 +19,7 @@ function serializeWorkspace(workspace: Workspace) {
     id: workspace.id,
     title: workspace.title,
     description: workspace.description,
+    workingDirectory: workspace.workingDirectory,
     lastActivityAt: workspace.lastActivityAt.toISOString(),
     createdAt: workspace.createdAt.toISOString(),
     updatedAt: workspace.updatedAt.toISOString(),
@@ -74,9 +75,14 @@ workspaceRouter.post("/", async (c) => {
     );
   }
 
-  const workspace = service.createWorkspace(parsed.data);
-
-  return c.json(serializeWorkspace(workspace), 201);
+  try {
+    const workspace = service.createWorkspace(parsed.data);
+    return c.json(serializeWorkspace(workspace), 201);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to create workspace";
+    return c.json(createErrorResponse("VALIDATION_ERROR", message), 400);
+  }
 });
 
 /**
@@ -98,11 +104,20 @@ workspaceRouter.put("/:id", async (c) => {
     );
   }
 
-  const workspace = service.updateWorkspace(id, parsed.data);
+  try {
+    const workspace = service.updateWorkspace(id, parsed.data);
 
-  if (!workspace) {
-    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
+    if (!workspace) {
+      return c.json(
+        createErrorResponse("NOT_FOUND", "Workspace not found"),
+        404,
+      );
+    }
+
+    return c.json(serializeWorkspace(workspace));
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to update workspace";
+    return c.json(createErrorResponse("VALIDATION_ERROR", message), 400);
   }
-
-  return c.json(serializeWorkspace(workspace));
 });

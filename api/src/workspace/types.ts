@@ -5,6 +5,7 @@ export interface Workspace {
   id: string;
   title: string;
   description: string;
+  workingDirectory: string | null;
   lastActivityAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -17,6 +18,7 @@ export interface WorkspaceRow {
   id: string;
   title: string;
   description: string;
+  working_directory: string | null;
   last_activity_at: string;
   created_at: string;
   updated_at: string;
@@ -28,6 +30,7 @@ export interface WorkspaceRow {
 export interface CreateWorkspaceInput {
   title: string;
   description?: string;
+  workingDirectory?: string | null;
 }
 
 /**
@@ -36,4 +39,5 @@ export interface CreateWorkspaceInput {
 export interface UpdateWorkspaceInput {
   title: string;
   description?: string;
+  workingDirectory?: string | null;
 }

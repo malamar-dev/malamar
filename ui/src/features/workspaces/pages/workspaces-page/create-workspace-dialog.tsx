@@ -22,7 +22,12 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer.tsx";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field.tsx";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -38,6 +43,9 @@ const createWorkspaceSchema = z.object({
   description: z
     .string()
     .max(1000, "Description must be at most 1000 characters"),
+  workingDirectory: z
+    .string()
+    .max(4096, "Working directory must be at most 4096 characters"),
 });
 
 type CreateWorkspaceFormData = z.infer<typeof createWorkspaceSchema>;
@@ -112,11 +120,15 @@ const CreateWorkspaceForm = ({
     defaultValues: {
       title: "",
       description: "",
+      workingDirectory: "",
     },
   });
 
   const onSubmit = async (data: CreateWorkspaceFormData) => {
-    const workspace = await createWorkspace.mutateAsync(data);
+    const workspace = await createWorkspace.mutateAsync({
+      ...data,
+      workingDirectory: data.workingDirectory || null,
+    });
     onSuccess?.();
     navigate(`/workspaces/${workspace.id}`);
   };
@@ -147,6 +159,23 @@ const CreateWorkspaceForm = ({
           {...register("description")}
         />
         <FieldError errors={[errors.description]} />
+      </Field>
+
+      <Field data-invalid={!!errors.workingDirectory}>
+        <FieldLabel htmlFor="workingDirectory">
+          Working Directory (optional)
+        </FieldLabel>
+        <Input
+          id="workingDirectory"
+          placeholder="e.g., /Users/you/projects/my-project"
+          aria-invalid={!!errors.workingDirectory}
+          {...register("workingDirectory")}
+        />
+        <FieldDescription>
+          Leave blank to create a temporary folder for each task, or specify a
+          path to use a static directory.
+        </FieldDescription>
+        <FieldError errors={[errors.workingDirectory]} />
       </Field>
 
       <Button type="submit" disabled={createWorkspace.isPending}>

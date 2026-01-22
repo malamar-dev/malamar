@@ -14,7 +14,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field.tsx";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
@@ -31,6 +36,11 @@ const workspaceSchema = z.object({
   description: z
     .string()
     .max(1000, "Description must be at most 1000 characters")
+    .optional()
+    .default(""),
+  workingDirectory: z
+    .string()
+    .max(4096, "Working directory must be at most 4096 characters")
     .optional()
     .default(""),
 });
@@ -58,6 +68,7 @@ const SettingsPage = () => {
     defaultValues: {
       title: "",
       description: "",
+      workingDirectory: "",
     },
   });
 
@@ -66,6 +77,7 @@ const SettingsPage = () => {
       reset({
         title: workspace.title,
         description: workspace.description,
+        workingDirectory: workspace.workingDirectory ?? "",
       });
     }
   }, [workspace, reset]);
@@ -74,7 +86,10 @@ const SettingsPage = () => {
     setShowSuccess(false);
     updateWorkspace.reset();
     try {
-      await updateWorkspace.mutateAsync(data);
+      await updateWorkspace.mutateAsync({
+        ...data,
+        workingDirectory: data.workingDirectory || null,
+      });
       setShowSuccess(true);
     } catch {
       // Error is handled by the mutation's isError state
@@ -176,6 +191,23 @@ const SettingsPage = () => {
                     {...register("description")}
                   />
                   <FieldError errors={[errors.description]} />
+                </Field>
+
+                <Field data-invalid={!!errors.workingDirectory}>
+                  <FieldLabel htmlFor="workingDirectory">
+                    Working Directory
+                  </FieldLabel>
+                  <Input
+                    id="workingDirectory"
+                    placeholder="e.g., /Users/you/projects/my-project"
+                    aria-invalid={!!errors.workingDirectory}
+                    {...register("workingDirectory")}
+                  />
+                  <FieldDescription>
+                    Leave blank to create a temporary folder for each task, or
+                    specify a path to use a static directory.
+                  </FieldDescription>
+                  <FieldError errors={[errors.workingDirectory]} />
                 </Field>
 
                 <div className="flex justify-end">

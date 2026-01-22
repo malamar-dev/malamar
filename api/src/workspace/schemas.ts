@@ -6,6 +6,7 @@ import { z } from "zod";
 const workspaceBaseSchema = z.object({
   title: z.string().min(1, "Title is required").max(255),
   description: z.string().max(1000).optional().default(""),
+  workingDirectory: z.string().max(4096).nullable().optional(),
 });
 
 /**

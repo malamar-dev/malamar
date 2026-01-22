@@ -9,6 +9,7 @@ function rowToWorkspace(row: WorkspaceRow): Workspace {
     id: row.id,
     title: row.title,
     description: row.description,
+    workingDirectory: row.working_directory,
     lastActivityAt: new Date(row.last_activity_at),
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
@@ -60,13 +61,14 @@ export function create(workspace: Workspace): Workspace {
   const db = getDatabase();
   db.prepare(
     `
-    INSERT INTO workspaces (id, title, description, last_activity_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO workspaces (id, title, description, working_directory, last_activity_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     workspace.id,
     workspace.title,
     workspace.description,
+    workspace.workingDirectory,
     workspace.lastActivityAt.toISOString(),
     workspace.createdAt.toISOString(),
     workspace.updatedAt.toISOString(),
@@ -82,6 +84,7 @@ export function update(
   id: string,
   title: string,
   description: string,
+  workingDirectory: string | null,
   updatedAt: Date,
 ): Workspace | null {
   const db = getDatabase();
@@ -89,11 +92,11 @@ export function update(
     .prepare(
       `
     UPDATE workspaces
-    SET title = ?, description = ?, updated_at = ?
+    SET title = ?, description = ?, working_directory = ?, updated_at = ?
     WHERE id = ?
   `,
     )
-    .run(title, description, updatedAt.toISOString(), id);
+    .run(title, description, workingDirectory, updatedAt.toISOString(), id);
 
   if (result.changes === 0) {
     return null;
