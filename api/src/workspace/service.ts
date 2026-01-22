@@ -1,6 +1,10 @@
 import { generateId } from "../shared";
 import * as repository from "./repository";
-import type { CreateWorkspaceInput, Workspace } from "./types";
+import type {
+  CreateWorkspaceInput,
+  UpdateWorkspaceInput,
+  Workspace,
+} from "./types";
 
 /**
  * List all workspaces, optionally filtered by search query.
@@ -31,4 +35,16 @@ export function createWorkspace(input: CreateWorkspaceInput): Workspace {
     updatedAt: now,
   };
   return repository.create(workspace);
+}
+
+/**
+ * Update an existing workspace.
+ * Returns the updated workspace, or null if not found.
+ */
+export function updateWorkspace(
+  id: string,
+  input: UpdateWorkspaceInput,
+): Workspace | null {
+  const now = new Date();
+  return repository.update(id, input.title, input.description ?? "", now);
 }

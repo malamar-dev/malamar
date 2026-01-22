@@ -73,3 +73,31 @@ export function create(workspace: Workspace): Workspace {
   );
   return workspace;
 }
+
+/**
+ * Update an existing workspace in the database.
+ * Returns the updated workspace, or null if not found.
+ */
+export function update(
+  id: string,
+  title: string,
+  description: string,
+  updatedAt: Date,
+): Workspace | null {
+  const db = getDatabase();
+  const result = db
+    .prepare(
+      `
+    UPDATE workspaces
+    SET title = ?, description = ?, updated_at = ?
+    WHERE id = ?
+  `,
+    )
+    .run(title, description, updatedAt.toISOString(), id);
+
+  if (result.changes === 0) {
+    return null;
+  }
+
+  return findById(id);
+}

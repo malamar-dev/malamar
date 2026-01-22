@@ -1,7 +1,11 @@
 import { Hono } from "hono";
 
 import { createErrorResponse } from "../shared";
-import { createWorkspaceSchema, listWorkspacesQuerySchema } from "./schemas";
+import {
+  createWorkspaceSchema,
+  listWorkspacesQuerySchema,
+  updateWorkspaceSchema,
+} from "./schemas";
 import * as service from "./service";
 import type { Workspace } from "./types";
 
@@ -73,4 +77,32 @@ workspaceRouter.post("/", async (c) => {
   const workspace = service.createWorkspace(parsed.data);
 
   return c.json(serializeWorkspace(workspace), 201);
+});
+
+/**
+ * PUT /:id - Update a workspace
+ */
+workspaceRouter.put("/:id", async (c) => {
+  const id = c.req.param("id");
+  const body = await c.req.json();
+  const parsed = updateWorkspaceSchema.safeParse(body);
+
+  if (!parsed.success) {
+    const firstError = parsed.error.errors[0];
+    return c.json(
+      createErrorResponse(
+        "VALIDATION_ERROR",
+        firstError?.message ?? "Invalid input",
+      ),
+      400,
+    );
+  }
+
+  const workspace = service.updateWorkspace(id, parsed.data);
+
+  if (!workspace) {
+    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
+  }
+
+  return c.json(serializeWorkspace(workspace));
 });

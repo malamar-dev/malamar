@@ -29,3 +29,11 @@ export interface CreateWorkspaceInput {
   title: string;
   description?: string;
 }
+
+/**
+ * Input for updating an existing workspace.
+ */
+export interface UpdateWorkspaceInput {
+  title: string;
+  description?: string;
+}
