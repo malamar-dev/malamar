@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
 import { useAgents } from "../../hooks/use-agents.ts";
 import { useReorderAgents } from "../../hooks/use-reorder-agents.ts";
@@ -72,10 +73,19 @@ const AgentsPage = () => {
       ]}
       variant="sm"
     >
-      <div className="mb-4 flex justify-end">
-        <Button onClick={() => setCreateDialogOpen(true)}>
-          <PlusIcon /> Agent
-        </Button>
+      <div className="mb-4 flex items-center justify-start">
+        <div>
+          <WorkspaceTabs
+            workspaceId={workspace?.id as string}
+            currentPage="agents"
+          />
+        </div>
+
+        <div className="ml-auto">
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            <PlusIcon /> Agent
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (

@@ -19,6 +19,10 @@ export const router = createBrowserRouter([
   },
   {
     path: "/workspaces/:id",
+    loader: ({ params }) => redirect(`/workspaces/${params.id}/agents`),
+  },
+  {
+    path: "/workspaces/:id/agents",
     lazy: lazy(() => import("@/features/workspaces/pages/agents-page")),
   },
   // Settings
