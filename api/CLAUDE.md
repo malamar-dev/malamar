@@ -10,13 +10,13 @@ For project overview and shared guidelines, see the root `CLAUDE.md`.
 
 **MUST use these technologies** - do not substitute alternatives:
 
-| Category | Technology | NOT This |
-|----------|------------|----------|
-| Runtime | Bun | Node.js |
-| Web Framework | Hono | Express, Fastify |
-| Database | SQLite via `bun:sqlite` | better-sqlite3, postgres |
-| Validation | Zod | Joi, Yup |
-| IDs | nanoid | uuid, cuid |
+| Category      | Technology              | NOT This                 |
+| ------------- | ----------------------- | ------------------------ |
+| Runtime       | Bun                     | Node.js                  |
+| Web Framework | Hono                    | Express, Fastify         |
+| Database      | SQLite via `bun:sqlite` | better-sqlite3, postgres |
+| Validation    | Zod                     | Joi, Yup                 |
+| IDs           | nanoid                  | uuid, cuid               |
 
 ### Bun-Specific APIs
 
@@ -107,13 +107,14 @@ api/
 Example: `1737643200_create_chat_tables.ts`
 
 **Structure**:
+
 ```typescript
 const migration: Migration = {
   version: 1737643200,
   name: "create_chat_tables",
   up(db: Database) {
     db.run(`CREATE TABLE ...`);
-  }
+  },
 };
 export default migration;
 ```
@@ -146,12 +147,12 @@ return createErrorResponse("NOT_FOUND", "Task not found");
 
 ### Error Codes
 
-| Code | HTTP Status | When to Use |
-|------|-------------|-------------|
-| `NOT_FOUND` | 404 | Resource doesn't exist |
-| `VALIDATION_ERROR` | 400 | Invalid request data |
-| `CONFLICT` | 409 | Duplicate or constraint violation |
-| `INTERNAL_ERROR` | 500 | Unexpected server error |
+| Code               | HTTP Status | When to Use                       |
+| ------------------ | ----------- | --------------------------------- |
+| `NOT_FOUND`        | 404         | Resource doesn't exist            |
+| `VALIDATION_ERROR` | 400         | Invalid request data              |
+| `CONFLICT`         | 409         | Duplicate or constraint violation |
+| `INTERNAL_ERROR`   | 500         | Unexpected server error           |
 
 ### Best Practices
 
@@ -210,6 +211,7 @@ describe("Feature", () => {
 ### Helpers
 
 Test utilities are in `e2e/helpers.ts`:
+
 - Server setup and teardown
 - Database initialization
 - HTTP request helpers
@@ -222,11 +224,11 @@ Test utilities are in `e2e/helpers.ts`:
 
 Located in `src/jobs/`:
 
-| Job | Purpose | Interval |
-|-----|---------|----------|
-| Runner | Process task queue | 1000ms (configurable) |
-| CLI Health Check | Verify CLI availability | 5 minutes |
-| Cleanup | Remove old queue items | Daily |
+| Job              | Purpose                 | Interval              |
+| ---------------- | ----------------------- | --------------------- |
+| Runner           | Process task queue      | 1000ms (configurable) |
+| CLI Health Check | Verify CLI availability | 5 minutes             |
+| Cleanup          | Remove old queue items  | Daily                 |
 
 ### Graceful Shutdown
 
@@ -240,12 +242,12 @@ Located in `src/jobs/`:
 
 ### Supported CLIs
 
-| CLI | Notes |
-|-----|-------|
+| CLI         | Notes                                          |
+| ----------- | ---------------------------------------------- |
 | Claude Code | Supports `--json-schema` for structured output |
-| Gemini CLI | Schema embedded in prompt |
-| Codex CLI | Schema embedded in prompt |
-| OpenCode | Schema embedded in prompt |
+| Gemini CLI  | Schema embedded in prompt                      |
+| Codex CLI   | Schema embedded in prompt                      |
+| OpenCode    | Schema embedded in prompt                      |
 
 ### Subprocess Management
 
@@ -301,6 +303,7 @@ bun run lint:fix    # Auto-fix issues
 ### Import Order
 
 ESLint plugin `simple-import-sort` enforces:
+
 1. External packages
 2. Internal modules (`../`, `./`)
 3. Sibling files
@@ -317,19 +320,20 @@ ESLint plugin `simple-import-sort` enforces:
 
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MALAMAR_HOST` | `127.0.0.1` | Bind address |
-| `MALAMAR_PORT` | `3456` | Server port |
-| `MALAMAR_DATA_DIR` | `~/.malamar` | Data directory |
-| `MALAMAR_LOG_LEVEL` | `info` | Log verbosity |
-| `MALAMAR_RUNNER_POLL_INTERVAL` | `1000` | Runner poll interval (ms) |
+| Variable                       | Default      | Description               |
+| ------------------------------ | ------------ | ------------------------- |
+| `MALAMAR_HOST`                 | `127.0.0.1`  | Bind address              |
+| `MALAMAR_PORT`                 | `3456`       | Server port               |
+| `MALAMAR_DATA_DIR`             | `~/.malamar` | Data directory            |
+| `MALAMAR_LOG_LEVEL`            | `info`       | Log verbosity             |
+| `MALAMAR_RUNNER_POLL_INTERVAL` | `1000`       | Runner poll interval (ms) |
 
 ### Data Directory
 
 Default: `~/.malamar/`
 
 Contains:
+
 - `malamar.db` - SQLite database
 - Configuration files
 - Temporary files for CLI communication
@@ -338,23 +342,23 @@ Contains:
 
 ## Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `bun --watch src/index.ts` | Development with watch |
-| `start` | `bun src/index.ts` | Production start |
-| `lint` | `eslint . && prettier --check .` | Check lint |
-| `lint:fix` | `eslint . --fix && prettier --write .` | Fix lint |
-| `test:e2e` | `bun test e2e/` | Run E2E tests |
+| Script     | Command                                | Description            |
+| ---------- | -------------------------------------- | ---------------------- |
+| `dev`      | `bun --watch src/index.ts`             | Development with watch |
+| `start`    | `bun src/index.ts`                     | Production start       |
+| `lint`     | `eslint . && prettier --check .`       | Check lint             |
+| `lint:fix` | `eslint . --fix && prettier --write .` | Fix lint               |
+| `test:e2e` | `bun test e2e/`                        | Run E2E tests          |
 
 ---
 
 ## Quick Reference
 
-| Need | Where to Look |
-|------|---------------|
-| Add a new feature | Copy existing module structure (e.g., `workspace/`) |
-| Add a migration | Create file in `migrations/entries/`, export in `index.ts` |
-| Add an endpoint | Add route in `<feature>/routes.ts`, register in `app.ts` |
-| Add a background job | Create in `jobs/`, register in `jobs/index.ts` |
-| Handle errors | Use `createErrorResponse()` from `shared/errors` |
-| Generate IDs | Use `generateId()` from `shared/id` |
+| Need                 | Where to Look                                              |
+| -------------------- | ---------------------------------------------------------- |
+| Add a new feature    | Copy existing module structure (e.g., `workspace/`)        |
+| Add a migration      | Create file in `migrations/entries/`, export in `index.ts` |
+| Add an endpoint      | Add route in `<feature>/routes.ts`, register in `app.ts`   |
+| Add a background job | Create in `jobs/`, register in `jobs/index.ts`             |
+| Handle errors        | Use `createErrorResponse()` from `shared/errors`           |
+| Generate IDs         | Use `generateId()` from `shared/id`                        |

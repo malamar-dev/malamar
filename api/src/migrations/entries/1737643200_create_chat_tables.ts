@@ -50,7 +50,9 @@ const migration: Migration = {
       )
     `);
     db.run(`CREATE INDEX idx_chat_queue_chat_id ON chat_queue(chat_id)`);
-    db.run(`CREATE INDEX idx_chat_queue_workspace_id ON chat_queue(workspace_id)`);
+    db.run(
+      `CREATE INDEX idx_chat_queue_workspace_id ON chat_queue(workspace_id)`,
+    );
     db.run(`CREATE INDEX idx_chat_queue_status ON chat_queue(status)`);
   },
 };

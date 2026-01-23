@@ -10,16 +10,16 @@ For project overview and shared guidelines, see the root `CLAUDE.md`.
 
 **MUST use these technologies** - do not substitute alternatives:
 
-| Category | Technology | NOT This |
-|----------|------------|----------|
-| Framework | React 19 | Vue, Angular, Svelte |
-| Bundler | Vite | Webpack, Bun.serve for frontend |
-| Server State | React Query (TanStack Query) | Redux, SWR |
-| Forms | react-hook-form + Zod | Formik, uncontrolled forms |
-| UI Components | shadcn/ui | Material UI, Ant Design |
-| Styling | Tailwind CSS v4 | CSS modules, styled-components |
-| Icons | Lucide React | FontAwesome, Heroicons |
-| Routing | React Router v7 | Next.js, Remix |
+| Category      | Technology                   | NOT This                        |
+| ------------- | ---------------------------- | ------------------------------- |
+| Framework     | React 19                     | Vue, Angular, Svelte            |
+| Bundler       | Vite                         | Webpack, Bun.serve for frontend |
+| Server State  | React Query (TanStack Query) | Redux, SWR                      |
+| Forms         | react-hook-form + Zod        | Formik, uncontrolled forms      |
+| UI Components | shadcn/ui                    | Material UI, Ant Design         |
+| Styling       | Tailwind CSS v4              | CSS modules, styled-components  |
+| Icons         | Lucide React                 | FontAwesome, Heroicons          |
+| Routing       | React Router v7              | Next.js, Remix                  |
 
 ### Package Manager
 
@@ -48,13 +48,13 @@ src/features/<feature>/
 
 ### Layer Responsibilities
 
-| Layer | Purpose | Example |
-|-------|---------|---------|
-| `api/` | HTTP calls via apiClient | `workspaces.api.ts` |
-| `hooks/` | React Query wrappers | `useWorkspaces()`, `useCreateWorkspace()` |
-| `types/` | TypeScript definitions | `Workspace`, `CreateWorkspaceInput` |
-| `components/` | Feature UI components | `CreateWorkspaceDialog` |
-| `pages/` | Route page components | `WorkspacesPage` |
+| Layer         | Purpose                  | Example                                   |
+| ------------- | ------------------------ | ----------------------------------------- |
+| `api/`        | HTTP calls via apiClient | `workspaces.api.ts`                       |
+| `hooks/`      | React Query wrappers     | `useWorkspaces()`, `useCreateWorkspace()` |
+| `types/`      | TypeScript definitions   | `Workspace`, `CreateWorkspaceInput`       |
+| `components/` | Feature UI components    | `CreateWorkspaceDialog`                   |
+| `pages/`      | Route page components    | `WorkspacesPage`                          |
 
 ---
 
@@ -145,6 +145,7 @@ Location: `src/components/ui/`
 **IMPORTANT**: These are auto-generated. Do not edit directly.
 
 To add a new component:
+
 ```bash
 bunx shadcn@latest add button
 ```
@@ -202,8 +203,8 @@ Use `class-variance-authority` (CVA) for variant-based styling:
 const buttonVariants = cva("base-styles", {
   variants: {
     variant: { default: "...", destructive: "..." },
-    size: { default: "...", sm: "...", lg: "..." }
-  }
+    size: { default: "...", sm: "...", lg: "..." },
+  },
 });
 ```
 
@@ -251,7 +252,8 @@ Thin wrappers around apiClient:
 export const workspacesApi = {
   list: () => apiClient.get<WorkspacesResponse>("/workspaces"),
   get: (id: string) => apiClient.get<Workspace>(`/workspaces/${id}`),
-  create: (input: CreateWorkspaceInput) => apiClient.post<Workspace>("/workspaces", input),
+  create: (input: CreateWorkspaceInput) =>
+    apiClient.post<Workspace>("/workspaces", input),
 };
 ```
 
@@ -279,14 +281,14 @@ Location: `src/routes/index.tsx`
 
 ### Standard Routes
 
-| Path | Page |
-|------|------|
-| `/workspaces` | Workspace list |
-| `/workspaces/:id/agents` | Workspace agents |
-| `/workspaces/:id/tasks` | Workspace tasks (Kanban) |
-| `/workspaces/:id/chats` | Workspace chats |
-| `/workspaces/:id/settings` | Workspace settings |
-| `/settings/clis` | CLI settings |
+| Path                       | Page                     |
+| -------------------------- | ------------------------ |
+| `/workspaces`              | Workspace list           |
+| `/workspaces/:id/agents`   | Workspace agents         |
+| `/workspaces/:id/tasks`    | Workspace tasks (Kanban) |
+| `/workspaces/:id/chats`    | Workspace chats          |
+| `/workspaces/:id/settings` | Workspace settings       |
+| `/settings/clis`           | CLI settings             |
 
 ### Code Splitting
 
@@ -331,13 +333,13 @@ Types are organized by feature in `features/<feature>/types/`:
 
 ### Conventions
 
-| Pattern | Use For |
-|---------|---------|
-| `interface` | Entity shapes (Workspace, Agent) |
-| `type` | Unions, intersections, mapped types |
-| `<Entity>Response` | API response wrappers |
-| `Create<Entity>Input` | Creation DTOs |
-| `Update<Entity>Input` | Update DTOs |
+| Pattern               | Use For                             |
+| --------------------- | ----------------------------------- |
+| `interface`           | Entity shapes (Workspace, Agent)    |
+| `type`                | Unions, intersections, mapped types |
+| `<Entity>Response`    | API response wrappers               |
+| `Create<Entity>Input` | Creation DTOs                       |
+| `Update<Entity>Input` | Update DTOs                         |
 
 ### CLI Types
 
@@ -414,13 +416,13 @@ ESLint plugin `simple-import-sort` enforces:
 
 ### Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `vite` | Development server (:5137) |
-| `build` | `tsc -b && vite build` | Production build |
-| `lint` | `eslint . && prettier --check .` | Check lint |
-| `lint:fix` | `eslint . --fix && prettier --write .` | Fix lint |
-| `preview` | `vite preview` | Preview production build |
+| Script     | Command                                | Description                |
+| ---------- | -------------------------------------- | -------------------------- |
+| `dev`      | `vite`                                 | Development server (:5137) |
+| `build`    | `tsc -b && vite build`                 | Production build           |
+| `lint`     | `eslint . && prettier --check .`       | Check lint                 |
+| `lint:fix` | `eslint . --fix && prettier --write .` | Fix lint                   |
+| `preview`  | `vite preview`                         | Preview production build   |
 
 ### API Proxy
 
@@ -436,13 +438,13 @@ Vite provides HMR - changes reflect immediately without full reload.
 
 ## Quick Reference
 
-| Need | Where to Look |
-|------|---------------|
-| Add a feature | Create folder in `features/` with api/, hooks/, types/, components/, pages/ |
-| Add a shadcn component | Run `bunx shadcn@latest add <component>` |
-| Add a global hook | Create in `src/hooks/` |
-| Add a page | Create in `features/<feature>/pages/`, add route in `routes/index.tsx` |
-| Add an API call | Create in `features/<feature>/api/` |
-| Add a query hook | Create in `features/<feature>/hooks/` |
-| Merge classes | Use `cn()` from `@/lib/utils` |
-| Handle loading | Use `Loader2` icon with `animate-spin` |
+| Need                   | Where to Look                                                               |
+| ---------------------- | --------------------------------------------------------------------------- |
+| Add a feature          | Create folder in `features/` with api/, hooks/, types/, components/, pages/ |
+| Add a shadcn component | Run `bunx shadcn@latest add <component>`                                    |
+| Add a global hook      | Create in `src/hooks/`                                                      |
+| Add a page             | Create in `features/<feature>/pages/`, add route in `routes/index.tsx`      |
+| Add an API call        | Create in `features/<feature>/api/`                                         |
+| Add a query hook       | Create in `features/<feature>/hooks/`                                       |
+| Merge classes          | Use `cn()` from `@/lib/utils`                                               |
+| Handle loading         | Use `Loader2` icon with `animate-spin`                                      |
