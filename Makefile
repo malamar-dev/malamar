@@ -3,6 +3,8 @@ e.PHONY: dev dev-api dev-ui install install-api install-ui lint lint-api lint-ui
 # Run both `api` and `ui` in parallel
 # API runs without watch to prevent job runner from restarting
 dev:
+	@lsof -ti:5137 | xargs kill -9 2>/dev/null || true
+	@lsof -ti:3456 | xargs kill -9 2>/dev/null || true
 	@trap 'kill 0' EXIT; \
 	$(MAKE) dev-api & \
 	$(MAKE) dev-ui & \
