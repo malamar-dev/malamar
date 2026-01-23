@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { createErrorResponse } from "../shared";
+import { createErrorResponse, httpStatusFromCode } from "../shared";
 import {
   createWorkspaceSchema,
   listWorkspacesQuerySchema,
@@ -48,13 +48,16 @@ workspaceRouter.get("/", (c) => {
  */
 workspaceRouter.get("/:id", (c) => {
   const id = c.req.param("id");
-  const workspace = service.getWorkspace(id);
+  const result = service.getWorkspace(id);
 
-  if (!workspace) {
-    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
   }
 
-  return c.json(serializeWorkspace(workspace));
+  return c.json(serializeWorkspace(result.data));
 });
 
 /**
@@ -75,14 +78,16 @@ workspaceRouter.post("/", async (c) => {
     );
   }
 
-  try {
-    const workspace = service.createWorkspace(parsed.data);
-    return c.json(serializeWorkspace(workspace), 201);
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to create workspace";
-    return c.json(createErrorResponse("VALIDATION_ERROR", message), 400);
+  const result = service.createWorkspace(parsed.data);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
   }
+
+  return c.json(serializeWorkspace(result.data), 201);
 });
 
 /**
@@ -104,20 +109,14 @@ workspaceRouter.put("/:id", async (c) => {
     );
   }
 
-  try {
-    const workspace = service.updateWorkspace(id, parsed.data);
+  const result = service.updateWorkspace(id, parsed.data);
 
-    if (!workspace) {
-      return c.json(
-        createErrorResponse("NOT_FOUND", "Workspace not found"),
-        404,
-      );
-    }
-
-    return c.json(serializeWorkspace(workspace));
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to update workspace";
-    return c.json(createErrorResponse("VALIDATION_ERROR", message), 400);
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
   }
+
+  return c.json(serializeWorkspace(result.data));
 });

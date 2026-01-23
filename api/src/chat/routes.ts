@@ -1,8 +1,12 @@
 import { Hono } from "hono";
 
-import { createErrorResponse } from "../shared";
+import { createErrorResponse, httpStatusFromCode } from "../shared";
 import * as workspaceService from "../workspace/service";
-import { listChatsQuerySchema, listMessagesQuerySchema } from "./schemas";
+import {
+  createChatBodySchema,
+  listChatsQuerySchema,
+  listMessagesQuerySchema,
+} from "./schemas";
 import * as service from "./service";
 import type { Chat, ChatMessage, PaginatedResult } from "./types";
 
@@ -57,9 +61,12 @@ chatRouter.get("/workspaces/:workspaceId/chats", (c) => {
   const workspaceId = c.req.param("workspaceId");
 
   // Verify workspace exists
-  const workspace = workspaceService.getWorkspace(workspaceId);
-  if (!workspace) {
-    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
+  const workspaceResult = workspaceService.getWorkspace(workspaceId);
+  if (!workspaceResult.ok) {
+    return c.json(
+      createErrorResponse(workspaceResult.code, workspaceResult.error),
+      httpStatusFromCode(workspaceResult.code),
+    );
   }
 
   // Parse and validate query parameters
@@ -86,18 +93,55 @@ chatRouter.get("/workspaces/:workspaceId/chats", (c) => {
 });
 
 /**
+ * POST /workspaces/:workspaceId/chats - Create a new chat
+ * Body: { title?: string, agentId?: string | null }
+ */
+chatRouter.post("/workspaces/:workspaceId/chats", async (c) => {
+  const workspaceId = c.req.param("workspaceId");
+
+  // Parse and validate request body
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = createChatBodySchema.safeParse(body);
+
+  if (!parsed.success) {
+    const firstError = parsed.error.errors[0];
+    return c.json(
+      createErrorResponse(
+        "VALIDATION_ERROR",
+        firstError?.message ?? "Invalid request body",
+      ),
+      400,
+    );
+  }
+
+  const result = service.createChat(workspaceId, parsed.data);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json(serializeChat(result.data), 201);
+});
+
+/**
  * GET /chats/:id - Get chat details
  * Returns chat metadata without messages.
  */
 chatRouter.get("/chats/:id", (c) => {
   const id = c.req.param("id");
 
-  const chat = service.getChat(id);
-  if (!chat) {
-    return c.json(createErrorResponse("NOT_FOUND", "Chat not found"), 404);
+  const result = service.getChat(id);
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
   }
 
-  return c.json(serializeChat(chat));
+  return c.json(serializeChat(result.data));
 });
 
 /**
@@ -108,9 +152,12 @@ chatRouter.get("/chats/:id/messages", (c) => {
   const chatId = c.req.param("id");
 
   // Verify chat exists
-  const chat = service.getChat(chatId);
-  if (!chat) {
-    return c.json(createErrorResponse("NOT_FOUND", "Chat not found"), 404);
+  const chatResult = service.getChat(chatId);
+  if (!chatResult.ok) {
+    return c.json(
+      createErrorResponse(chatResult.code, chatResult.error),
+      httpStatusFromCode(chatResult.code),
+    );
   }
 
   // Parse and validate query parameters

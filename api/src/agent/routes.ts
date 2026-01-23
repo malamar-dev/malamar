@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { createErrorResponse } from "../shared";
+import { createErrorResponse, httpStatusFromCode } from "../shared";
 import * as workspaceService from "../workspace/service";
 import {
   createAgentSchema,
@@ -35,9 +35,12 @@ agentRouter.get("/workspaces/:workspaceId/agents", (c) => {
   const workspaceId = c.req.param("workspaceId");
 
   // Verify workspace exists
-  const workspace = workspaceService.getWorkspace(workspaceId);
-  if (!workspace) {
-    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
+  const workspaceResult = workspaceService.getWorkspace(workspaceId);
+  if (!workspaceResult.ok) {
+    return c.json(
+      createErrorResponse(workspaceResult.code, workspaceResult.error),
+      httpStatusFromCode(workspaceResult.code),
+    );
   }
 
   const agents = service.listAgents(workspaceId);
@@ -53,12 +56,6 @@ agentRouter.get("/workspaces/:workspaceId/agents", (c) => {
 agentRouter.post("/workspaces/:workspaceId/agents", async (c) => {
   const workspaceId = c.req.param("workspaceId");
 
-  // Verify workspace exists
-  const workspace = workspaceService.getWorkspace(workspaceId);
-  if (!workspace) {
-    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
-  }
-
   const body = await c.req.json();
   const parsed = createAgentSchema.safeParse(body);
 
@@ -73,9 +70,16 @@ agentRouter.post("/workspaces/:workspaceId/agents", async (c) => {
     );
   }
 
-  const agent = service.createAgent(workspaceId, parsed.data);
+  const result = service.createAgent(workspaceId, parsed.data);
 
-  return c.json(serializeAgent(agent), 201);
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json(serializeAgent(result.data), 201);
 });
 
 /**
@@ -83,12 +87,6 @@ agentRouter.post("/workspaces/:workspaceId/agents", async (c) => {
  */
 agentRouter.put("/workspaces/:workspaceId/agents/reorder", async (c) => {
   const workspaceId = c.req.param("workspaceId");
-
-  // Verify workspace exists
-  const workspace = workspaceService.getWorkspace(workspaceId);
-  if (!workspace) {
-    return c.json(createErrorResponse("NOT_FOUND", "Workspace not found"), 404);
-  }
 
   const body = await c.req.json();
   const parsed = reorderAgentsSchema.safeParse(body);
@@ -104,20 +102,17 @@ agentRouter.put("/workspaces/:workspaceId/agents/reorder", async (c) => {
     );
   }
 
-  const agents = service.reorderAgents(workspaceId, parsed.data.agentIds);
+  const result = service.reorderAgents(workspaceId, parsed.data.agentIds);
 
-  if (agents === null) {
+  if (!result.ok) {
     return c.json(
-      createErrorResponse(
-        "VALIDATION_ERROR",
-        "One or more agent IDs are invalid or do not belong to this workspace",
-      ),
-      400,
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
     );
   }
 
   return c.json({
-    agents: agents.map(serializeAgent),
+    agents: result.data.map(serializeAgent),
   });
 });
 
@@ -141,13 +136,16 @@ agentRouter.put("/agents/:id", async (c) => {
     );
   }
 
-  const agent = service.updateAgent(id, parsed.data);
+  const result = service.updateAgent(id, parsed.data);
 
-  if (!agent) {
-    return c.json(createErrorResponse("NOT_FOUND", "Agent not found"), 404);
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
   }
 
-  return c.json(serializeAgent(agent));
+  return c.json(serializeAgent(result.data));
 });
 
 /**
@@ -156,10 +154,13 @@ agentRouter.put("/agents/:id", async (c) => {
 agentRouter.delete("/agents/:id", (c) => {
   const id = c.req.param("id");
 
-  const deleted = service.deleteAgent(id);
+  const result = service.deleteAgent(id);
 
-  if (!deleted) {
-    return c.json(createErrorResponse("NOT_FOUND", "Agent not found"), 404);
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
   }
 
   return c.body(null, 204);

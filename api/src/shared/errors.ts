@@ -2,7 +2,9 @@ export type ErrorCode =
   | "NOT_FOUND"
   | "VALIDATION_ERROR"
   | "CONFLICT"
-  | "INTERNAL_ERROR";
+  | "INTERNAL_ERROR"
+  | "AGENT_NOT_FOUND"
+  | "AGENT_NOT_IN_WORKSPACE";
 
 export interface ApiError {
   code: ErrorCode;
@@ -26,4 +28,44 @@ export function createErrorResponse(
       message,
     },
   };
+}
+
+/**
+ * Discriminated union Result type for service layer.
+ * Use `ok()` and `err()` helpers to create results.
+ */
+export type Result<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: string; code: ErrorCode };
+
+/**
+ * Create a success result.
+ */
+export function ok<T>(data: T): Result<T> {
+  return { ok: true, data };
+}
+
+/**
+ * Create an error result.
+ */
+export function err(error: string, code: ErrorCode): Result<never> {
+  return { ok: false, error, code };
+}
+
+/**
+ * Map error codes to HTTP status codes.
+ */
+export function httpStatusFromCode(code: ErrorCode): number {
+  switch (code) {
+    case "NOT_FOUND":
+    case "AGENT_NOT_FOUND":
+      return 404;
+    case "VALIDATION_ERROR":
+    case "AGENT_NOT_IN_WORKSPACE":
+      return 400;
+    case "CONFLICT":
+      return 409;
+    case "INTERNAL_ERROR":
+      return 500;
+  }
 }

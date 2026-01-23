@@ -1,6 +1,6 @@
 import { existsSync, statSync } from "node:fs";
 
-import { generateId } from "../shared";
+import { err, generateId, ok, type Result } from "../shared";
 import * as repository from "./repository";
 import type {
   CreateWorkspaceInput,
@@ -10,25 +10,25 @@ import type {
 
 /**
  * Validates that a working directory path exists and is a directory.
- * Throws an error if validation fails.
+ * Returns an error message if invalid, null if valid.
  */
-function validateWorkingDirectory(path: string | null | undefined): void {
+function validateWorkingDirectory(
+  path: string | null | undefined,
+): string | null {
   if (!path) {
-    return; // null/undefined is allowed
+    return null; // null/undefined is allowed
   }
 
   if (!existsSync(path)) {
-    throw new Error(
-      "The specified path does not exist or is not a valid directory",
-    );
+    return "The specified path does not exist or is not a valid directory";
   }
 
   const stat = statSync(path);
   if (!stat.isDirectory()) {
-    throw new Error(
-      "The specified path does not exist or is not a valid directory",
-    );
+    return "The specified path does not exist or is not a valid directory";
   }
+
+  return null;
 }
 
 /**
@@ -40,17 +40,25 @@ export function listWorkspaces(searchQuery?: string): Workspace[] {
 
 /**
  * Get a workspace by ID.
- * Returns null if not found.
  */
-export function getWorkspace(id: string): Workspace | null {
-  return repository.findById(id);
+export function getWorkspace(id: string): Result<Workspace> {
+  const workspace = repository.findById(id);
+  if (!workspace) {
+    return err("Workspace not found", "NOT_FOUND");
+  }
+  return ok(workspace);
 }
 
 /**
  * Create a new workspace.
  */
-export function createWorkspace(input: CreateWorkspaceInput): Workspace {
-  validateWorkingDirectory(input.workingDirectory);
+export function createWorkspace(
+  input: CreateWorkspaceInput,
+): Result<Workspace> {
+  const validationError = validateWorkingDirectory(input.workingDirectory);
+  if (validationError) {
+    return err(validationError, "VALIDATION_ERROR");
+  }
 
   const now = new Date();
   const workspace: Workspace = {
@@ -62,25 +70,33 @@ export function createWorkspace(input: CreateWorkspaceInput): Workspace {
     createdAt: now,
     updatedAt: now,
   };
-  return repository.create(workspace);
+  return ok(repository.create(workspace));
 }
 
 /**
  * Update an existing workspace.
- * Returns the updated workspace, or null if not found.
  */
 export function updateWorkspace(
   id: string,
   input: UpdateWorkspaceInput,
-): Workspace | null {
-  validateWorkingDirectory(input.workingDirectory);
+): Result<Workspace> {
+  const validationError = validateWorkingDirectory(input.workingDirectory);
+  if (validationError) {
+    return err(validationError, "VALIDATION_ERROR");
+  }
 
   const now = new Date();
-  return repository.update(
+  const workspace = repository.update(
     id,
     input.title,
     input.description ?? "",
     input.workingDirectory ?? null,
     now,
   );
+
+  if (!workspace) {
+    return err("Workspace not found", "NOT_FOUND");
+  }
+
+  return ok(workspace);
 }

@@ -19,5 +19,15 @@ export const listMessagesQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
 });
 
+/**
+ * Schema for creating a chat request body.
+ * All fields are optional.
+ */
+export const createChatBodySchema = z.object({
+  title: z.string().max(255).optional(),
+  agentId: z.string().optional().nullable(),
+});
+
 export type ListChatsQuery = z.infer<typeof listChatsQuerySchema>;
 export type ListMessagesQuery = z.infer<typeof listMessagesQuerySchema>;
+export type CreateChatBody = z.infer<typeof createChatBodySchema>;

@@ -184,3 +184,26 @@ export function findMessagesByChatId(
     hasMore: offset + rows.length < total,
   };
 }
+
+/**
+ * Create a new chat in the database.
+ * Returns the created Chat entity.
+ */
+export function create(
+  id: string,
+  workspaceId: string,
+  title: string,
+  agentId: string | null,
+): Chat {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  db.prepare(
+    `
+    INSERT INTO chats (id, workspace_id, agent_id, title, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `,
+  ).run(id, workspaceId, agentId, title, now, now);
+
+  return findById(id)!;
+}

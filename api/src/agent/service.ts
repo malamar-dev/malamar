@@ -1,4 +1,5 @@
-import { generateId } from "../shared";
+import { err, generateId, ok, type Result } from "../shared";
+import * as workspaceRepository from "../workspace/repository";
 import * as repository from "./repository";
 import type { Agent, CreateAgentInput, UpdateAgentInput } from "./types";
 
@@ -11,10 +12,13 @@ export function listAgents(workspaceId: string): Agent[] {
 
 /**
  * Get an agent by ID.
- * Returns null if not found.
  */
-export function getAgent(id: string): Agent | null {
-  return repository.findById(id);
+export function getAgent(id: string): Result<Agent> {
+  const agent = repository.findById(id);
+  if (!agent) {
+    return err("Agent not found", "NOT_FOUND");
+  }
+  return ok(agent);
 }
 
 /**
@@ -23,7 +27,13 @@ export function getAgent(id: string): Agent | null {
 export function createAgent(
   workspaceId: string,
   input: CreateAgentInput,
-): Agent {
+): Result<Agent> {
+  // Validate workspace exists
+  const workspace = workspaceRepository.findById(workspaceId);
+  if (!workspace) {
+    return err("Workspace not found", "NOT_FOUND");
+  }
+
   const now = new Date();
   const maxOrder = repository.getMaxOrder(workspaceId);
 
@@ -38,37 +48,54 @@ export function createAgent(
     updatedAt: now,
   };
 
-  return repository.create(agent);
+  return ok(repository.create(agent));
 }
 
 /**
  * Update an existing agent.
- * Returns null if not found.
  */
-export function updateAgent(id: string, input: UpdateAgentInput): Agent | null {
-  return repository.update(id, input);
+export function updateAgent(
+  id: string,
+  input: UpdateAgentInput,
+): Result<Agent> {
+  const agent = repository.update(id, input);
+  if (!agent) {
+    return err("Agent not found", "NOT_FOUND");
+  }
+  return ok(agent);
 }
 
 /**
  * Delete an agent by ID.
- * Returns true if deleted, false if not found.
  */
-export function deleteAgent(id: string): boolean {
-  return repository.deleteById(id);
+export function deleteAgent(id: string): Result<boolean> {
+  const deleted = repository.deleteById(id);
+  if (!deleted) {
+    return err("Agent not found", "NOT_FOUND");
+  }
+  return ok(true);
 }
 
 /**
  * Reorder agents in a workspace.
- * Returns null if any agent ID is invalid.
  */
 export function reorderAgents(
   workspaceId: string,
   agentIds: string[],
-): Agent[] | null {
-  // Validate all agent IDs belong to the workspace
-  if (!repository.validateAgentIds(workspaceId, agentIds)) {
-    return null;
+): Result<Agent[]> {
+  // Validate workspace exists
+  const workspace = workspaceRepository.findById(workspaceId);
+  if (!workspace) {
+    return err("Workspace not found", "NOT_FOUND");
   }
 
-  return repository.reorder(workspaceId, agentIds);
+  // Validate all agent IDs belong to the workspace
+  if (!repository.validateAgentIds(workspaceId, agentIds)) {
+    return err(
+      "One or more agent IDs are invalid or do not belong to this workspace",
+      "VALIDATION_ERROR",
+    );
+  }
+
+  return ok(repository.reorder(workspaceId, agentIds));
 }
