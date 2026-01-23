@@ -28,6 +28,32 @@ export const createChatBodySchema = z.object({
   agentId: z.string().optional().nullable(),
 });
 
+/**
+ * Schema for creating a message request body.
+ */
+export const createMessageBodySchema = z.object({
+  message: z.string().min(1).max(100000),
+});
+
+/**
+ * Schema for validating CLI output from chat processing.
+ * Both message and actions are optional.
+ */
+export const cliOutputSchema = z.object({
+  message: z.string().optional(),
+  actions: z
+    .array(
+      z
+        .object({
+          type: z.string(),
+        })
+        .passthrough(),
+    )
+    .optional(),
+});
+
 export type ListChatsQuery = z.infer<typeof listChatsQuerySchema>;
 export type ListMessagesQuery = z.infer<typeof listMessagesQuerySchema>;
 export type CreateChatBody = z.infer<typeof createChatBodySchema>;
+export type CreateMessageBody = z.infer<typeof createMessageBodySchema>;
+export type CliOutput = z.infer<typeof cliOutputSchema>;

@@ -4,6 +4,10 @@ export type {
   ChatAction,
   ChatMessage,
   ChatMessageRole,
+  ChatQueueItem,
+  ChatQueueStatus,
+  CliChatOutput,
   PaginatedResult,
   PaginationParams,
+  RenameChatAction,
 } from "./types";

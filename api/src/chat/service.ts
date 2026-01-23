@@ -2,7 +2,14 @@ import * as agentRepository from "../agent/repository";
 import { err, generateId, ok, type Result } from "../shared";
 import * as workspaceRepository from "../workspace/repository";
 import * as repository from "./repository";
-import type { Chat, ChatMessage, PaginatedResult } from "./types";
+import type {
+  Chat,
+  ChatAction,
+  ChatMessage,
+  ChatQueueItem,
+  PaginatedResult,
+  RenameChatAction,
+} from "./types";
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
@@ -99,4 +106,133 @@ export function createChat(
   );
 
   return ok(chat);
+}
+
+// =============================================================================
+// Chat Message Operations
+// =============================================================================
+
+/**
+ * Create a user message and queue it for processing.
+ * Returns an error if the chat already has an in-progress queue item.
+ */
+export function createMessage(
+  chatId: string,
+  message: string,
+): Result<{ message: ChatMessage; queueItem: ChatQueueItem }> {
+  // Validate chat exists
+  const chat = repository.findById(chatId);
+  if (!chat) {
+    return err("Chat not found", "NOT_FOUND");
+  }
+
+  // Check for in-progress queue item (reject concurrent messages)
+  const inProgress = repository.findInProgressQueueByChatId(chatId);
+  if (inProgress) {
+    return err("Chat is already processing a message", "CONFLICT");
+  }
+
+  // Create user message
+  const messageId = generateId();
+  const chatMessage = repository.createMessage(
+    messageId,
+    chatId,
+    "user",
+    message,
+  );
+
+  // Create queue item
+  const queueId = generateId();
+  const queueItem = repository.createQueueItem(
+    queueId,
+    chatId,
+    chat.workspaceId,
+  );
+
+  return ok({ message: chatMessage, queueItem });
+}
+
+/**
+ * Cancel an in-progress chat processing.
+ * The actual subprocess killing is handled by the chat processor.
+ * Returns an error if no active processing exists.
+ */
+export function cancelProcessing(
+  chatId: string,
+  killProcess: (chatId: string) => boolean,
+): Result<void> {
+  // Validate chat exists
+  const chat = repository.findById(chatId);
+  if (!chat) {
+    return err("Chat not found", "NOT_FOUND");
+  }
+
+  // Find in-progress queue item
+  const queueItem = repository.findInProgressQueueByChatId(chatId);
+  if (!queueItem) {
+    return err("No active processing to cancel", "NOT_FOUND");
+  }
+
+  // Kill the subprocess
+  killProcess(chatId);
+
+  // Mark queue item as failed
+  repository.updateQueueStatus(queueItem.id, "failed");
+
+  // Add system message about cancellation
+  const messageId = generateId();
+  repository.createMessage(
+    messageId,
+    chatId,
+    "system",
+    "Processing was cancelled by user",
+  );
+
+  return ok(undefined);
+}
+
+/**
+ * Execute actions returned by an agent.
+ * Currently only supports rename_chat action.
+ * Invalid or unsupported actions are silently ignored.
+ */
+export function executeActions(chatId: string, actions: ChatAction[]): void {
+  for (const action of actions) {
+    if (action.type === "rename_chat") {
+      // Only allow rename on first agent response
+      const hasExisting = repository.hasAgentMessages(chatId);
+      if (!hasExisting) {
+        const renameAction = action as RenameChatAction;
+        const title = renameAction.title?.trim();
+        if (title) {
+          repository.updateTitle(chatId, title);
+        }
+      }
+      // Silently ignore if not first response or invalid title
+    }
+    // Other action types are silently ignored for now
+  }
+}
+
+/**
+ * Create an agent message (called by the chat processor).
+ */
+export function createAgentMessage(
+  chatId: string,
+  message: string,
+  actions?: ChatAction[] | null,
+): ChatMessage {
+  const messageId = generateId();
+  return repository.createMessage(messageId, chatId, "agent", message, actions);
+}
+
+/**
+ * Create a system message (called by the chat processor on error).
+ */
+export function createSystemMessage(
+  chatId: string,
+  message: string,
+): ChatMessage {
+  const messageId = generateId();
+  return repository.createMessage(messageId, chatId, "system", message);
 }

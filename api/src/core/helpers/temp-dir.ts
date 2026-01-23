@@ -36,13 +36,13 @@ export async function createChatTemporaryDir(chatId: string): Promise<string> {
 }
 
 /**
- * Validates that a path is a safe Malamar temporary directory.
+ * Validates that a path is a safe Malamar temporary path.
  * Returns true only if:
  * 1. The path is directly inside the system temp directory (no subdirectories)
- * 2. The directory name starts with the Malamar prefix
+ * 2. The path name starts with the Malamar prefix
  */
-function isSafeMalamarTempDir(dirPath: string): boolean {
-  const normalizedPath = resolve(dirPath);
+function isSafeMalamarTempPath(path: string): boolean {
+  const normalizedPath = resolve(path);
   const tempDir = resolve(tmpdir());
 
   // Check that the parent directory is exactly the temp directory
@@ -51,18 +51,19 @@ function isSafeMalamarTempDir(dirPath: string): boolean {
     return false;
   }
 
-  // Check that the directory name starts with our prefix
-  const dirName = basename(normalizedPath);
-  return dirName.startsWith(MALAMAR_TMP_PREFIX);
+  // Check that the path name starts with our prefix
+  const pathName = basename(normalizedPath);
+  return pathName.startsWith(MALAMAR_TMP_PREFIX);
 }
 
 /**
- * Remove a temporary directory (async, ignores errors).
+ * Remove a temporary path (file or directory).
+ * Async, ignores errors. Only removes paths in temp dir with malamar_ prefix.
  */
-export function removeTemporaryDir(dirPath: string | null): void {
-  if (!dirPath || !isSafeMalamarTempDir(dirPath)) return;
+export function removeTemporaryPath(path: string | null): void {
+  if (!path || !isSafeMalamarTempPath(path)) return;
 
   setTimeout(() => {
-    rm(dirPath, { recursive: true, force: true }).catch(() => {});
+    rm(path, { recursive: true, force: true }).catch(() => {});
   }, 0);
 }

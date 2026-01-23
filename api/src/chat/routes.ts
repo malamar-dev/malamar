@@ -1,9 +1,11 @@
 import { Hono } from "hono";
 
+import { killChatProcess } from "../jobs";
 import { createErrorResponse, httpStatusFromCode } from "../shared";
 import * as workspaceService from "../workspace/service";
 import {
   createChatBodySchema,
+  createMessageBodySchema,
   listChatsQuerySchema,
   listMessagesQuerySchema,
 } from "./schemas";
@@ -181,4 +183,65 @@ chatRouter.get("/chats/:id/messages", (c) => {
     messages: result.items.map(serializeMessage),
     pagination: serializePagination(result),
   });
+});
+
+/**
+ * POST /chats/:id/messages - Create a user message
+ * Body: { message: string }
+ * Returns 202 Accepted immediately after queuing.
+ * Returns 409 Conflict if chat is already processing.
+ */
+chatRouter.post("/chats/:id/messages", async (c) => {
+  const chatId = c.req.param("id");
+
+  // Parse and validate request body
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = createMessageBodySchema.safeParse(body);
+
+  if (!parsed.success) {
+    const firstError = parsed.error.errors[0];
+    return c.json(
+      createErrorResponse(
+        "VALIDATION_ERROR",
+        firstError?.message ?? "Invalid request body",
+      ),
+      400,
+    );
+  }
+
+  const result = service.createMessage(chatId, parsed.data.message);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json(
+    {
+      message: serializeMessage(result.data.message),
+    },
+    202,
+  );
+});
+
+/**
+ * POST /chats/:id/cancel - Cancel active chat processing
+ * Kills the CLI subprocess and marks the queue item as failed.
+ * Returns 404 if no active processing exists.
+ */
+chatRouter.post("/chats/:id/cancel", (c) => {
+  const chatId = c.req.param("id");
+
+  const result = service.cancelProcessing(chatId, killChatProcess);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json({ success: true });
 });

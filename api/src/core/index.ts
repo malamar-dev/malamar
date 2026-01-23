@@ -9,6 +9,6 @@ export {
   createChatTemporaryDir,
   createRandomTemporaryDir,
   createTaskTemporaryDir,
-  removeTemporaryDir,
+  removeTemporaryPath,
 } from "./helpers/temp-dir";
 export type { Config } from "./types";

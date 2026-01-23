@@ -1,7 +1,7 @@
 import {
   createRandomTemporaryDir,
   loadConfig,
-  removeTemporaryDir,
+  removeTemporaryPath,
 } from "../../core";
 import { CLI_HEALTH_CHECK_PROMPT } from "../../prompts";
 import type { CliAdapter, CliHealthResult } from "../types";
@@ -220,7 +220,7 @@ export const claudeAdapter: CliAdapter = {
         version,
       };
     } finally {
-      removeTemporaryDir(tempDir);
+      removeTemporaryPath(tempDir);
     }
   },
 };

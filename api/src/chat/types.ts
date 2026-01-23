@@ -81,3 +81,48 @@ export interface PaginatedResult<T> {
   limit: number;
   hasMore: boolean;
 }
+
+/**
+ * Possible statuses for a chat queue item.
+ */
+export type ChatQueueStatus = "queued" | "in_progress" | "completed" | "failed";
+
+/**
+ * Chat queue item entity as returned by the API.
+ */
+export interface ChatQueueItem {
+  id: string;
+  chatId: string;
+  workspaceId: string;
+  status: ChatQueueStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+/**
+ * Database row representation of a chat queue item.
+ */
+export interface ChatQueueRow {
+  id: string;
+  chat_id: string;
+  workspace_id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Rename chat action type.
+ */
+export interface RenameChatAction extends ChatAction {
+  type: "rename_chat";
+  title: string;
+}
+
+/**
+ * CLI output schema for chat responses.
+ */
+export interface CliChatOutput {
+  message?: string;
+  actions?: ChatAction[];
+}
