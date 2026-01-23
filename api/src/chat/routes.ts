@@ -9,6 +9,7 @@ import {
   listChatsQuerySchema,
   listMessagesQuerySchema,
 } from "./schemas";
+import type { ChatWithStatus } from "./service";
 import * as service from "./service";
 import type { Chat, ChatMessage, PaginatedResult } from "./types";
 
@@ -26,6 +27,16 @@ function serializeChat(chat: Chat) {
     title: chat.title,
     createdAt: chat.createdAt.toISOString(),
     updatedAt: chat.updatedAt.toISOString(),
+  };
+}
+
+/**
+ * Serialize a chat with processing status for API response.
+ */
+function serializeChatWithStatus(chat: ChatWithStatus) {
+  return {
+    ...serializeChat(chat),
+    isProcessing: chat.isProcessing,
   };
 }
 
@@ -130,12 +141,12 @@ chatRouter.post("/workspaces/:workspaceId/chats", async (c) => {
 
 /**
  * GET /chats/:id - Get chat details
- * Returns chat metadata without messages.
+ * Returns chat metadata with processing status.
  */
 chatRouter.get("/chats/:id", (c) => {
   const id = c.req.param("id");
 
-  const result = service.getChat(id);
+  const result = service.getChatWithStatus(id);
   if (!result.ok) {
     return c.json(
       createErrorResponse(result.code, result.error),
@@ -143,7 +154,7 @@ chatRouter.get("/chats/:id", (c) => {
     );
   }
 
-  return c.json(serializeChat(result.data));
+  return c.json(serializeChatWithStatus(result.data));
 });
 
 /**

@@ -304,6 +304,21 @@ export function findInProgressQueueByChatId(
 }
 
 /**
+ * Check if a chat has any active queue items (queued or in_progress).
+ * Returns true if processing is ongoing or pending.
+ */
+export function hasActiveQueueItem(chatId: string): boolean {
+  const db = getDatabase();
+  const result = db
+    .query<{ count: number }, [string]>(
+      `SELECT COUNT(*) as count FROM chat_queue
+       WHERE chat_id = ? AND status IN ('queued', 'in_progress')`,
+    )
+    .get(chatId);
+  return (result?.count ?? 0) > 0;
+}
+
+/**
  * Find a queue item by ID.
  * Returns null if not found.
  */

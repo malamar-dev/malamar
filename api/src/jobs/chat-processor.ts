@@ -125,16 +125,18 @@ async function processQueueItem(
       throw new Error(result.error || "CLI invocation failed");
     }
 
-    // Create agent message
+    // Extract response data
     const agentMessage = result.output?.message || "";
     const actions = result.output?.actions || null;
 
-    chatService.createAgentMessage(chatId, agentMessage, actions);
-
-    // Execute actions (rename_chat on first response)
+    // Execute actions BEFORE creating agent message
+    // This ensures hasAgentMessages() returns false for first response
     if (actions && actions.length > 0) {
       chatService.executeActions(chatId, actions);
     }
+
+    // Create agent message
+    chatService.createAgentMessage(chatId, agentMessage, actions);
 
     // Mark as completed
     chatRepository.updateQueueStatus(queueId, "completed");

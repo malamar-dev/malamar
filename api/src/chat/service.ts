@@ -55,6 +55,30 @@ export function getChat(id: string): Result<Chat> {
 }
 
 /**
+ * Chat with processing status included.
+ */
+export interface ChatWithStatus extends Chat {
+  isProcessing: boolean;
+}
+
+/**
+ * Get a single chat by ID with processing status.
+ */
+export function getChatWithStatus(id: string): Result<ChatWithStatus> {
+  const chat = repository.findById(id);
+  if (!chat) {
+    return err("Chat not found", "NOT_FOUND");
+  }
+
+  const isProcessing = repository.hasActiveQueueItem(id);
+
+  return ok({
+    ...chat,
+    isProcessing,
+  });
+}
+
+/**
  * Get paginated list of messages for a chat.
  */
 export function getMessages(

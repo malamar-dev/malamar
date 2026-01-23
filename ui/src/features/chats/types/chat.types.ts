@@ -6,21 +6,66 @@ export interface Chat {
   agentId: string | null;
   cliType: CliType | null;
   title: string;
+  isProcessing: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface ChatsResponse {
   chats: Chat[];
-  pagination: {
-    total: number;
-    offset: number;
-    limit: number;
-    hasMore: boolean;
-  };
+  pagination: PaginationMeta;
 }
 
 export interface CreateChatInput {
   title?: string;
   agentId?: string | null;
+}
+
+// =============================================================================
+// Chat Messages
+// =============================================================================
+
+export type ChatMessageRole = "user" | "agent" | "system";
+
+export interface ChatAction {
+  type: string;
+  [key: string]: unknown;
+}
+
+export interface ChatMessage {
+  id: string;
+  chatId: string;
+  role: ChatMessageRole;
+  message: string;
+  actions: ChatAction[] | null;
+  createdAt: string;
+}
+
+export interface MessagesResponse {
+  messages: ChatMessage[];
+  pagination: PaginationMeta;
+}
+
+export interface SendMessageInput {
+  message: string;
+}
+
+export interface SendMessageResponse {
+  message: ChatMessage;
+}
+
+// =============================================================================
+// Pagination
+// =============================================================================
+
+export interface PaginationMeta {
+  total: number;
+  offset: number;
+  limit: number;
+  hasMore: boolean;
+}
+
+export interface PaginationParams {
+  offset?: number;
+  limit?: number;
 }
