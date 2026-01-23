@@ -1,4 +1,6 @@
-export type CliType = "claude" | "gemini" | "codex" | "opencode";
+import type { CliType } from "@/types/cli.types.ts";
+
+export type { CliType };
 
 export interface Agent {
   id: string;
