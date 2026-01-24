@@ -26,7 +26,7 @@ export const useInfiniteChats = (
   options?: { q?: string },
 ) => {
   return useInfiniteQuery({
-    queryKey: ["chats-infinite", workspaceId, options?.q],
+    queryKey: ["chats", workspaceId, "infinite", options?.q],
     queryFn: ({ pageParam = 0 }) =>
       chatsApi.list(workspaceId, {
         q: options?.q || undefined,

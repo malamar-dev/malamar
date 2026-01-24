@@ -145,7 +145,7 @@ export function reorder(workspaceId: string, agentIds: string[]): Agent[] {
   // Wrap all updates in a transaction for atomicity
   db.transaction(() => {
     for (let i = 0; i < agentIds.length; i++) {
-      updateStmt.run(i + 1, now, agentIds[i], workspaceId);
+      updateStmt.run(i + 1, now, agentIds[i]!, workspaceId);
     }
   })();
 

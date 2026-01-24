@@ -11,7 +11,7 @@ export const useMessages = (
   isProcessing?: boolean,
 ) => {
   return useQuery({
-    queryKey: ["chat-messages", chatId, params],
+    queryKey: ["chats", chatId, "messages", params],
     queryFn: () => chatsApi.getMessages(chatId, params),
     enabled: !!chatId,
     // Only poll when processing to catch new agent messages

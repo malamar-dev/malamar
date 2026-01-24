@@ -12,7 +12,12 @@ import type {
 } from "../types/chat.types.ts";
 
 export const chatsApi = {
-  // Chat operations
+  /**
+   * Fetches a paginated list of chats for a workspace.
+   * @param workspaceId - The workspace ID to fetch chats for
+   * @param params - Optional pagination and search parameters
+   * @returns Paginated list of chats
+   */
   list: (workspaceId: string, params?: ListChatsParams) => {
     const searchParams = new URLSearchParams();
     if (params?.q) {
@@ -28,11 +33,29 @@ export const chatsApi = {
     const url = `/workspaces/${workspaceId}/chats${query ? `?${query}` : ""}`;
     return apiClient.get<ChatsResponse>(url);
   },
+
+  /**
+   * Fetches a single chat by its ID.
+   * @param id - The chat ID
+   * @returns The chat details
+   */
   get: (id: string) => apiClient.get<Chat>(`/chats/${id}`),
+
+  /**
+   * Creates a new chat in a workspace.
+   * @param workspaceId - The workspace ID to create the chat in
+   * @param input - The chat creation data
+   * @returns The newly created chat
+   */
   create: (workspaceId: string, input: CreateChatInput) =>
     apiClient.post<Chat>(`/workspaces/${workspaceId}/chats`, input),
 
-  // Message operations
+  /**
+   * Fetches messages for a chat with pagination.
+   * @param chatId - The chat ID to fetch messages for
+   * @param params - Optional pagination parameters
+   * @returns Paginated list of messages
+   */
   getMessages: (chatId: string, params?: PaginationParams) => {
     const searchParams = new URLSearchParams();
     if (params?.offset !== undefined) {
@@ -45,8 +68,21 @@ export const chatsApi = {
     const url = `/chats/${chatId}/messages${query ? `?${query}` : ""}`;
     return apiClient.get<MessagesResponse>(url);
   },
+
+  /**
+   * Sends a message to a chat.
+   * @param chatId - The chat ID to send the message to
+   * @param input - The message content
+   * @returns The response from sending the message
+   */
   sendMessage: (chatId: string, input: SendMessageInput) =>
     apiClient.post<SendMessageResponse>(`/chats/${chatId}/messages`, input),
+
+  /**
+   * Cancels ongoing message processing for a chat.
+   * @param chatId - The chat ID to cancel processing for
+   * @returns Success status
+   */
   cancelProcessing: (chatId: string) =>
     apiClient.post<{ success: boolean }>(`/chats/${chatId}/cancel`, {}),
 };

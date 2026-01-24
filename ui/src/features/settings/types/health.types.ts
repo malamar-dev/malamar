@@ -1,4 +1,4 @@
-import type { CliType } from "@/types/cli.types.ts";
+import type { CliType } from "./cli.types.ts";
 
 export type CliHealthStatus = "healthy" | "unhealthy";
 

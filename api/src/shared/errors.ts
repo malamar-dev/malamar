@@ -1,3 +1,5 @@
+import type { ContentfulStatusCode } from "hono/utils/http-status";
+
 export type ErrorCode =
   | "NOT_FOUND"
   | "VALIDATION_ERROR"
@@ -55,7 +57,7 @@ export function err(error: string, code: ErrorCode): Result<never> {
 /**
  * Map error codes to HTTP status codes.
  */
-export function httpStatusFromCode(code: ErrorCode): number {
+export function httpStatusFromCode(code: ErrorCode): ContentfulStatusCode {
   switch (code) {
     case "NOT_FOUND":
     case "AGENT_NOT_FOUND":

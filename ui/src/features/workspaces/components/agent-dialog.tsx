@@ -34,9 +34,9 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils.ts";
 
-import { useCreateAgent } from "../../hooks/use-create-agent.ts";
-import { useUpdateAgent } from "../../hooks/use-update-agent.ts";
-import type { Agent, CliType } from "../../types/agent.types.ts";
+import { useCreateAgent } from "../hooks/use-create-agent.ts";
+import { useUpdateAgent } from "../hooks/use-update-agent.ts";
+import type { Agent, CliType } from "../types/agent.types.ts";
 
 const CLI_TYPES: { value: CliType; label: string }[] = [
   { value: "claude", label: "Claude" },

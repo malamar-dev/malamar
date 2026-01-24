@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
+import type { CliType } from "@/features/settings/types/cli.types.ts";
 import type { HealthResponse } from "@/features/settings/types/health.types.ts";
-import type { CliType } from "@/types/cli.types.ts";
 
 export type ServerPropsState = {
   health: HealthResponse | null;

@@ -23,7 +23,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item.tsx";
 
-import type { Agent } from "../../types/agent.types.ts";
+import type { Agent } from "../types/agent.types.ts";
 
 interface AgentItemProps {
   agent: Agent;

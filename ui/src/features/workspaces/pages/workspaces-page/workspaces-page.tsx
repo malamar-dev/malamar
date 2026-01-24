@@ -13,9 +13,9 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { CreateWorkspaceDialog } from "@/features/workspaces/pages/workspaces-page/create-workspace-dialog.tsx";
 import { formatRelativeTime } from "@/lib/date-utils.ts";
 
+import { CreateWorkspaceDialog } from "../../components/create-workspace-dialog.tsx";
 import { useWorkspaces } from "../../hooks/use-workspaces.ts";
 import type { Workspace } from "../../types/workspace.types.ts";
 

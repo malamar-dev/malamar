@@ -1,4 +1,4 @@
-import type { CliType } from "@/types/cli.types.ts";
+import type { CliType } from "@/features/settings/types/cli.types.ts";
 
 export interface Chat {
   id: string;

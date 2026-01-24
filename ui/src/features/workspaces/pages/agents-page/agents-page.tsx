@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
+import { AgentDialog } from "../../components/agent-dialog.tsx";
+import { AgentItem } from "../../components/agent-item.tsx";
+import { DeleteAgentDialog } from "../../components/delete-agent-dialog.tsx";
 import { useAgents } from "../../hooks/use-agents.ts";
 import { useReorderAgents } from "../../hooks/use-reorder-agents.ts";
 import { useWorkspace } from "../../hooks/use-workspace.ts";
 import type { Agent } from "../../types/agent.types.ts";
-import { AgentDialog } from "./agent-dialog.tsx";
-import { AgentItem } from "./agent-item.tsx";
-import { DeleteAgentDialog } from "./delete-agent-dialog.tsx";
 
 function EmptyState() {
   return (

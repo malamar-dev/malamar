@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/drawer.tsx";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
-import { useDeleteAgent } from "../../hooks/use-delete-agent.ts";
-import type { Agent } from "../../types/agent.types.ts";
+import { useDeleteAgent } from "../hooks/use-delete-agent.ts";
+import type { Agent } from "../types/agent.types.ts";
 
 interface DeleteAgentDialogProps {
   open: boolean;

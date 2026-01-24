@@ -4,7 +4,7 @@ import { workspacesApi } from "../api/workspaces.api.ts";
 
 export const useWorkspace = (id: string) => {
   return useQuery({
-    queryKey: ["workspace", id],
+    queryKey: ["workspaces", id],
     queryFn: () => workspacesApi.get(id),
     enabled: !!id,
   });

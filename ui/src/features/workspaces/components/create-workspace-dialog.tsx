@@ -33,7 +33,7 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils.ts";
 
-import { useCreateWorkspace } from "../../hooks/use-create-workspace.ts";
+import { useCreateWorkspace } from "../hooks/use-create-workspace.ts";
 
 const createWorkspaceSchema = z.object({
   title: z
