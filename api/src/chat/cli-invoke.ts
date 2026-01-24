@@ -107,7 +107,17 @@ The JSON must have this structure:
 \`\`\`
 
 Both "message" and "actions" are optional. Include "message" to respond to the user.
-Include "actions" only when you need to take an action.
+
+## Available Actions
+
+### rename_chat (First Response Only)
+On your FIRST response in a conversation, include the rename_chat action to give the chat a descriptive title based on the user's request.
+
+Guidelines:
+- Keep titles concise (under 50 characters)
+- Use sentence case
+- Describe the main topic or task
+- Examples: "Setting up authentication", "Debug API timeout issue", "Refactor payment module"
 `;
 }
 

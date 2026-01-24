@@ -11,7 +11,7 @@ import type {
   RenameChatAction,
 } from "./types";
 
-const DEFAULT_LIMIT = 20;
+const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 100;
 const DEFAULT_TITLE = "Untitled chat";
 

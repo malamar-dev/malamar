@@ -1,16 +1,13 @@
 import { Link } from "react-router";
 
-import { Badge } from "@/components/ui/badge.tsx";
 import {
   Item,
   ItemContent,
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item.tsx";
-import { useServerProps } from "@/hooks/use-server-props.ts";
+import type { Chat } from "@/features/chats";
 import { formatRelativeTime } from "@/lib/date-utils.ts";
-
-import type { Chat } from "../types/chat.types.ts";
 
 interface ChatItemProps {
   chat: Chat;
@@ -18,19 +15,11 @@ interface ChatItemProps {
 }
 
 export function ChatItem({ chat, agentName }: ChatItemProps) {
-  const { defaultCliType } = useServerProps();
-  const displayCliType = chat.cliType ?? defaultCliType;
-
   return (
     <Link to={`/chat/${chat.id}`}>
       <Item variant="muted">
         <ItemContent>
-          <ItemTitle>
-            {chat.title}{" "}
-            <Badge variant="outline" className="text-xs uppercase">
-              {displayCliType}
-            </Badge>
-          </ItemTitle>
+          <ItemTitle>{chat.title}</ItemTitle>
 
           <ItemDescription className="line-clamp-1">
             {agentName ?? "Malamar"} · {formatRelativeTime(chat.updatedAt)}

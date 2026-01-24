@@ -4,6 +4,7 @@ import type {
   Chat,
   ChatsResponse,
   CreateChatInput,
+  ListChatsParams,
   MessagesResponse,
   PaginationParams,
   SendMessageInput,
@@ -12,8 +13,21 @@ import type {
 
 export const chatsApi = {
   // Chat operations
-  list: (workspaceId: string) =>
-    apiClient.get<ChatsResponse>(`/workspaces/${workspaceId}/chats`),
+  list: (workspaceId: string, params?: ListChatsParams) => {
+    const searchParams = new URLSearchParams();
+    if (params?.q) {
+      searchParams.set("q", params.q);
+    }
+    if (params?.offset !== undefined) {
+      searchParams.set("offset", String(params.offset));
+    }
+    if (params?.limit !== undefined) {
+      searchParams.set("limit", String(params.limit));
+    }
+    const query = searchParams.toString();
+    const url = `/workspaces/${workspaceId}/chats${query ? `?${query}` : ""}`;
+    return apiClient.get<ChatsResponse>(url);
+  },
   get: (id: string) => apiClient.get<Chat>(`/chats/${id}`),
   create: (workspaceId: string, input: CreateChatInput) =>
     apiClient.post<Chat>(`/workspaces/${workspaceId}/chats`, input),

@@ -69,3 +69,8 @@ export interface PaginationParams {
   offset?: number;
   limit?: number;
 }
+
+export interface ListChatsParams extends PaginationParams {
+  /** Search query for filtering by title */
+  q?: string;
+}
