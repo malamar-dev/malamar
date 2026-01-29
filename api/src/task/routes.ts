@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 
 import { createErrorResponse, httpStatusFromCode } from "../shared";
+import * as repository from "./repository";
 import {
   createCommentBodySchema,
   createTaskBodySchema,
@@ -22,8 +23,8 @@ export const taskRouter = new Hono();
 /**
  * Serialize a task for API response.
  */
-function serializeTask(task: Task) {
-  return {
+function serializeTask(task: Task, includeCommentCount = false) {
+  const serialized: Record<string, unknown> = {
     id: task.id,
     workspaceId: task.workspaceId,
     summary: task.summary,
@@ -32,6 +33,12 @@ function serializeTask(task: Task) {
     createdAt: task.createdAt.toISOString(),
     updatedAt: task.updatedAt.toISOString(),
   };
+
+  if (includeCommentCount) {
+    serialized.commentCount = repository.countCommentsByTaskId(task.id);
+  }
+
+  return serialized;
 }
 
 /**
@@ -146,7 +153,7 @@ taskRouter.get("/workspaces/:workspaceId/tasks", (c) => {
   }
 
   return c.json({
-    tasks: result.data.items.map(serializeTask),
+    tasks: result.data.items.map((task) => serializeTask(task, true)),
     pagination: serializePagination(result.data),
   });
 });

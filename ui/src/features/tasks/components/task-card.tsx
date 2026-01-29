@@ -1,5 +1,6 @@
-import { LoaderIcon } from "lucide-react";
+import { LoaderIcon, MessageSquareIcon } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge.tsx";
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ interface TaskCardProps {
 
 export function TaskCard({ task, onClick }: TaskCardProps) {
   const isProcessing = task.status === "in_progress";
+  const commentCount = task.commentCount ?? 0;
 
   return (
     <Card
@@ -34,7 +36,15 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       </CardHeader>
       <CardContent className="pt-0">
         <div className="text-muted-foreground flex items-center justify-between text-xs">
-          <span>{formatRelativeTime(task.updatedAt)}</span>
+          <div className="flex items-center gap-2">
+            <span>{formatRelativeTime(task.updatedAt)}</span>
+            {commentCount > 0 && (
+              <Badge variant="secondary" className="h-5 gap-1 px-1.5 text-xs">
+                <MessageSquareIcon className="h-3 w-3" />
+                {commentCount}
+              </Badge>
+            )}
+          </div>
           {isProcessing && (
             <span className="text-primary flex items-center gap-1">
               <LoaderIcon className="h-3 w-3 animate-spin" />

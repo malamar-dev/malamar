@@ -122,7 +122,7 @@ Before testing, ensure:
 ### 4.3 Task Card Display
 - [x] Shows summary (truncated with ellipsis if long)
 - [x] Shows relative time ("5 min ago", "2 days ago")
-- [ ] Shows comment count badge if > 0
+- [x] Shows comment count badge if > 0
 - [ ] Shows priority badge if prioritized
 - [x] Shows processing indicator (pulsing/spinner) when agent is working
 

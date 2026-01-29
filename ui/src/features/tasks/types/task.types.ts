@@ -14,6 +14,7 @@ export interface Task {
   summary: string;
   description: string;
   status: TaskStatus;
+  commentCount?: number;
   createdAt: string;
   updatedAt: string;
 }
