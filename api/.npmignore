@@ -1,0 +1,25 @@
+# Development files
+.eslintrc.js
+eslint.config.js
+.prettierrc
+tsconfig.json
+
+# Test files
+e2e/
+*.test.ts
+__tests__/
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Build artifacts not needed
+*.map
+
+# Environment
+.env
+.env.*

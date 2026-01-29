@@ -21,7 +21,9 @@ const dotVariants = cva("inline-block size-2 rounded-full shrink-0", {
 });
 
 interface DotProps
-  extends React.ComponentProps<"span">, VariantProps<typeof dotVariants> {}
+  extends
+    Omit<React.ComponentProps<"span">, "color">,
+    VariantProps<typeof dotVariants> {}
 
 function Dot({ className, color, pulse, ...props }: DotProps) {
   return (

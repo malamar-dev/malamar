@@ -1,4 +1,4 @@
-e.PHONY: dev dev-api dev-ui install install-api install-ui lint lint-api lint-ui fix fix-api fix-ui
+.PHONY: dev dev-api dev-ui install install-api install-ui lint lint-api lint-ui fix fix-api fix-ui build build-ui pack publish
 
 # Run both `api` and `ui` in parallel
 # API runs without watch to prevent job runner from restarting
@@ -51,3 +51,22 @@ fix-api:
 
 fix-ui:
 	cd ui && bun run lint:fix
+
+# Build for production/npm publishing
+build: build-ui
+	@echo "Copying UI dist to api/ui-dist..."
+	rm -rf api/ui-dist
+	cp -r ui/dist api/ui-dist
+	@echo "Build complete!"
+
+build-ui:
+	@echo "Building UI..."
+	cd ui && bun run build
+
+# Create local npm tarball for testing
+pack: build
+	cd api && npm pack
+
+# Publish to npm
+publish: build
+	cd api && npm publish

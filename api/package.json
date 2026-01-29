@@ -1,14 +1,45 @@
 {
-  "name": "api",
+  "name": "malamar",
+  "version": "0.0.1",
+  "description": "Multi-agent workflow orchestration tool for AI CLIs",
   "module": "src/index.ts",
   "type": "module",
-  "private": true,
+  "bin": {
+    "malamar": "./src/main.ts"
+  },
+  "files": [
+    "src",
+    "ui-dist"
+  ],
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "start": "bun src/index.ts",
+    "start": "bun src/main.ts",
+    "build": "bun run build:ui && bun run build:copy",
+    "build:ui": "cd ../ui && bun run build",
+    "build:copy": "rm -rf ui-dist && cp -r ../ui/dist ui-dist",
+    "prepublishOnly": "bun run build",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "test:e2e": "bun test e2e/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/malamar-dev/malamar.git"
+  },
+  "keywords": [
+    "ai",
+    "cli",
+    "multi-agent",
+    "workflow",
+    "orchestration",
+    "claude",
+    "gemini",
+    "codex"
+  ],
+  "author": "Malamar",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
   },
   "dependencies": {
     "hono": "^4.7.4",

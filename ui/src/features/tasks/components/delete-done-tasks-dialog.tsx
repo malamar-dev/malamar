@@ -110,9 +110,7 @@ function DeleteDoneTasksForm({
 
   const confirmSchema = z.object({
     confirmation: z.literal(workspaceName, {
-      errorMap: () => ({
-        message: `Please type "${workspaceName}" to confirm`,
-      }),
+      message: `Please type "${workspaceName}" to confirm`,
     }),
   });
 

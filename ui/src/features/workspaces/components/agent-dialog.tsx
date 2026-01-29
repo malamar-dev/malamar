@@ -51,7 +51,7 @@ const agentSchema = z.object({
     .min(1, "Name is required")
     .max(255, "Name must be at most 255 characters"),
   cliType: z.enum(["claude", "gemini", "codex", "opencode"], {
-    required_error: "CLI type is required",
+    message: "CLI type is required",
   }),
   instruction: z
     .string()

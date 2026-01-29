@@ -35,14 +35,10 @@ const workspaceSchema = z.object({
     .max(255, "Title must be at most 255 characters"),
   description: z
     .string()
-    .max(1000, "Description must be at most 1000 characters")
-    .optional()
-    .default(""),
+    .max(1000, "Description must be at most 1000 characters"),
   workingDirectory: z
     .string()
-    .max(4096, "Working directory must be at most 4096 characters")
-    .optional()
-    .default(""),
+    .max(4096, "Working directory must be at most 4096 characters"),
 });
 
 type WorkspaceFormData = z.infer<typeof workspaceSchema>;
