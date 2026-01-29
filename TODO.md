@@ -120,11 +120,11 @@ Before testing, ensure:
 - [x] Empty board (all columns) shows "No tasks yet" with CTA
 
 ### 4.3 Task Card Display
-- [ ] Shows summary (truncated with ellipsis if long)
-- [ ] Shows relative time ("5 min ago", "2 days ago")
+- [x] Shows summary (truncated with ellipsis if long)
+- [x] Shows relative time ("5 min ago", "2 days ago")
 - [ ] Shows comment count badge if > 0
 - [ ] Shows priority badge if prioritized
-- [ ] Shows processing indicator (pulsing/spinner) when agent is working
+- [x] Shows processing indicator (pulsing/spinner) when agent is working
 
 ### 4.4 Task Detail Dialog
 - [ ] Opens on card click
