@@ -553,9 +553,9 @@ Before testing, ensure:
 - [ ] Acceptable for single-user scale
 
 ### 16.2 Comment/Log Volume
-- [ ] No hard limits on comments per task
-- [ ] No hard limits on activity logs per task
-- [ ] UI handles reasonable volumes (tens to hundreds)
+- [x] No hard limits on comments per task
+- [x] No hard limits on activity logs per task
+- [x] UI handles reasonable volumes (tens to hundreds)
 
 ### 16.3 Agent Loop Limit
 - [x] Max 100 iterations per task processing cycle
