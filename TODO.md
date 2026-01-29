@@ -303,7 +303,7 @@ Before testing, ensure:
 - [x] Agent messages: left-aligned, markdown rendered
 - [x] System messages: centered, muted style
 - [x] Each shows: author, content, timestamp
-- [ ] Infinite scroll / load more pagination
+- [x] Infinite scroll / load more pagination
 
 ### 8.4 Send Message
 - [x] Input at bottom of chat
