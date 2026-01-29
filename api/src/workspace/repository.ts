@@ -104,3 +104,14 @@ export function update(
 
   return findById(id);
 }
+
+/**
+ * Delete a workspace by ID.
+ * Returns true if the workspace was deleted, false if not found.
+ * Note: CASCADE DELETE is configured in the schema for related tables.
+ */
+export function remove(id: string): boolean {
+  const db = getDatabase();
+  const result = db.prepare(`DELETE FROM workspaces WHERE id = ?`).run(id);
+  return result.changes > 0;
+}

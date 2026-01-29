@@ -136,3 +136,21 @@ workspaceRouter.put("/:id", async (c) => {
 
   return c.json(serializeWorkspace(result.data));
 });
+
+/**
+ * DELETE /:id - Delete a workspace
+ * Cascade deletes all related entities (agents, tasks, chats, etc.)
+ */
+workspaceRouter.delete("/:id", (c) => {
+  const id = c.req.param("id");
+  const result = service.deleteWorkspace(id);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json({ success: true });
+});

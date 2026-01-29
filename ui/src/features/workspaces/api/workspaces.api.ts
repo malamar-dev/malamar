@@ -49,4 +49,12 @@ export const workspacesApi = {
    */
   validatePath: (path: string) =>
     apiClient.post<{ valid: boolean }>("/workspaces/validate-path", { path }),
+
+  /**
+   * Deletes a workspace by its ID.
+   * This will cascade delete all related entities.
+   * @param id - The workspace ID to delete
+   */
+  delete: (id: string) =>
+    apiClient.delete<{ success: boolean }>(`/workspaces/${id}`),
 };

@@ -4,6 +4,7 @@ import {
   AlertTriangleIcon,
   CheckIcon,
   LoaderIcon,
+  Trash2Icon,
 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -30,6 +31,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
+import { DeleteWorkspaceDialog } from "../../components/delete-workspace-dialog.tsx";
 import { useUpdateWorkspace } from "../../hooks/use-update-workspace.ts";
 import { useValidatePath } from "../../hooks/use-validate-path.ts";
 import { useWorkspace } from "../../hooks/use-workspace.ts";
@@ -61,6 +63,7 @@ const SettingsPage = () => {
   const validatePath = useValidatePath();
   const [showSuccess, setShowSuccess] = useState(false);
   const [pathWarning, setPathWarning] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const {
     register,
@@ -249,6 +252,36 @@ const SettingsPage = () => {
               </form>
             </CardContent>
           </Card>
+
+          <Card className="border-destructive mt-6">
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Delete this workspace</p>
+                  <p className="text-muted-foreground text-sm">
+                    Permanently delete this workspace and all of its data.
+                  </p>
+                </div>
+                <Button
+                  variant="destructive"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
+                  <Trash2Icon />
+                  Delete Workspace
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <DeleteWorkspaceDialog
+            open={deleteDialogOpen}
+            setOpen={setDeleteDialogOpen}
+            workspaceId={workspace?.id ?? ""}
+            workspaceName={workspace?.title ?? ""}
+          />
         </Fragment>
       )}
     </AppLayout>

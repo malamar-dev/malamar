@@ -89,3 +89,17 @@ export function updateWorkspace(
 
   return ok(workspace);
 }
+
+/**
+ * Delete a workspace by ID.
+ * This will cascade delete all related entities (agents, tasks, chats, etc.).
+ */
+export function deleteWorkspace(id: string): Result<void> {
+  const deleted = repository.remove(id);
+
+  if (!deleted) {
+    return err("Workspace not found", "NOT_FOUND");
+  }
+
+  return ok(undefined);
+}
