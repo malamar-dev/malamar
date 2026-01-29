@@ -83,21 +83,21 @@ Before testing, ensure:
 ### 3.3 Update Agent
 - [x] Can edit name, instruction, CLI type
 - [x] Name uniqueness enforced (conflict error if duplicate)
-- [ ] Changes take effect immediately for subsequent task processing
+- [x] Changes take effect immediately for subsequent task processing
 
 ### 3.4 Reorder Agents
 - [ ] Desktop: Drag-and-drop works
 - [ ] Mobile: Up/down arrow buttons work
-- [ ] Order persists after page refresh
-- [ ] Order affects agent execution sequence in task loop
+- [x] Order persists after page refresh
+- [x] Order affects agent execution sequence in task loop
 
 ### 3.5 Delete Agent
-- [ ] Confirm dialog before deletion
+- [x] Confirm dialog before deletion
 - [ ] Deleting agent preserves old comments (shows "(Deleted Agent)")
 - [ ] Deleting agent preserves old chats (switches to Malamar agent)
 
 ### 3.6 Workspace with No Agents
-- [ ] Warning banner displayed persistently
+- [x] Warning banner displayed persistently
 - [ ] Tasks immediately move to "In Review" (no agents = all skip)
 - [ ] Can still chat with Malamar agent to recreate agents
 

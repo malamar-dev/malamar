@@ -1,17 +1,19 @@
 import {
   AlertCircleIcon,
+  AlertTriangleIcon,
   ListTodoIcon,
   PlusIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
+import { useAgents } from "@/features/workspaces/hooks/use-agents.ts";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 
 import { CreateTaskDialog } from "../../components/create-task-dialog.tsx";
@@ -37,6 +39,7 @@ const TasksPage = () => {
   const { id: workspaceId } = useParams<{ id: string }>();
   const { data: workspace } = useWorkspace(workspaceId ?? "");
   const { data, isLoading, isError, error } = useTasks(workspaceId ?? "");
+  const { data: agentsData } = useAgents(workspaceId ?? "");
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteDoneDialogOpen, setDeleteDoneDialogOpen] = useState(false);
@@ -44,6 +47,7 @@ const TasksPage = () => {
 
   const tasks = data?.tasks ?? [];
   const hasDoneTasks = tasks.some((t) => t.status === "done");
+  const hasNoAgents = agentsData?.agents.length === 0;
 
   const handleTaskClick = (task: Task) => {
     setSelectedTask(task);
@@ -83,6 +87,24 @@ const TasksPage = () => {
           </Button>
         </div>
       </div>
+
+      {/* No Agents Warning */}
+      {hasNoAgents && (
+        <Alert variant="warning" className="mb-4">
+          <AlertTriangleIcon />
+          <AlertTitle>No agents configured</AlertTitle>
+          <AlertDescription>
+            <p className="mb-2">
+              Tasks will be immediately moved to "In Review" without processing.
+            </p>
+            <Button size="sm" variant="outline" asChild>
+              <Link to={`/workspaces/${workspaceId}/agents`}>
+                Configure Agents
+              </Link>
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Content */}
       {isLoading ? (
