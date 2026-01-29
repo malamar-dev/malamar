@@ -312,6 +312,22 @@ export function createComment(
     null,
   );
 
+  // If task is in_review, move it back to todo for reprocessing
+  if (task.status === "in_review") {
+    repository.update(taskId, { status: "todo" });
+
+    // Log status change
+    repository.createLog(
+      generateId(),
+      taskId,
+      task.workspaceId,
+      "status_changed",
+      "user",
+      MOCK_USER_ID,
+      { oldStatus: "in_review", newStatus: "todo" },
+    );
+  }
+
   // Create queue item to trigger agent loop (if no active queue item)
   const existingQueueItem = repository.findActiveQueueItemByTaskId(taskId);
   if (!existingQueueItem) {

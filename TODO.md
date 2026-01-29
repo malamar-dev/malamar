@@ -241,11 +241,11 @@ Before testing, ensure:
 ## 6. Task Comments
 
 ### 6.1 User Comments
-- [ ] Can add comment from task detail dialog
-- [ ] Comment content is required (non-empty)
-- [ ] User comments show "User" as author
-- [ ] Adding comment to "In Review" task moves it back to "Todo"
-- [ ] New queue item created on comment
+- [x] Can add comment from task detail dialog
+- [x] Comment content is required (non-empty)
+- [x] User comments show "User" as author
+- [x] Adding comment to "In Review" task moves it back to "Todo"
+- [x] New queue item created on comment
 
 ### 6.2 Agent Comments
 - [ ] Agent comments show agent name as author
