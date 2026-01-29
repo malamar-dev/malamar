@@ -294,8 +294,8 @@ Before testing, ensure:
 
 ### 8.2 List Chats
 - [ ] Chats listed in sidebar
-- [ ] Search by title works (`?q=` parameter)
-- [ ] Most recently updated first
+- [x] Search by title works (`?q=` parameter)
+- [x] Most recently updated first
 - [x] Empty state: "No conversations yet" with CTA
 
 ### 8.3 Chat Messages

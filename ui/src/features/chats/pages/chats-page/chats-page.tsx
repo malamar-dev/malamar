@@ -3,10 +3,11 @@ import {
   ChevronDownIcon,
   MessageSquareIcon,
   PlusIcon,
+  SearchIcon,
   SparklesIcon,
 } from "lucide-react";
-import { useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useMemo, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
@@ -18,11 +19,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useCreateChat } from "@/features/chats";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 import { useAgents } from "@/features/workspaces/hooks/use-agents.ts";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
+import { useDebounce } from "@/hooks/use-debounce.ts";
 
 import { ChatItem } from "../../components/chat-item.tsx";
 import { LoadMoreButton } from "../../components/load-more-button.tsx";
@@ -84,9 +87,24 @@ function EmptyState({
 const ChatsPage = () => {
   const navigate = useNavigate();
   const { id: workspaceId } = useParams<{ id: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("q") ?? "";
+  const [inputValue, setInputValue] = useState(searchQuery);
+  const debouncedQuery = useDebounce(inputValue, 300);
+
   const { data: workspace } = useWorkspace(workspaceId ?? "");
   const { data: agentsData } = useAgents(workspaceId ?? "");
   const createChat = useCreateChat(workspaceId ?? "");
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value) {
+      setSearchParams({ q: value });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   // Fetch chats with infinite query (handles accumulation automatically)
   const {
@@ -97,7 +115,7 @@ const ChatsPage = () => {
     error,
     hasNextPage,
     fetchNextPage,
-  } = useInfiniteChats(workspaceId ?? "", {});
+  } = useInfiniteChats(workspaceId ?? "", { q: debouncedQuery || undefined });
 
   // Flatten pages into a single array of chats
   const chats = useMemo(
@@ -125,6 +143,7 @@ const ChatsPage = () => {
   const hasMore = hasNextPage ?? false;
   const isLoadingMore = isFetchingNextPage;
   const showInitialLoading = isLoading && chats.length === 0;
+  const isSearching = !!debouncedQuery;
 
   return (
     <AppLayout
@@ -134,7 +153,7 @@ const ChatsPage = () => {
       ]}
       variant="sm"
     >
-      <div className="mb-4 flex items-center justify-start">
+      <div className="mb-4 flex items-center justify-start gap-4">
         <div>
           <WorkspaceTabs
             workspaceId={workspace?.id as string}
@@ -142,7 +161,17 @@ const ChatsPage = () => {
           />
         </div>
 
-        <div className="ml-auto">
+        <div className="relative ml-auto max-w-xs flex-1">
+          <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Input
+            placeholder="Search chats..."
+            value={inputValue}
+            onChange={handleSearchChange}
+            className="pl-9"
+          />
+        </div>
+
+        <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={createChat.isPending}>
@@ -191,7 +220,7 @@ const ChatsPage = () => {
         </Alert>
       ) : chats.length === 0 ? (
         <EmptyState
-          isSearching={false}
+          isSearching={isSearching}
           onCreateChat={handleCreateChat}
           agents={agents}
           isCreating={createChat.isPending}
