@@ -131,7 +131,7 @@ Before testing, ensure:
 - [x] Three tabs: Details, Comments, Activity
 - [x] Details tab: edit summary/description, see status, take actions
 - [x] Comments tab: view all comments, add new comment
-- [ ] Activity tab: timeline of events with icons
+- [x] Activity tab: timeline of events with icons
 
 ### 4.5 Update Task
 - [ ] Can edit summary and description
