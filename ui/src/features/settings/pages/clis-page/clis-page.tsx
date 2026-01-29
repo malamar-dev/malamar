@@ -1,8 +1,9 @@
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, RefreshCwIcon } from "lucide-react";
 import { Fragment } from "react";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardContent,
@@ -14,6 +15,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 import { useHealth } from "../../hooks/use-health.ts";
+import { useRefreshHealth } from "../../hooks/use-refresh-health.ts";
 import type { CliHealth } from "../../types/health.types.ts";
 
 function CliCard({
@@ -61,13 +63,31 @@ function CliCard({
 
 export const ClisPage = () => {
   const { data, isLoading, isError, error } = useHealth();
+  const refreshHealth = useRefreshHealth();
 
   const claudeCli = data?.clis.find((cli) => cli.type === "claude");
+
+  const handleRefresh = () => {
+    refreshHealth.mutate();
+  };
 
   return (
     <AppLayout
       breadcrumbItems={[{ label: "Settings" }, { label: "CLIs" }]}
       variant="xs"
+      actions={
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={refreshHealth.isPending}
+        >
+          <RefreshCwIcon
+            className={refreshHealth.isPending ? "animate-spin" : ""}
+          />
+          Refresh CLI Status
+        </Button>
+      }
     >
       {isLoading ? (
         <Skeleton className="h-32" />

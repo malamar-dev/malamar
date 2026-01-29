@@ -25,10 +25,12 @@ const appLayoutVariants = cva("mx-auto w-full", {
 interface AppLayoutProps
   extends React.ComponentProps<"div">, VariantProps<typeof appLayoutVariants> {
   breadcrumbItems?: BreadcrumbItemType[];
+  actions?: React.ReactNode;
 }
 
 export const AppLayout = ({
   breadcrumbItems,
+  actions,
   variant,
   className,
   ...props
@@ -39,7 +41,7 @@ export const AppLayout = ({
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <AppHeader breadcrumbItems={breadcrumbItems} />
+        <AppHeader breadcrumbItems={breadcrumbItems} actions={actions} />
 
         <div
           className={cn(appLayoutVariants({ variant, className }))}

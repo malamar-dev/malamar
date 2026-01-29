@@ -25,11 +25,11 @@ Before testing, ensure:
 - [x] Subsequent restarts do NOT recreate sample workspace (check directory existence)
 
 ### 1.2 CLI Health Detection
-- [ ] On startup, CLI health check runs automatically
-- [ ] `/api/health` returns correct CLI status
-- [ ] Healthy CLIs show green indicator in UI (Settings > CLIs)
-- [ ] Unhealthy CLIs show red indicator with error message
-- [ ] "Refresh CLI Status" button triggers immediate re-detection
+- [x] On startup, CLI health check runs automatically
+- [x] `/api/health` returns correct CLI status
+- [x] Healthy CLIs show green indicator in UI (Settings > CLIs)
+- [x] Unhealthy CLIs show red indicator with error message
+- [x] "Refresh CLI Status" button triggers immediate re-detection
 
 ---
 

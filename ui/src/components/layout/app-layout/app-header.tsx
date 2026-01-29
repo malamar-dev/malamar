@@ -23,8 +23,10 @@ import { useTheme } from "@/hooks/use-theme.ts";
 
 export const AppHeader = ({
   breadcrumbItems,
+  actions,
 }: {
   breadcrumbItems?: BreadcrumbItemType[];
+  actions?: React.ReactNode;
 }) => {
   const { setTheme } = useTheme();
 
@@ -66,7 +68,9 @@ export const AppHeader = ({
         )}
       </div>
 
-      <div className="ml-auto px-3">
+      {actions && <div className="flex items-center gap-2">{actions}</div>}
+
+      <div className="px-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-7 w-7">

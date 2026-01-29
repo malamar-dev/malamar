@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 
 import { getAllCliHealth } from "../cli";
+import { runCliHealthCheck } from "../jobs/cli-health-check";
 
 export const healthRouter = new Hono();
 
@@ -27,6 +28,26 @@ healthRouter.get("/", (c) => {
             version: null,
           },
         ];
+
+  return c.json({ status: "ok", clis });
+});
+
+/**
+ * POST /api/health/refresh
+ * Triggers an immediate CLI health check re-detection
+ */
+healthRouter.post("/refresh", async (c) => {
+  await runCliHealthCheck();
+
+  const cliResults = getAllCliHealth();
+  const clis = cliResults.map((result) => ({
+    type: result.type,
+    status: result.status,
+    error: result.error,
+    lastCheckedAt: result.lastCheckedAt.toISOString(),
+    binaryPath: result.binaryPath,
+    version: result.version,
+  }));
 
   return c.json({ status: "ok", clis });
 });
