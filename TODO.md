@@ -416,10 +416,10 @@ Before testing, ensure:
 ## 11. Settings
 
 ### 11.1 Global Settings Page
-- [ ] CLI configuration section
-- [ ] Each CLI shows: name, status, binary path, version
-- [ ] Healthy = green dot, Unhealthy = red dot + error
-- [ ] "Refresh" button re-runs health check
+- [x] CLI configuration section
+- [x] Each CLI shows: name, status, binary path, version
+- [x] Healthy = green dot, Unhealthy = red dot + error
+- [x] "Refresh" button re-runs health check
 
 ### 11.2 Workspace Settings
 - [ ] Title editable
