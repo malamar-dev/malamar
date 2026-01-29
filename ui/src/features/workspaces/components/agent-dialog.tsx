@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderIcon } from "lucide-react";
+import { AlertCircleIcon, LoaderIcon } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { Alert, AlertDescription } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import {
   Dialog,
@@ -33,6 +34,7 @@ import {
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { useHealth } from "@/features/settings/hooks/use-health.ts";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { ApiError } from "@/lib/api-client.ts";
 import { cn } from "@/lib/utils.ts";
 
 import { useCreateAgent } from "../hooks/use-create-agent.ts";
@@ -197,6 +199,11 @@ function AgentForm({
 
   const isPending = createAgent.isPending || updateAgent.isPending;
 
+  // Get API error message
+  const apiError = createAgent.error || updateAgent.error;
+  const errorMessage =
+    apiError instanceof ApiError ? apiError.message : apiError?.message;
+
   const onSubmit = async (data: AgentFormData) => {
     if (isEditing && agent) {
       await updateAgent.mutateAsync({
@@ -214,6 +221,12 @@ function AgentForm({
       className={cn("grid items-start gap-6", className)}
       onSubmit={handleSubmit(onSubmit)}
     >
+      {errorMessage && (
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
       <Field data-invalid={!!errors.name}>
         <FieldLabel htmlFor="name">Name</FieldLabel>
         <Input

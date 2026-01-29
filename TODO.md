@@ -81,8 +81,8 @@ Before testing, ensure:
 - [x] Empty state shows warning banner + prompt to chat with Malamar
 
 ### 3.3 Update Agent
-- [ ] Can edit name, instruction, CLI type
-- [ ] Name uniqueness enforced (conflict error if duplicate)
+- [x] Can edit name, instruction, CLI type
+- [x] Name uniqueness enforced (conflict error if duplicate)
 - [ ] Changes take effect immediately for subsequent task processing
 
 ### 3.4 Reorder Agents
