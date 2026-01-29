@@ -76,7 +76,7 @@ Before testing, ensure:
 - [x] New agent appends to end of list (highest order + 1)
 
 ### 3.2 List Agents
-- [ ] Agents displayed in order (1, 2, 3, 4...)
+- [x] Agents displayed in order (1, 2, 3, 4...)
 - [ ] Each shows: name, CLI type, instruction preview
 - [ ] Empty state shows warning banner + prompt to chat with Malamar
 

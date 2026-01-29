@@ -21,6 +21,7 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemMedia,
   ItemTitle,
 } from "@/components/ui/item.tsx";
 
@@ -49,6 +50,13 @@ export function AgentItem({
 }: AgentItemProps) {
   return (
     <Item variant="muted">
+      <ItemMedia
+        variant="icon"
+        className="bg-primary/10 text-primary font-semibold"
+      >
+        {agent.order}
+      </ItemMedia>
+
       <ItemContent>
         <ItemTitle>
           {agent.name}{" "}
