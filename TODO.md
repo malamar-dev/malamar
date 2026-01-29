@@ -267,14 +267,14 @@ Before testing, ensure:
 ## 7. Task Activity Log
 
 ### 7.1 Event Types
-- [ ] `task_created`: logged on task creation
-- [ ] `status_changed`: logged with old_status, new_status
-- [ ] `comment_added`: logged when any comment added
-- [ ] `agent_started`: logged with agent_name
-- [ ] `agent_finished`: logged with agent_name, action_type
-- [ ] `task_cancelled`: logged on user cancellation
-- [ ] `task_prioritized`: logged when prioritized
-- [ ] `task_deprioritized`: logged when priority removed
+- [x] `task_created`: logged on task creation
+- [x] `status_changed`: logged with old_status, new_status
+- [x] `comment_added`: logged when any comment added
+- [x] `agent_started`: logged with agent_name
+- [x] `agent_finished`: logged with agent_name, action_type
+- [x] `task_cancelled`: logged on user cancellation
+- [x] `task_prioritized`: logged when prioritized
+- [x] `task_deprioritized`: logged when priority removed
 
 ### 7.2 Log Display
 - [x] Logs ordered by created_at (ascending)
