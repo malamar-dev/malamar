@@ -36,16 +36,16 @@ Before testing, ensure:
 ## 2. Workspace Management
 
 ### 2.1 Create Workspace
-- [ ] "Create Workspace" button opens dialog/drawer (responsive)
-- [ ] Title is required (form validation)
-- [ ] Description is optional
-- [ ] Working Directory is optional
-- [ ] New workspace appears in list after creation
-- [ ] Workspace has correct `last_activity_at` timestamp
+- [x] "Create Workspace" button opens dialog/drawer (responsive)
+- [x] Title is required (form validation)
+- [x] Description is optional
+- [x] Working Directory is optional
+- [x] New workspace appears in list after creation
+- [x] Workspace has correct `last_activity_at` timestamp
 
 ### 2.2 List Workspaces
-- [ ] All workspaces displayed as cards
-- [ ] Cards show title, description preview, last activity time
+- [x] All workspaces displayed as cards
+- [x] Cards show title, description preview, last activity time
 - [ ] Search by title works (`?q=` parameter)
 - [ ] Empty state shows "No workspaces yet" with CTA
 
