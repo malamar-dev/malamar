@@ -441,10 +441,10 @@ Before testing, ensure:
 ## 12. Error Handling & Edge Cases
 
 ### 12.1 API Errors
-- [ ] 400 Validation errors show field-specific messages
-- [ ] 404 Not found shows "Resource not found"
-- [ ] 409 Conflict shows "Duplicate" error
-- [ ] 500 Server errors show generic error
+- [x] 400 Validation errors show field-specific messages
+- [x] 404 Not found shows "Resource not found"
+- [x] 409 Conflict shows "Duplicate" error
+- [x] 500 Server errors show generic error
 
 ### 12.2 Network Errors
 - [ ] Offline state handled gracefully
