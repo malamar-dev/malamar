@@ -1,4 +1,23 @@
 import {
+  closestCenter,
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import {
   AlertCircleIcon,
   AlertTriangleIcon,
   MessageSquareIcon,
@@ -15,8 +34,8 @@ import { useCreateChat } from "@/features/chats";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
 import { AgentDialog } from "../../components/agent-dialog.tsx";
-import { AgentItem } from "../../components/agent-item.tsx";
 import { DeleteAgentDialog } from "../../components/delete-agent-dialog.tsx";
+import { SortableAgentItem } from "../../components/sortable-agent-item.tsx";
 import { useAgents } from "../../hooks/use-agents.ts";
 import { useReorderAgents } from "../../hooks/use-reorder-agents.ts";
 import { useWorkspace } from "../../hooks/use-workspace.ts";
@@ -61,6 +80,41 @@ const AgentsPage = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editAgent, setEditAgent] = useState<Agent | null>(null);
   const [deleteAgent, setDeleteAgent] = useState<Agent | null>(null);
+
+  // dnd-kit sensors for drag-and-drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px movement required before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id || !data?.agents) {
+      return;
+    }
+
+    const oldIndex = data.agents.findIndex((agent) => agent.id === active.id);
+    const newIndex = data.agents.findIndex((agent) => agent.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    const newAgentIds = arrayMove(
+      data.agents.map((a) => a.id),
+      oldIndex,
+      newIndex,
+    );
+
+    reorderAgents.mutate({ agentIds: newAgentIds });
+  };
 
   const handleMoveUp = (agent: Agent) => {
     if (!data?.agents) return;
@@ -145,21 +199,34 @@ const AgentsPage = () => {
           onChatWithMalamar={handleChatWithMalamar}
         />
       ) : (
-        <div className="space-y-3">
-          {data?.agents.map((agent, index) => (
-            <AgentItem
-              key={agent.id}
-              agent={agent}
-              isFirst={index === 0}
-              isLast={index === data.agents.length - 1}
-              onEdit={setEditAgent}
-              onDelete={setDeleteAgent}
-              onMoveUp={handleMoveUp}
-              onMoveDown={handleMoveDown}
-              onChat={handleChat}
-            />
-          ))}
-        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={data?.agents.map((a) => a.id) ?? []}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {data?.agents.map((agent, index) => (
+                <SortableAgentItem
+                  key={agent.id}
+                  id={agent.id}
+                  agent={agent}
+                  isFirst={index === 0}
+                  isLast={index === data.agents.length - 1}
+                  onEdit={setEditAgent}
+                  onDelete={setDeleteAgent}
+                  onMoveUp={handleMoveUp}
+                  onMoveDown={handleMoveDown}
+                  onChat={handleChat}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       <AgentDialog

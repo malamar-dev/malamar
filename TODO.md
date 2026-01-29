@@ -86,7 +86,7 @@ Before testing, ensure:
 - [x] Changes take effect immediately for subsequent task processing
 
 ### 3.4 Reorder Agents
-- [ ] Desktop: Drag-and-drop works
+- [x] Desktop: Drag-and-drop works
 - [ ] Mobile: Up/down arrow buttons work
 - [x] Order persists after page refresh
 - [x] Order affects agent execution sequence in task loop

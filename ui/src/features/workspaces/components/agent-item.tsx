@@ -27,7 +27,7 @@ import {
 
 import type { Agent } from "../types/agent.types.ts";
 
-interface AgentItemProps {
+export interface AgentItemProps {
   agent: Agent;
   isFirst: boolean;
   isLast: boolean;
@@ -90,23 +90,26 @@ export function AgentItem({
               Chat
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+            {/* Move Up/Down buttons - only visible on mobile (below md breakpoint) */}
+            <div className="md:hidden">
+              <DropdownMenuSeparator />
 
-            <DropdownMenuItem
-              onClick={() => onMoveUp(agent)}
-              disabled={isFirst}
-            >
-              <ArrowUpIcon />
-              Move Up
-            </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onMoveUp(agent)}
+                disabled={isFirst}
+              >
+                <ArrowUpIcon />
+                Move Up
+              </DropdownMenuItem>
 
-            <DropdownMenuItem
-              onClick={() => onMoveDown(agent)}
-              disabled={isLast}
-            >
-              <ArrowDownIcon />
-              Move Down
-            </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onMoveDown(agent)}
+                disabled={isLast}
+              >
+                <ArrowDownIcon />
+                Move Down
+              </DropdownMenuItem>
+            </div>
 
             <DropdownMenuSeparator />
 
