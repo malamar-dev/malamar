@@ -77,8 +77,8 @@ Before testing, ensure:
 
 ### 3.2 List Agents
 - [x] Agents displayed in order (1, 2, 3, 4...)
-- [ ] Each shows: name, CLI type, instruction preview
-- [ ] Empty state shows warning banner + prompt to chat with Malamar
+- [x] Each shows: name, CLI type, instruction preview
+- [x] Empty state shows warning banner + prompt to chat with Malamar
 
 ### 3.3 Update Agent
 - [ ] Can edit name, instruction, CLI type

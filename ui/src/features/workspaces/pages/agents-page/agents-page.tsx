@@ -1,4 +1,9 @@
-import { AlertCircleIcon, BotIcon, PlusIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  MessageSquareIcon,
+  PlusIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
@@ -17,12 +22,31 @@ import { useReorderAgents } from "../../hooks/use-reorder-agents.ts";
 import { useWorkspace } from "../../hooks/use-workspace.ts";
 import type { Agent } from "../../types/agent.types.ts";
 
-function EmptyState() {
+interface EmptyStateProps {
+  onAddAgent: () => void;
+  onChatWithMalamar: () => void;
+}
+
+function EmptyState({ onAddAgent, onChatWithMalamar }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16">
-      <BotIcon className="text-muted-foreground mb-4 h-12 w-12" />
-      <p className="text-muted-foreground mb-4 text-lg">No agents yet</p>
-    </div>
+    <Alert variant="warning">
+      <AlertTriangleIcon />
+      <AlertTitle>No agents configured</AlertTitle>
+      <AlertDescription>
+        <p className="mb-3">
+          This workspace has no agents. Tasks will be immediately moved to "In
+          Review" without processing.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" onClick={onAddAgent}>
+            <PlusIcon /> Add Agent
+          </Button>
+          <Button size="sm" variant="outline" onClick={onChatWithMalamar}>
+            <MessageSquareIcon /> Chat with Malamar
+          </Button>
+        </div>
+      </AlertDescription>
+    </Alert>
   );
 }
 
@@ -73,6 +97,11 @@ const AgentsPage = () => {
     navigate(`/chat/${newChat.id}`);
   };
 
+  const handleChatWithMalamar = async () => {
+    const newChat = await createChat.mutateAsync({});
+    navigate(`/chat/${newChat.id}`);
+  };
+
   return (
     <AppLayout
       breadcrumbItems={[
@@ -111,7 +140,10 @@ const AgentsPage = () => {
           </AlertDescription>
         </Alert>
       ) : data?.agents.length === 0 ? (
-        <EmptyState />
+        <EmptyState
+          onAddAgent={() => setCreateDialogOpen(true)}
+          onChatWithMalamar={handleChatWithMalamar}
+        />
       ) : (
         <div className="space-y-3">
           {data?.agents.map((agent, index) => (
