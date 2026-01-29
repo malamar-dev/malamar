@@ -321,7 +321,7 @@ Before testing, ensure:
 ### 8.6 Chat Title
 - [x] Default: "Untitled chat"
 - [x] Agent can rename on first response only
-- [ ] After first response, `rename_chat` action ignored
+- [x] After first response, `rename_chat` action ignored
 - [x] User can edit title anytime via UI
 
 ### 8.7 Agent Switching
