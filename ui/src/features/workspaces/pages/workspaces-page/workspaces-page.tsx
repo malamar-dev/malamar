@@ -45,11 +45,14 @@ function WorkspaceCard({ workspace }: { workspace: Workspace }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-16">
       <InboxIcon className="text-muted-foreground mb-4 h-12 w-12" />
-      <p className="text-muted-foreground text-lg">No workspace yet</p>
+      <p className="text-muted-foreground mb-4 text-lg">No workspaces yet</p>
+      <Button onClick={onCreateClick}>
+        <PlusIcon /> Create Workspace
+      </Button>
     </div>
   );
 }
@@ -117,7 +120,7 @@ const WorkspacesPage = () => {
           </AlertDescription>
         </Alert>
       ) : data?.workspaces.length === 0 ? (
-        <EmptyState />
+        <EmptyState onCreateClick={() => setOpen(true)} />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {data?.workspaces.map((workspace) => (

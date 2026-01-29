@@ -13,5 +13,5 @@ export const healthApi = {
    * Triggers an immediate CLI health check re-detection.
    * @returns Updated health status for all CLIs
    */
-  refresh: () => apiClient.post<HealthResponse>("/health/refresh"),
+  refresh: () => apiClient.post<HealthResponse>("/health/refresh", {}),
 };

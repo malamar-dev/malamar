@@ -47,7 +47,7 @@ Before testing, ensure:
 - [x] All workspaces displayed as cards
 - [x] Cards show title, description preview, last activity time
 - [x] Search by title works (`?q=` parameter)
-- [ ] Empty state shows "No workspaces yet" with CTA
+- [x] Empty state shows "No workspaces yet" with CTA
 
 ### 2.3 Update Workspace
 - [ ] Navigate to workspace settings page
