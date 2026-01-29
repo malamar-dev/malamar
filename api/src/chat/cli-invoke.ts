@@ -190,11 +190,12 @@ export async function invokeChatCli(
     createdTempDir = true;
   }
 
-  // Generate file paths
-  const inputPath = join(tmpdir(), `malamar_chat_${chatId}.md`);
-  const contextPath = join(tmpdir(), `malamar_chat_${chatId}_context.md`);
-  const outputId = generateId();
-  const outputPath = join(tmpdir(), `malamar_chat_output_${outputId}.json`);
+  // Generate file paths - use unique IDs to avoid race conditions
+  // when processing multiple messages for the same chat
+  const invocationId = generateId();
+  const inputPath = join(tmpdir(), `malamar_chat_input_${invocationId}.md`);
+  const contextPath = join(tmpdir(), `malamar_chat_context_${invocationId}.md`);
+  const outputPath = join(tmpdir(), `malamar_chat_output_${invocationId}.json`);
 
   try {
     // Write input files

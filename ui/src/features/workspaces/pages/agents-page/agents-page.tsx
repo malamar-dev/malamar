@@ -1,11 +1,12 @@
 import { AlertCircleIcon, BotIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useCreateChat } from "@/features/chats";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
 import { AgentDialog } from "../../components/agent-dialog.tsx";
@@ -26,10 +27,12 @@ function EmptyState() {
 }
 
 const AgentsPage = () => {
+  const navigate = useNavigate();
   const { id: workspaceId } = useParams<{ id: string }>();
   const { data: workspace } = useWorkspace(workspaceId ?? "");
   const { data, isLoading, isError, error } = useAgents(workspaceId ?? "");
   const reorderAgents = useReorderAgents(workspaceId ?? "");
+  const createChat = useCreateChat(workspaceId ?? "");
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editAgent, setEditAgent] = useState<Agent | null>(null);
@@ -63,6 +66,11 @@ const AgentsPage = () => {
     ];
 
     reorderAgents.mutate({ agentIds: newAgentIds });
+  };
+
+  const handleChat = async (agent: Agent) => {
+    const newChat = await createChat.mutateAsync({ agentId: agent.id });
+    navigate(`/chat/${newChat.id}`);
   };
 
   return (
@@ -116,6 +124,7 @@ const AgentsPage = () => {
               onDelete={setDeleteAgent}
               onMoveUp={handleMoveUp}
               onMoveDown={handleMoveDown}
+              onChat={handleChat}
             />
           ))}
         </div>

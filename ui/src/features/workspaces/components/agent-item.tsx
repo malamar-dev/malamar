@@ -1,6 +1,7 @@
 import {
   ArrowDownIcon,
   ArrowUpIcon,
+  MessageSquareIcon,
   MoreVerticalIcon,
   PencilIcon,
   TrashIcon,
@@ -33,6 +34,7 @@ interface AgentItemProps {
   onDelete: (agent: Agent) => void;
   onMoveUp: (agent: Agent) => void;
   onMoveDown: (agent: Agent) => void;
+  onChat: (agent: Agent) => void;
 }
 
 export function AgentItem({
@@ -43,6 +45,7 @@ export function AgentItem({
   onDelete,
   onMoveUp,
   onMoveDown,
+  onChat,
 }: AgentItemProps) {
   return (
     <Item variant="muted">
@@ -72,6 +75,11 @@ export function AgentItem({
             <DropdownMenuItem onClick={() => onEdit(agent)}>
               <PencilIcon />
               Edit
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => onChat(agent)}>
+              <MessageSquareIcon />
+              Chat
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />

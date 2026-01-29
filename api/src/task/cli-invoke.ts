@@ -249,8 +249,10 @@ export async function invokeTaskCli(
     cwd = await createTaskTemporaryDir(taskId);
   }
 
-  // Generate file paths
-  const inputPath = join(tmpdir(), `malamar_task_${taskId}.md`);
+  // Generate file paths - use unique IDs to avoid race conditions
+  // when multiple agents process the same task sequentially
+  const inputId = generateId();
+  const inputPath = join(tmpdir(), `malamar_input_${inputId}.md`);
   const outputId = generateId();
   const outputPath = join(tmpdir(), `malamar_output_${outputId}.json`);
 
