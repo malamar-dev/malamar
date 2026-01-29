@@ -170,12 +170,12 @@ Before testing, ensure:
 - [x] Activity log: `task_prioritized` / `task_deprioritized` events
 
 ### 4.10 Task Cancellation
-- [ ] "Cancel" button available for In Progress tasks
-- [ ] Cancelling kills CLI subprocess immediately
-- [ ] Task moves to "In Review" (prevents immediate re-pickup)
-- [ ] System comment added: "Task cancelled by user"
-- [ ] Activity log: `task_cancelled` event
-- [ ] User can comment to restart processing
+- [x] "Cancel" button available for In Progress tasks
+- [x] Cancelling kills CLI subprocess immediately
+- [x] Task moves to "In Review" (prevents immediate re-pickup)
+- [x] System comment added: "Task cancelled by user"
+- [x] Activity log: `task_cancelled` event
+- [x] User can comment to restart processing
 
 ---
 
