@@ -134,7 +134,7 @@ Before testing, ensure:
 - [x] Activity tab: timeline of events with icons
 
 ### 4.5 Update Task
-- [ ] Can edit summary and description
+- [x] Can edit summary and description
 - [ ] Can change status (with restrictions per status)
 - [ ] Status change logged in activity log
 
