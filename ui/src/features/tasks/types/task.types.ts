@@ -15,6 +15,7 @@ export interface Task {
   description: string;
   status: TaskStatus;
   commentCount?: number;
+  isPriority?: boolean;
   createdAt: string;
   updatedAt: string;
 }

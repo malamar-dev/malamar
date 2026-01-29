@@ -1,4 +1,4 @@
-import { LoaderIcon, MessageSquareIcon } from "lucide-react";
+import { LoaderIcon, MessageSquareIcon, StarIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge.tsx";
 import {
@@ -20,6 +20,7 @@ interface TaskCardProps {
 export function TaskCard({ task, onClick }: TaskCardProps) {
   const isProcessing = task.status === "in_progress";
   const commentCount = task.commentCount ?? 0;
+  const isPriority = task.isPriority ?? false;
 
   return (
     <Card
@@ -30,9 +31,20 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       onClick={onClick}
     >
       <CardHeader className="pb-2">
-        <CardTitle className="line-clamp-2 text-sm font-medium">
-          {task.summary}
-        </CardTitle>
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="line-clamp-2 text-sm font-medium">
+            {task.summary}
+          </CardTitle>
+          {isPriority && (
+            <Badge
+              variant="default"
+              className="h-5 shrink-0 gap-1 px-1.5 text-xs"
+            >
+              <StarIcon className="h-3 w-3" />
+              Priority
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="pt-0">
         <div className="text-muted-foreground flex items-center justify-between text-xs">

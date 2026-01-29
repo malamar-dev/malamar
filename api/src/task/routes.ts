@@ -38,6 +38,10 @@ function serializeTask(task: Task, includeCommentCount = false) {
     serialized.commentCount = repository.countCommentsByTaskId(task.id);
   }
 
+  // Include priority status from queue item (most recent, regardless of status)
+  const queueItem = repository.findQueueItemByTaskId(task.id);
+  serialized.isPriority = queueItem?.isPriority ?? false;
+
   return serialized;
 }
 

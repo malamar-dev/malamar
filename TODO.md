@@ -123,7 +123,7 @@ Before testing, ensure:
 - [x] Shows summary (truncated with ellipsis if long)
 - [x] Shows relative time ("5 min ago", "2 days ago")
 - [x] Shows comment count badge if > 0
-- [ ] Shows priority badge if prioritized
+- [x] Shows priority badge if prioritized
 - [x] Shows processing indicator (pulsing/spinner) when agent is working
 
 ### 4.4 Task Detail Dialog
