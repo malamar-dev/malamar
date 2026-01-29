@@ -466,17 +466,17 @@ Before testing, ensure:
 ## 13. Startup Recovery & Graceful Shutdown
 
 ### 13.1 Startup Recovery
-- [ ] On restart, `in_progress` queue items reset to `queued`
-- [ ] Runner picks them up naturally
-- [ ] Tasks stay "In Progress" status
-- [ ] No data loss or duplication
+- [x] On restart, `in_progress` queue items reset to `queued`
+- [x] Runner picks them up naturally
+- [x] Tasks stay "In Progress" status
+- [x] No data loss or duplication
 
 ### 13.2 Graceful Shutdown
-- [ ] SIGTERM/SIGINT handled
-- [ ] Stops accepting new queue pickups
-- [ ] Kills active CLI subprocesses
+- [x] SIGTERM/SIGINT handled
+- [x] Stops accepting new queue pickups
+- [x] Kills active CLI subprocesses
 - [ ] Closes SSE connections
-- [ ] Closes database connection
+- [x] Closes database connection
 
 ---
 
@@ -558,9 +558,9 @@ Before testing, ensure:
 - [ ] UI handles reasonable volumes (tens to hundreds)
 
 ### 16.3 Agent Loop Limit
-- [ ] Max 100 iterations per task processing cycle
-- [ ] Prevents infinite loops
-- [ ] System comment if limit reached
+- [x] Max 100 iterations per task processing cycle
+- [x] Prevents infinite loops
+- [x] System comment if limit reached
 
 ---
 
