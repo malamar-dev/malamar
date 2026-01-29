@@ -1,6 +1,7 @@
 import {
   ArrowLeftIcon,
   BanIcon,
+  CheckCircleIcon,
   LoaderIcon,
   StarIcon,
   Trash2Icon,
@@ -124,19 +125,34 @@ export function TaskActions({
       )}
 
       {task.status === "in_review" && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleStatusChange("todo")}
-          disabled={isPending}
-        >
-          {updateTask.isPending ? (
-            <LoaderIcon className="h-4 w-4 animate-spin" />
-          ) : (
-            <ArrowLeftIcon className="h-4 w-4" />
-          )}
-          Move to Todo
-        </Button>
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleStatusChange("todo")}
+            disabled={isPending}
+          >
+            {updateTask.isPending ? (
+              <LoaderIcon className="h-4 w-4 animate-spin" />
+            ) : (
+              <ArrowLeftIcon className="h-4 w-4" />
+            )}
+            Move to Todo
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleStatusChange("done")}
+            disabled={isPending}
+          >
+            {updateTask.isPending ? (
+              <LoaderIcon className="h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircleIcon className="h-4 w-4" />
+            )}
+            Move to Done
+          </Button>
+        </>
       )}
 
       {task.status === "done" && (

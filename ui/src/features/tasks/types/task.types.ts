@@ -81,10 +81,10 @@ export type TaskEventType =
   | "task_deprioritized";
 
 export interface TaskLogMetadata {
-  old_status?: TaskStatus;
-  new_status?: TaskStatus;
-  agent_name?: string;
-  action_type?: "skip" | "comment" | "in_review";
+  oldStatus?: TaskStatus;
+  newStatus?: TaskStatus;
+  agentName?: string;
+  actionType?: "skip" | "comment" | "in_review";
 }
 
 export interface TaskLog {

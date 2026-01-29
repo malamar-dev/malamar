@@ -56,16 +56,16 @@ function formatEventDescription(log: TaskLog): string {
       return "Task created";
     case "status_changed":
       return formatStatusChange(
-        log.metadata?.old_status,
-        log.metadata?.new_status,
+        log.metadata?.oldStatus,
+        log.metadata?.newStatus,
       );
     case "comment_added":
       return "Comment added";
     case "agent_started":
-      return `${log.metadata?.agent_name ?? "Agent"} started processing`;
+      return `${log.metadata?.agentName ?? "Agent"} started processing`;
     case "agent_finished": {
-      const agentName = log.metadata?.agent_name ?? "Agent";
-      const actionType = log.metadata?.action_type;
+      const agentName = log.metadata?.agentName ?? "Agent";
+      const actionType = log.metadata?.actionType;
       if (actionType === "skip") {
         return `${agentName} finished (skipped)`;
       } else if (actionType === "comment") {

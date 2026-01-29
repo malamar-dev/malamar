@@ -135,8 +135,8 @@ Before testing, ensure:
 
 ### 4.5 Update Task
 - [x] Can edit summary and description
-- [ ] Can change status (with restrictions per status)
-- [ ] Status change logged in activity log
+- [x] Can change status (with restrictions per status)
+- [x] Status change logged in activity log
 
 ### 4.6 Task Status Transitions (User Actions)
 | Current Status | Available Actions |
