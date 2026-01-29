@@ -28,13 +28,55 @@ import { ChatItem } from "../../components/chat-item.tsx";
 import { LoadMoreButton } from "../../components/load-more-button.tsx";
 import { useInfiniteChats } from "../../hooks/use-chats.ts";
 
-function EmptyState({ isSearching }: { isSearching: boolean }) {
+interface EmptyStateProps {
+  isSearching: boolean;
+  onCreateChat: (agentId?: string) => void;
+  agents: { id: string; name: string }[];
+  isCreating: boolean;
+}
+
+function EmptyState({
+  isSearching,
+  onCreateChat,
+  agents,
+  isCreating,
+}: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16">
       <MessageSquareIcon className="text-muted-foreground mb-4 h-12 w-12" />
       <p className="text-muted-foreground mb-4 text-lg">
-        {isSearching ? "No chats match your search" : "No chats yet"}
+        {isSearching ? "No chats match your search" : "No conversations yet"}
       </p>
+      {!isSearching && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button disabled={isCreating}>
+              <PlusIcon className="h-4 w-4" />
+              Start a conversation
+              <ChevronDownIcon className="ml-1 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center">
+            <DropdownMenuItem onClick={() => onCreateChat()}>
+              <SparklesIcon className="mr-2 h-4 w-4" />
+              Malamar
+            </DropdownMenuItem>
+            {agents.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                {agents.map((agent) => (
+                  <DropdownMenuItem
+                    key={agent.id}
+                    onClick={() => onCreateChat(agent.id)}
+                  >
+                    {agent.name}
+                  </DropdownMenuItem>
+                ))}
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 }
@@ -148,7 +190,12 @@ const ChatsPage = () => {
           </AlertDescription>
         </Alert>
       ) : chats.length === 0 ? (
-        <EmptyState isSearching={false} />
+        <EmptyState
+          isSearching={false}
+          onCreateChat={handleCreateChat}
+          agents={agents}
+          isCreating={createChat.isPending}
+        />
       ) : (
         <div className="flex flex-col space-y-4">
           {chats.map((chat) => (

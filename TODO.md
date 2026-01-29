@@ -296,7 +296,7 @@ Before testing, ensure:
 - [ ] Chats listed in sidebar
 - [ ] Search by title works (`?q=` parameter)
 - [ ] Most recently updated first
-- [ ] Empty state: "No conversations yet" with CTA
+- [x] Empty state: "No conversations yet" with CTA
 
 ### 8.3 Chat Messages
 - [ ] User messages: right-aligned, colored background
