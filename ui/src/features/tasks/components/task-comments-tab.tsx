@@ -7,7 +7,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
-import { formatRelativeTime } from "@/lib/date-utils.ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
+import { formatFullTimestamp, formatRelativeTime } from "@/lib/date-utils.ts";
 import { cn } from "@/lib/utils.ts";
 
 import { useComments } from "../hooks/use-comments.ts";
@@ -42,9 +47,16 @@ function CommentItem({ comment }: { comment: TaskComment }) {
         >
           {authorName}
         </span>
-        <span className="text-muted-foreground text-xs">
-          {formatRelativeTime(comment.createdAt)}
-        </span>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="text-muted-foreground cursor-default text-xs">
+              {formatRelativeTime(comment.createdAt)}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{formatFullTimestamp(comment.createdAt)}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
       <div className="text-sm whitespace-pre-wrap">{comment.content}</div>
     </div>

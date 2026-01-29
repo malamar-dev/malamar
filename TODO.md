@@ -522,9 +522,9 @@ Before testing, ensure:
 | ≥ 7 days (current year) | "Jan 15" |
 | ≥ 7 days (past year) | "Jan 15, 2025" |
 
-- [ ] Hover tooltip shows full timestamp
-- [ ] Uses browser locale
-- [ ] Local timezone
+- [x] Hover tooltip shows full timestamp
+- [x] Uses browser locale
+- [x] Local timezone
 
 ### 15.4 Loading States
 - [ ] Skeleton placeholders for initial load

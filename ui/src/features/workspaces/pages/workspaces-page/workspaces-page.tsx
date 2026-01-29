@@ -14,8 +14,13 @@ import {
 } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 import { useDebounce } from "@/hooks/use-debounce.ts";
-import { formatRelativeTime } from "@/lib/date-utils.ts";
+import { formatFullTimestamp, formatRelativeTime } from "@/lib/date-utils.ts";
 
 import { CreateWorkspaceDialog } from "../../components/create-workspace-dialog.tsx";
 import { useWorkspaces } from "../../hooks/use-workspaces.ts";
@@ -36,9 +41,16 @@ function WorkspaceCard({ workspace }: { workspace: Workspace }) {
         </CardHeader>
 
         <CardFooter className="mt-auto flex-row justify-end">
-          <p className="text-muted-foreground text-right text-xs">
-            {formatRelativeTime(workspace.lastActivityAt)}
-          </p>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="text-muted-foreground cursor-default text-right text-xs">
+                {formatRelativeTime(workspace.lastActivityAt)}
+              </p>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{formatFullTimestamp(workspace.lastActivityAt)}</p>
+            </TooltipContent>
+          </Tooltip>
         </CardFooter>
       </Card>
     </Link>

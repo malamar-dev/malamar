@@ -1,4 +1,9 @@
-import { formatRelativeTime } from "@/lib/date-utils.ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
+import { formatFullTimestamp, formatRelativeTime } from "@/lib/date-utils.ts";
 import { cn } from "@/lib/utils.ts";
 
 import type { ChatMessage as ChatMessageType } from "../types/chat.types.ts";
@@ -19,7 +24,16 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       <div className="flex justify-center py-2">
         <div className="bg-muted/50 text-muted-foreground rounded-lg px-4 py-2 text-center text-sm">
           <p className="whitespace-pre-wrap">{message.message}</p>
-          <p className="mt-1 text-xs opacity-70">{formattedTime}</p>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p className="mt-1 cursor-default text-xs opacity-70">
+                {formattedTime}
+              </p>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{formatFullTimestamp(message.createdAt)}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     );
@@ -42,14 +56,21 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
           <ActionRenderer actions={message.actions} className="mt-3" />
         )}
 
-        <p
-          className={cn(
-            "mt-1 text-xs",
-            isUser ? "text-primary-foreground/70" : "text-muted-foreground",
-          )}
-        >
-          {formattedTime}
-        </p>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p
+              className={cn(
+                "mt-1 cursor-default text-xs",
+                isUser ? "text-primary-foreground/70" : "text-muted-foreground",
+              )}
+            >
+              {formattedTime}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{formatFullTimestamp(message.createdAt)}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );

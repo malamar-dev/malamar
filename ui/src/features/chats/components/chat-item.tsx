@@ -6,8 +6,13 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item.tsx";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
 import type { Chat } from "@/features/chats";
-import { formatRelativeTime } from "@/lib/date-utils.ts";
+import { formatFullTimestamp, formatRelativeTime } from "@/lib/date-utils.ts";
 
 interface ChatItemProps {
   chat: Chat;
@@ -22,7 +27,17 @@ export function ChatItem({ chat, agentName }: ChatItemProps) {
           <ItemTitle>{chat.title}</ItemTitle>
 
           <ItemDescription className="line-clamp-1">
-            {agentName ?? "Malamar"} · {formatRelativeTime(chat.updatedAt)}
+            {agentName ?? "Malamar"} ·{" "}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-default">
+                  {formatRelativeTime(chat.updatedAt)}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{formatFullTimestamp(chat.updatedAt)}</p>
+              </TooltipContent>
+            </Tooltip>
           </ItemDescription>
         </ItemContent>
       </Item>

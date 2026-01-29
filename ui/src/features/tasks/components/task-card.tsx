@@ -7,7 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
-import { formatRelativeTime } from "@/lib/date-utils.ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
+import { formatFullTimestamp, formatRelativeTime } from "@/lib/date-utils.ts";
 import { cn } from "@/lib/utils.ts";
 
 import type { Task } from "../types/task.types.ts";
@@ -49,7 +54,16 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       <CardContent className="pt-0">
         <div className="text-muted-foreground flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span>{formatRelativeTime(task.updatedAt)}</span>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="cursor-default">
+                  {formatRelativeTime(task.updatedAt)}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{formatFullTimestamp(task.updatedAt)}</p>
+              </TooltipContent>
+            </Tooltip>
             {commentCount > 0 && (
               <Badge variant="secondary" className="h-5 gap-1 px-1.5 text-xs">
                 <MessageSquareIcon className="h-3 w-3" />
