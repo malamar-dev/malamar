@@ -376,7 +376,7 @@ Before testing, ensure:
 ### 9.2 Workspace Agents (No Actions)
 - [ ] Workspace agents (Planner, etc.) provide advice only
 - [ ] No workspace modification actions available
-- [ ] Can only rename chat on first response
+- [x] Can only rename chat on first response
 
 ---
 
@@ -615,9 +615,9 @@ Before testing, ensure:
 ## 19. Security Considerations
 
 ### 19.1 Input Validation
-- [ ] All API inputs validated via Zod
+- [x] All API inputs validated via Zod
 - [ ] Maximum lengths enforced where appropriate
-- [ ] No SQL injection (parameterized queries via Bun SQLite)
+- [x] No SQL injection (parameterized queries via Bun SQLite)
 
 ### 19.2 File Paths
 - [ ] Working directory paths validated (exist check)
@@ -626,7 +626,7 @@ Before testing, ensure:
 
 ### 19.3 CLI Invocation
 - [ ] Environment variables properly handled
-- [ ] No shell injection (direct subprocess spawn)
+- [x] No shell injection (direct subprocess spawn)
 
 ---
 
