@@ -132,6 +132,29 @@ export function createChat(
   return ok(chat);
 }
 
+/**
+ * Update a chat's title.
+ * Returns the updated chat, or an error if validation fails.
+ */
+export function updateChat(
+  id: string,
+  params: { title: string },
+): Result<Chat> {
+  // Validate chat exists
+  const existingChat = repository.findById(id);
+  if (!existingChat) {
+    return err("Chat not found", "NOT_FOUND");
+  }
+
+  // Update the chat title
+  const updatedChat = repository.updateTitle(id, params.title);
+  if (!updatedChat) {
+    return err("Failed to update chat", "INTERNAL_ERROR");
+  }
+
+  return ok(updatedChat);
+}
+
 // =============================================================================
 // Chat Message Operations
 // =============================================================================

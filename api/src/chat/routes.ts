@@ -8,6 +8,7 @@ import {
   createMessageBodySchema,
   listChatsQuerySchema,
   listMessagesQuerySchema,
+  updateChatBodySchema,
 } from "./schemas";
 import type { ChatWithStatus } from "./service";
 import * as service from "./service";
@@ -155,6 +156,40 @@ chatRouter.get("/chats/:id", (c) => {
   }
 
   return c.json(serializeChatWithStatus(result.data));
+});
+
+/**
+ * PATCH /chats/:id - Update chat details
+ * Body: { title: string }
+ */
+chatRouter.patch("/chats/:id", async (c) => {
+  const id = c.req.param("id");
+
+  // Parse and validate request body
+  const body = await c.req.json().catch(() => ({}));
+  const parsed = updateChatBodySchema.safeParse(body);
+
+  if (!parsed.success) {
+    const firstError = parsed.error.errors[0];
+    return c.json(
+      createErrorResponse(
+        "VALIDATION_ERROR",
+        firstError?.message ?? "Invalid request body",
+      ),
+      400,
+    );
+  }
+
+  const result = service.updateChat(id, parsed.data);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json(serializeChat(result.data));
 });
 
 /**

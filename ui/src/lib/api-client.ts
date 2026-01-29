@@ -40,6 +40,13 @@ export const apiClient = {
       body: JSON.stringify(data),
     }).then(handleResponse<T>),
 
+  patch: <T>(path: string, data: unknown): Promise<T> =>
+    fetch(`/api${path}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }).then(handleResponse<T>),
+
   delete: <T>(path: string): Promise<T> =>
     fetch(`/api${path}`, {
       method: "DELETE",

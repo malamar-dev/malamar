@@ -42,6 +42,15 @@ export const chatsApi = {
   get: (id: string) => apiClient.get<Chat>(`/chats/${id}`),
 
   /**
+   * Updates a chat's title.
+   * @param id - The chat ID
+   * @param input - The update data
+   * @returns The updated chat
+   */
+  update: (id: string, input: { title: string }) =>
+    apiClient.patch<Chat>(`/chats/${id}`, input),
+
+  /**
    * Creates a new chat in a workspace.
    * @param workspaceId - The workspace ID to create the chat in
    * @param input - The chat creation data

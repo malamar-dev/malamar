@@ -36,6 +36,13 @@ export const createMessageBodySchema = z.object({
 });
 
 /**
+ * Schema for updating a chat request body.
+ */
+export const updateChatBodySchema = z.object({
+  title: z.string().min(1).max(255),
+});
+
+/**
  * Schema for validating CLI output from chat processing.
  * Both message and actions are optional.
  */
@@ -56,4 +63,5 @@ export type ListChatsQuery = z.infer<typeof listChatsQuerySchema>;
 export type ListMessagesQuery = z.infer<typeof listMessagesQuerySchema>;
 export type CreateChatBody = z.infer<typeof createChatBodySchema>;
 export type CreateMessageBody = z.infer<typeof createMessageBodySchema>;
+export type UpdateChatBody = z.infer<typeof updateChatBodySchema>;
 export type CliOutput = z.infer<typeof cliOutputSchema>;

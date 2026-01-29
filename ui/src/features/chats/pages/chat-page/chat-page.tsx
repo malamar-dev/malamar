@@ -9,10 +9,12 @@ import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 
 import { ChatInput } from "../../components/chat-input.tsx";
 import { ChatMessagesList } from "../../components/chat-messages-list.tsx";
+import { EditableChatTitle } from "../../components/editable-chat-title.tsx";
 import { useCancelProcessing } from "../../hooks/use-cancel-processing.ts";
 import { useChat } from "../../hooks/use-chat.ts";
 import { useMessages } from "../../hooks/use-messages.ts";
 import { useSendMessage } from "../../hooks/use-send-message.ts";
+import { useUpdateChat } from "../../hooks/use-update-chat.ts";
 
 const MESSAGES_PER_PAGE = 50;
 
@@ -36,6 +38,7 @@ const ChatPage = () => {
   // Mutations
   const sendMessage = useSendMessage(chatId ?? "");
   const cancelProcessing = useCancelProcessing(chatId ?? "");
+  const updateChat = useUpdateChat(chatId ?? "");
 
   // Combine errors from both mutations
   const mutationError = sendMessage.error || cancelProcessing.error;
@@ -63,6 +66,13 @@ const ChatPage = () => {
     cancelProcessing.reset();
   }, [sendMessage, cancelProcessing]);
 
+  const handleUpdateTitle = useCallback(
+    async (newTitle: string) => {
+      await updateChat.mutateAsync({ title: newTitle });
+    },
+    [updateChat],
+  );
+
   const workspaceChatsHref = chat?.workspaceId
     ? `/workspaces/${chat.workspaceId}/chats`
     : "/workspaces";
@@ -80,7 +90,11 @@ const ChatPage = () => {
           label: isLoading ? (
             <Skeleton className="h-4 w-24" />
           ) : (
-            (chat?.title ?? "")
+            <EditableChatTitle
+              title={chat?.title ?? ""}
+              onSave={handleUpdateTitle}
+              isSaving={updateChat.isPending}
+            />
           ),
         },
       ]}

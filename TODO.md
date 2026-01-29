@@ -322,7 +322,7 @@ Before testing, ensure:
 - [x] Default: "Untitled chat"
 - [x] Agent can rename on first response only
 - [ ] After first response, `rename_chat` action ignored
-- [ ] User can edit title anytime via UI
+- [x] User can edit title anytime via UI
 
 ### 8.7 Agent Switching
 - [ ] Can change agent mid-conversation
