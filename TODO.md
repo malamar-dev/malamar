@@ -130,7 +130,7 @@ Before testing, ensure:
 - [x] Opens on card click
 - [x] Three tabs: Details, Comments, Activity
 - [ ] Details tab: edit summary/description, see status, take actions
-- [ ] Comments tab: view all comments, add new comment
+- [x] Comments tab: view all comments, add new comment
 - [ ] Activity tab: timeline of events with icons
 
 ### 4.5 Update Task
