@@ -400,9 +400,9 @@ Before testing, ensure:
 - [ ] Reconnection works after connection loss
 
 ### 10.2 Polling Fallback
-- [ ] Chat messages polled when processing active (5s interval)
-- [ ] Polling stops when processing completes
-- [ ] Refetch on window focus
+- [x] Chat messages polled when processing active (5s interval)
+- [x] Polling stops when processing completes
+- [x] Refetch on window focus
 
 ### 10.3 Toast Notifications
 - [ ] Important events trigger toast
