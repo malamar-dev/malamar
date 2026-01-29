@@ -299,10 +299,10 @@ Before testing, ensure:
 - [x] Empty state: "No conversations yet" with CTA
 
 ### 8.3 Chat Messages
-- [ ] User messages: right-aligned, colored background
-- [ ] Agent messages: left-aligned, markdown rendered
-- [ ] System messages: centered, muted style
-- [ ] Each shows: author, content, timestamp
+- [x] User messages: right-aligned, colored background
+- [x] Agent messages: left-aligned, markdown rendered
+- [x] System messages: centered, muted style
+- [x] Each shows: author, content, timestamp
 - [ ] Infinite scroll / load more pagination
 
 ### 8.4 Send Message
