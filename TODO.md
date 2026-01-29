@@ -253,7 +253,7 @@ Before testing, ensure:
 - [ ] Agent comments trigger loop restart
 
 ### 6.3 System Comments
-- [ ] System comments show "System" as author
+- [x] System comments show "System" as author
 - [ ] Include error messages, cancellation notices
 - [ ] System comments do NOT trigger agent responses
 
@@ -279,7 +279,7 @@ Before testing, ensure:
 ### 7.2 Log Display
 - [x] Logs ordered by created_at (ascending)
 - [x] Each shows: icon, description, actor, timestamp
-- [ ] Actor: "User", agent name, or "System"
+- [x] Actor: "User", agent name, or "System"
 - [ ] Hover tooltip shows full timestamp
 
 ---
