@@ -639,12 +639,12 @@ Before testing, ensure:
 - [ ] Edge (latest)
 
 ### 20.2 Features Used
-- [ ] CSS Grid
-- [ ] CSS Flexbox
-- [ ] CSS Variables
+- [x] CSS Grid
+- [x] CSS Flexbox
+- [x] CSS Variables
 - [ ] EventSource (SSE)
-- [ ] Fetch API
-- [ ] localStorage
+- [x] Fetch API
+- [x] localStorage
 
 ---
 
