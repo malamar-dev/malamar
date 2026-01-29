@@ -34,6 +34,14 @@ export function createAgent(
     return err("Workspace not found", "NOT_FOUND");
   }
 
+  // Check for duplicate name in workspace
+  if (repository.existsByNameInWorkspace(workspaceId, input.name)) {
+    return err(
+      "An agent with this name already exists in the workspace",
+      "CONFLICT",
+    );
+  }
+
   const now = new Date();
   const maxOrder = repository.getMaxOrder(workspaceId);
 
@@ -58,6 +66,28 @@ export function updateAgent(
   id: string,
   input: UpdateAgentInput,
 ): Result<Agent> {
+  // First get the existing agent to check workspace and name
+  const existingAgent = repository.findById(id);
+  if (!existingAgent) {
+    return err("Agent not found", "NOT_FOUND");
+  }
+
+  // If name is being changed, check for duplicate
+  if (
+    input.name &&
+    input.name !== existingAgent.name &&
+    repository.existsByNameInWorkspace(
+      existingAgent.workspaceId,
+      input.name,
+      id,
+    )
+  ) {
+    return err(
+      "An agent with this name already exists in the workspace",
+      "CONFLICT",
+    );
+  }
+
   const agent = repository.update(id, input);
   if (!agent) {
     return err("Agent not found", "NOT_FOUND");

@@ -207,7 +207,7 @@ describe("Agent endpoints", () => {
       expect(body.error.code).toBe("NOT_FOUND");
     });
 
-    test("POST /api/workspaces/:id/agents allows duplicate names", async () => {
+    test("POST /api/workspaces/:id/agents rejects duplicate names", async () => {
       const response = await fetch(
         `${getBaseUrl()}/api/workspaces/${workspaceId}/agents`,
         {
@@ -221,11 +221,13 @@ describe("Agent endpoints", () => {
         },
       );
 
-      expect(response.status).toBe(201);
-      const body = (await response.json()) as AgentResponse;
+      expect(response.status).toBe(409);
+      const body = (await response.json()) as ErrorResponse;
 
-      expect(body.name).toBe("Planner");
-      expect(body.order).toBe(3);
+      expect(body.error.code).toBe("CONFLICT");
+      expect(body.error.message).toBe(
+        "An agent with this name already exists in the workspace",
+      );
     });
   });
 
@@ -237,10 +239,9 @@ describe("Agent endpoints", () => {
       expect(response.status).toBe(200);
 
       const body = (await response.json()) as AgentsListResponse;
-      expect(body.agents.length).toBe(3);
+      expect(body.agents.length).toBe(2);
       expect(body.agents[0]!.order).toBe(1);
       expect(body.agents[1]!.order).toBe(2);
-      expect(body.agents[2]!.order).toBe(3);
     });
   });
 

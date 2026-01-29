@@ -44,6 +44,35 @@ export function findById(id: string): Agent | null {
 }
 
 /**
+ * Check if an agent name already exists in a workspace.
+ * Optionally excludes a specific agent ID (for updates).
+ */
+export function existsByNameInWorkspace(
+  workspaceId: string,
+  name: string,
+  excludeAgentId?: string,
+): boolean {
+  const db = getDatabase();
+  if (excludeAgentId) {
+    const result = db
+      .query<
+        { count: number },
+        [string, string, string]
+      >(`SELECT COUNT(*) as count FROM agents WHERE workspace_id = ? AND name = ? AND id != ?`)
+      .get(workspaceId, name, excludeAgentId);
+    return (result?.count ?? 0) > 0;
+  } else {
+    const result = db
+      .query<
+        { count: number },
+        [string, string]
+      >(`SELECT COUNT(*) as count FROM agents WHERE workspace_id = ? AND name = ?`)
+      .get(workspaceId, name);
+    return (result?.count ?? 0) > 0;
+  }
+}
+
+/**
  * Get the maximum order value for agents in a workspace.
  * Returns 0 if no agents exist.
  */
