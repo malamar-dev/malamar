@@ -157,10 +157,10 @@ Before testing, ensure:
 - [ ] If in progress, kills CLI subprocess first
 
 ### 4.8 Delete All Done Tasks
-- [ ] Button in workspace settings or task view
-- [ ] Requires typing workspace name to confirm
-- [ ] Only deletes tasks with status "Done"
-- [ ] Tasks in other statuses unaffected
+- [x] Button in workspace settings or task view
+- [x] Requires typing workspace name to confirm
+- [x] Only deletes tasks with status "Done"
+- [x] Tasks in other statuses unaffected
 
 ### 4.9 Task Prioritization
 - [x] "Prioritize" button in task detail
