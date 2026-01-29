@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
+import { useHealth } from "@/features/settings/hooks/use-health.ts";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils.ts";
 
@@ -38,11 +39,12 @@ import { useCreateAgent } from "../hooks/use-create-agent.ts";
 import { useUpdateAgent } from "../hooks/use-update-agent.ts";
 import type { Agent, CliType } from "../types/agent.types.ts";
 
-const CLI_TYPES: { value: CliType; label: string }[] = [
-  { value: "claude", label: "Claude" },
-  { value: "gemini", label: "Gemini" },
-  { value: "codex", label: "Codex" },
-  { value: "opencode", label: "OpenCode" },
+// Priority order: Claude > Codex > Gemini > OpenCode
+const CLI_TYPES: { value: CliType; label: string; priority: number }[] = [
+  { value: "claude", label: "Claude", priority: 1 },
+  { value: "codex", label: "Codex", priority: 2 },
+  { value: "gemini", label: "Gemini", priority: 3 },
+  { value: "opencode", label: "OpenCode", priority: 4 },
 ];
 
 const agentSchema = z.object({
@@ -138,6 +140,29 @@ function AgentForm({
   const isEditing = !!agent;
   const createAgent = useCreateAgent(workspaceId);
   const updateAgent = useUpdateAgent(workspaceId);
+  const { data: healthData } = useHealth();
+
+  // Get health status for each CLI
+  const cliHealthMap = useMemo(() => {
+    const map = new Map<CliType, boolean>();
+    if (healthData?.clis) {
+      for (const cli of healthData.clis) {
+        map.set(cli.type, cli.status === "healthy");
+      }
+    }
+    return map;
+  }, [healthData]);
+
+  // Get default CLI (first healthy one by priority, or "claude" as fallback)
+  const defaultCliType = useMemo((): CliType => {
+    const sortedClis = [...CLI_TYPES].sort((a, b) => a.priority - b.priority);
+    for (const cli of sortedClis) {
+      if (cliHealthMap.get(cli.value)) {
+        return cli.value;
+      }
+    }
+    return "claude"; // Fallback if none are healthy
+  }, [cliHealthMap]);
 
   const {
     register,
@@ -149,7 +174,7 @@ function AgentForm({
     resolver: zodResolver(agentSchema),
     defaultValues: {
       name: agent?.name ?? "",
-      cliType: agent?.cliType ?? "claude",
+      cliType: agent?.cliType ?? defaultCliType,
       instruction: agent?.instruction ?? "",
     },
   });
@@ -164,11 +189,11 @@ function AgentForm({
     } else {
       reset({
         name: "",
-        cliType: "claude",
+        cliType: defaultCliType,
         instruction: "",
       });
     }
-  }, [agent, reset]);
+  }, [agent, reset, defaultCliType]);
 
   const isPending = createAgent.isPending || updateAgent.isPending;
 
@@ -211,11 +236,33 @@ function AgentForm({
                 <SelectValue placeholder="Select a CLI type" />
               </SelectTrigger>
               <SelectContent>
-                {CLI_TYPES.map((cliType) => (
-                  <SelectItem key={cliType.value} value={cliType.value}>
-                    {cliType.label}
-                  </SelectItem>
-                ))}
+                {CLI_TYPES.map((cliType) => {
+                  const isHealthy = cliHealthMap.get(cliType.value);
+                  return (
+                    <SelectItem key={cliType.value} value={cliType.value}>
+                      <span className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "h-2 w-2 rounded-full",
+                            isHealthy === true
+                              ? "bg-green-500"
+                              : isHealthy === false
+                                ? "bg-red-500"
+                                : "bg-gray-400",
+                          )}
+                          title={
+                            isHealthy === true
+                              ? "Healthy"
+                              : isHealthy === false
+                                ? "Unhealthy"
+                                : "Unknown"
+                          }
+                        />
+                        {cliType.label}
+                      </span>
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           )}

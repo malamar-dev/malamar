@@ -70,8 +70,8 @@ Before testing, ensure:
 ### 3.1 Create Agent
 - [x] "Add Agent" button opens dialog
 - [x] Name is required and unique within workspace
-- [ ] CLI type dropdown shows all 4 CLIs with health indicator
-- [ ] Default CLI is first healthy one (priority: Claude > Codex > Gemini > OpenCode)
+- [x] CLI type dropdown shows all 4 CLIs with health indicator
+- [x] Default CLI is first healthy one (priority: Claude > Codex > Gemini > OpenCode)
 - [x] Instruction is required (textarea)
 - [x] New agent appends to end of list (highest order + 1)
 
