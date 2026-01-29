@@ -501,7 +501,7 @@ Before testing, ensure:
 ## 15. UI/UX Details
 
 ### 15.1 Responsive Design
-- [ ] Desktop: Dialog for forms
+- [x] Desktop: Dialog for forms
 - [ ] Mobile: Drawer for forms
 - [ ] Sidebar collapses on mobile
 - [ ] Kanban columns stack or scroll on mobile
@@ -542,7 +542,7 @@ Before testing, ensure:
 
 ### 15.6 Keyboard Shortcuts
 - [ ] Ctrl/Cmd+Enter to send chat message
-- [ ] Escape to close dialogs
+- [x] Escape to close dialogs
 
 ---
 
