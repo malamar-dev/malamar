@@ -527,7 +527,7 @@ Before testing, ensure:
 - [x] Local timezone
 
 ### 15.4 Loading States
-- [ ] Skeleton placeholders for initial load
+- [x] Skeleton placeholders for initial load
 - [ ] Spinner on buttons during mutations
 - [ ] Disabled state during processing
 
