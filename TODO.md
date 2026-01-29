@@ -248,14 +248,14 @@ Before testing, ensure:
 - [x] New queue item created on comment
 
 ### 6.2 Agent Comments
-- [ ] Agent comments show agent name as author
-- [ ] Markdown content rendered correctly
-- [ ] Agent comments trigger loop restart
+- [x] Agent comments show agent name as author
+- [x] Markdown content rendered correctly
+- [x] Agent comments trigger loop restart
 
 ### 6.3 System Comments
 - [x] System comments show "System" as author
-- [ ] Include error messages, cancellation notices
-- [ ] System comments do NOT trigger agent responses
+- [x] Include error messages, cancellation notices
+- [x] System comments do NOT trigger agent responses
 
 ### 6.4 Comment Display
 - [x] Comments ordered by created_at (oldest first for reading flow)
