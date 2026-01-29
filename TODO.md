@@ -314,9 +314,9 @@ Before testing, ensure:
 
 ### 8.5 Cancel Processing
 - [x] "Stop" button appears while processing
-- [ ] Cancelling kills CLI subprocess
-- [ ] System message added about cancellation
-- [ ] Can resume by sending another message
+- [x] Cancelling kills CLI subprocess
+- [x] System message added about cancellation
+- [x] Can resume by sending another message
 
 ### 8.6 Chat Title
 - [x] Default: "Untitled chat"
