@@ -422,10 +422,10 @@ Before testing, ensure:
 - [x] "Refresh" button re-runs health check
 
 ### 11.2 Workspace Settings
-- [ ] Title editable
-- [ ] Description editable
-- [ ] Working Directory Mode: static vs temp toggle
-- [ ] Static Directory Path input (with validation warning)
+- [x] Title editable
+- [x] Description editable
+- [x] Working Directory Mode: static vs temp toggle
+- [x] Static Directory Path input (with validation warning)
 - [ ] Notification settings (per workspace)
 
 ### 11.3 Notification Settings
