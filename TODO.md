@@ -507,11 +507,11 @@ Before testing, ensure:
 - [ ] Kanban columns stack or scroll on mobile
 
 ### 15.2 Theme Support
-- [ ] Light mode
-- [ ] Dark mode
-- [ ] System preference detection
-- [ ] Toggle in header
-- [ ] Preference persists in localStorage
+- [x] Light mode
+- [x] Dark mode
+- [x] System preference detection
+- [x] Toggle in header
+- [x] Preference persists in localStorage
 
 ### 15.3 Date/Time Formatting
 | Age | Format |
