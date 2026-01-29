@@ -147,9 +147,9 @@ Before testing, ensure:
 | Done | Delete, Move to Todo |
 
 - [x] Todo → In Progress: happens automatically via runner
-- [ ] In Progress → In Review: user can manually trigger
-- [ ] In Review → Done: only users can move to Done
-- [ ] Done → Todo: reopens task for reprocessing
+- [x] In Progress → In Review: user can manually trigger
+- [x] In Review → Done: only users can move to Done
+- [x] Done → Todo: reopens task for reprocessing
 
 ### 4.7 Delete Task
 - [x] Confirm dialog before deletion
