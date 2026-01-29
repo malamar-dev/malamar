@@ -308,7 +308,7 @@ Before testing, ensure:
 ### 8.4 Send Message
 - [x] Input at bottom of chat
 - [x] Send button or Ctrl/Cmd+Enter to submit
-- [ ] Message appears immediately (optimistic update)
+- [x] Message appears immediately (optimistic update)
 - [x] Processing indicator shows while agent responds
 - [x] Cannot send while processing (input disabled)
 

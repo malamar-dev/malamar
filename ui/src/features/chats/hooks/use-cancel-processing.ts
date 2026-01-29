@@ -9,7 +9,9 @@ export const useCancelProcessing = (chatId: string) => {
     mutationFn: () => chatsApi.cancelProcessing(chatId),
     onSuccess: () => {
       // Invalidate messages to show the cancellation system message
-      queryClient.invalidateQueries({ queryKey: ["chat-messages", chatId] });
+      queryClient.invalidateQueries({
+        queryKey: ["chats", chatId, "messages"],
+      });
       // Invalidate chat to update isProcessing status
       queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
     },
