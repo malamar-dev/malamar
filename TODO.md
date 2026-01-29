@@ -182,18 +182,18 @@ Before testing, ensure:
 ## 5. Task Processing (Multi-Agent Loop)
 
 ### 5.1 Task Pickup
-- [ ] Runner polls for queued tasks (default: 1000ms interval)
-- [ ] One task per workspace processed at a time
-- [ ] Priority queue items picked first
-- [ ] Most recently processed task prioritized (tackle until completion)
-- [ ] LIFO fallback for remaining tasks
+- [x] Runner polls for queued tasks (default: 1000ms interval)
+- [x] One task per workspace processed at a time
+- [x] Priority queue items picked first
+- [x] Most recently processed task prioritized (tackle until completion)
+- [x] LIFO fallback for remaining tasks
 
 ### 5.2 Agent Execution Sequence
-- [ ] Agents execute in order (by `order` column)
-- [ ] Each agent receives: workspace instruction, task summary, description, comments, activity log
-- [ ] Agent sees list of other agents in workflow
-- [ ] Activity log: `agent_started` event when agent begins
-- [ ] Activity log: `agent_finished` event with action type
+- [x] Agents execute in order (by `order` column)
+- [x] Each agent receives: workspace instruction, task summary, description, comments, activity log
+- [x] Agent sees list of other agents in workflow
+- [x] Activity log: `agent_started` event when agent begins
+- [x] Activity log: `agent_finished` event with action type
 
 ### 5.3 Agent Actions
 | Action | Result |
@@ -203,38 +203,38 @@ Before testing, ensure:
 | Change Status (in_review) | Stop loop, move task to In Review |
 | Comment + Change Status | Add comment, then move to In Review |
 
-- [ ] Skip: agent has nothing to do, no comment added
-- [ ] Comment: markdown summary added, loop restarts
-- [ ] Change Status: task moves to In Review, loop stops
+- [x] Skip: agent has nothing to do, no comment added
+- [x] Comment: markdown summary added, loop restarts
+- [x] Change Status: task moves to In Review, loop stops
 
 ### 5.4 Loop Continuation
-- [ ] If any agent added a comment → loop restarts from first agent
-- [ ] If all agents skipped → task moves to "In Review"
-- [ ] If any agent requests "In Review" → stop immediately
-- [ ] Safety limit: max 100 iterations (prevents infinite loops)
+- [x] If any agent added a comment → loop restarts from first agent
+- [x] If all agents skipped → task moves to "In Review"
+- [x] If any agent requests "In Review" → stop immediately
+- [x] Safety limit: max 100 iterations (prevents infinite loops)
 
 ### 5.5 Error Handling
-- [ ] CLI exit non-zero: system comment with error
-- [ ] Output file missing: system comment with error
-- [ ] Output file empty: system comment with error
-- [ ] JSON parse failure: system comment with error
-- [ ] Schema validation failure: system comment with error
-- [ ] Task does NOT move to "In Review" on error
-- [ ] Error triggers retry via queue (natural retry)
+- [x] CLI exit non-zero: system comment with error
+- [x] Output file missing: system comment with error
+- [x] Output file empty: system comment with error
+- [x] JSON parse failure: system comment with error
+- [x] Schema validation failure: system comment with error
+- [x] Task does NOT move to "In Review" on error
+- [x] Error triggers retry via queue (natural retry)
 
 ### 5.6 Working Directory
-- [ ] Temp Folder mode: `/tmp/malamar_task_{task_id}` created
-- [ ] Static Directory mode: uses workspace path as-is
+- [x] Temp Folder mode: `/tmp/malamar_task_{task_id}` created
+- [x] Static Directory mode: uses workspace path as-is
 - [ ] Static mode: warning logged if directory doesn't exist
-- [ ] Directory passed as `cwd` to CLI subprocess
+- [x] Directory passed as `cwd` to CLI subprocess
 
 ### 5.7 Context Files
-- [ ] Input file: `/tmp/malamar_task_{task_id}.md`
-- [ ] Output file: `/tmp/malamar_output_{random_nanoid}.json`
-- [ ] Input includes: workspace instruction, agent instruction, other agents, task details
-- [ ] Comments in JSONL format inside code block
-- [ ] Activity logs in JSONL format inside code block
-- [ ] Output instruction specifies exact output path
+- [x] Input file: `/tmp/malamar_input_{random_nanoid}.md` (uses nanoid for uniqueness)
+- [x] Output file: `/tmp/malamar_output_{random_nanoid}.json`
+- [x] Input includes: workspace instruction, agent instruction, other agents, task details
+- [x] Comments in JSONL format inside code block
+- [x] Activity logs in JSONL format inside code block
+- [x] Output instruction specifies exact output path
 
 ---
 
