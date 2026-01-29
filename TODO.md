@@ -129,7 +129,7 @@ Before testing, ensure:
 ### 4.4 Task Detail Dialog
 - [x] Opens on card click
 - [x] Three tabs: Details, Comments, Activity
-- [ ] Details tab: edit summary/description, see status, take actions
+- [x] Details tab: edit summary/description, see status, take actions
 - [x] Comments tab: view all comments, add new comment
 - [ ] Activity tab: timeline of events with icons
 
