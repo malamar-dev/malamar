@@ -152,7 +152,7 @@ Before testing, ensure:
 - [ ] Done → Todo: reopens task for reprocessing
 
 ### 4.7 Delete Task
-- [ ] Confirm dialog before deletion
+- [x] Confirm dialog before deletion
 - [ ] Cascade deletes: comments, logs, queue items
 - [ ] If in progress, kills CLI subprocess first
 
