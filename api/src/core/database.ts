@@ -39,6 +39,9 @@ export async function initDatabase(): Promise<Database> {
   console.log(`[Database] Opening database at ${dbPath}`);
   db = new Database(dbPath);
 
+  // Enable foreign key constraints (required for CASCADE DELETE to work)
+  db.run("PRAGMA foreign_keys = ON;");
+
   // Configure SQLite for better performance
   db.run("PRAGMA journal_mode = WAL;");
   db.run("PRAGMA synchronous = NORMAL;");
