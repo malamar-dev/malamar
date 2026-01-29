@@ -87,7 +87,7 @@ Before testing, ensure:
 
 ### 3.4 Reorder Agents
 - [x] Desktop: Drag-and-drop works
-- [ ] Mobile: Up/down arrow buttons work
+- [x] Mobile: Up/down arrow buttons work
 - [x] Order persists after page refresh
 - [x] Order affects agent execution sequence in task loop
 
