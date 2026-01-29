@@ -528,8 +528,8 @@ Before testing, ensure:
 
 ### 15.4 Loading States
 - [x] Skeleton placeholders for initial load
-- [ ] Spinner on buttons during mutations
-- [ ] Disabled state during processing
+- [x] Spinner on buttons during mutations
+- [x] Disabled state during processing
 
 ### 15.5 Empty States
 | Context | Message |
