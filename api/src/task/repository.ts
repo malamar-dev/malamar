@@ -242,7 +242,7 @@ export function countCommentsByTaskId(taskId: string): number {
 
 /**
  * Find comments for a task with pagination.
- * Returns comments sorted by created_at DESC (newest first).
+ * Returns comments sorted by created_at ASC (oldest first for reading flow).
  */
 export function findCommentsByTaskId(
   taskId: string,
@@ -257,7 +257,7 @@ export function findCommentsByTaskId(
     .query<TaskCommentRow, [string, number, number]>(
       `SELECT * FROM task_comments
        WHERE task_id = ?
-       ORDER BY created_at DESC
+       ORDER BY created_at ASC
        LIMIT ? OFFSET ?`,
     )
     .all(taskId, limit, offset);
@@ -331,7 +331,7 @@ export function countLogsByTaskId(taskId: string): number {
 
 /**
  * Find logs for a task with pagination.
- * Returns logs sorted by created_at DESC (newest first).
+ * Returns logs sorted by created_at ASC (oldest first for timeline view).
  */
 export function findLogsByTaskId(
   taskId: string,
@@ -346,7 +346,7 @@ export function findLogsByTaskId(
     .query<TaskLogRow, [string, number, number]>(
       `SELECT * FROM task_logs
        WHERE task_id = ?
-       ORDER BY created_at DESC
+       ORDER BY created_at ASC
        LIMIT ? OFFSET ?`,
     )
     .all(taskId, limit, offset);

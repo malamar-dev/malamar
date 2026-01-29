@@ -258,8 +258,8 @@ Before testing, ensure:
 - [ ] System comments do NOT trigger agent responses
 
 ### 6.4 Comment Display
-- [ ] Comments ordered by created_at (oldest first for reading flow)
-- [ ] Each shows: author, content (rendered markdown), timestamp
+- [x] Comments ordered by created_at (oldest first for reading flow)
+- [x] Each shows: author, content (rendered markdown), timestamp
 - [ ] Deleted agent comments show "(Deleted Agent)"
 
 ---
@@ -277,8 +277,8 @@ Before testing, ensure:
 - [ ] `task_deprioritized`: logged when priority removed
 
 ### 7.2 Log Display
-- [ ] Logs ordered by created_at (ascending)
-- [ ] Each shows: icon, description, actor, timestamp
+- [x] Logs ordered by created_at (ascending)
+- [x] Each shows: icon, description, actor, timestamp
 - [ ] Actor: "User", agent name, or "System"
 - [ ] Hover tooltip shows full timestamp
 
