@@ -98,7 +98,7 @@ Before testing, ensure:
 
 ### 3.6 Workspace with No Agents
 - [x] Warning banner displayed persistently
-- [ ] Tasks immediately move to "In Review" (no agents = all skip)
+- [x] Tasks immediately move to "In Review" (no agents = all skip)
 - [ ] Can still chat with Malamar agent to recreate agents
 
 ---
