@@ -73,7 +73,7 @@ Before testing, ensure:
 - [ ] CLI type dropdown shows all 4 CLIs with health indicator
 - [ ] Default CLI is first healthy one (priority: Claude > Codex > Gemini > OpenCode)
 - [x] Instruction is required (textarea)
-- [ ] New agent appends to end of list (highest order + 1)
+- [x] New agent appends to end of list (highest order + 1)
 
 ### 3.2 List Agents
 - [ ] Agents displayed in order (1, 2, 3, 4...)
