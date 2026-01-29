@@ -146,7 +146,7 @@ Before testing, ensure:
 | In Review | Delete, Move to Todo |
 | Done | Delete, Move to Todo |
 
-- [ ] Todo → In Progress: happens automatically via runner
+- [x] Todo → In Progress: happens automatically via runner
 - [ ] In Progress → In Review: user can manually trigger
 - [ ] In Review → Done: only users can move to Done
 - [ ] Done → Todo: reopens task for reprocessing
