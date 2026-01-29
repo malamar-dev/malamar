@@ -542,3 +542,218 @@ export function getAgentName(agentId: string): string | null {
     .get(agentId);
   return result?.name ?? null;
 }
+
+// =============================================================================
+// Queue Processor Support
+// =============================================================================
+
+/**
+ * Find workspace IDs that have queued task queue items.
+ * Only includes workspaces where the associated task is in "todo" or "in_progress" status.
+ */
+export function findWorkspacesWithQueuedItems(): string[] {
+  const db = getDatabase();
+  const rows = db
+    .query<{ workspace_id: string }, []>(
+      `SELECT DISTINCT tq.workspace_id
+       FROM task_queue tq
+       JOIN tasks t ON tq.task_id = t.id
+       WHERE tq.status = 'queued'
+       AND t.status IN ('todo', 'in_progress')`,
+    )
+    .all();
+  return rows.map((row) => row.workspace_id);
+}
+
+/**
+ * Pick the next queue item for a workspace using the pickup algorithm.
+ * Order:
+ * 1. Priority items first (is_priority = 1)
+ * 2. Task with most recent completed/failed queue item (continue working on same task)
+ * 3. LIFO fallback (most recently updated queued item)
+ *
+ * Only considers items where task status is "todo" or "in_progress".
+ */
+export function pickNextQueueItem(workspaceId: string): TaskQueue | null {
+  const db = getDatabase();
+
+  // Step 1: Try to find a priority item
+  const priorityRow = db
+    .query<TaskQueueRow, [string]>(
+      `SELECT tq.*
+       FROM task_queue tq
+       JOIN tasks t ON tq.task_id = t.id
+       WHERE tq.workspace_id = ?
+       AND tq.status = 'queued'
+       AND tq.is_priority = 1
+       AND t.status IN ('todo', 'in_progress')
+       ORDER BY tq.updated_at DESC
+       LIMIT 1`,
+    )
+    .get(workspaceId);
+
+  if (priorityRow) {
+    return rowToQueueItem(priorityRow);
+  }
+
+  // Step 2: Find task with most recently processed queue item and pick its queued item
+  const recentTaskRow = db
+    .query<{ task_id: string }, [string]>(
+      `SELECT task_id
+       FROM task_queue
+       WHERE workspace_id = ?
+       AND status IN ('completed', 'failed')
+       ORDER BY updated_at DESC
+       LIMIT 1`,
+    )
+    .get(workspaceId);
+
+  if (recentTaskRow) {
+    const recentlyProcessedRow = db
+      .query<TaskQueueRow, [string, string]>(
+        `SELECT tq.*
+         FROM task_queue tq
+         JOIN tasks t ON tq.task_id = t.id
+         WHERE tq.task_id = ?
+         AND tq.workspace_id = ?
+         AND tq.status = 'queued'
+         AND t.status IN ('todo', 'in_progress')
+         LIMIT 1`,
+      )
+      .get(recentTaskRow.task_id, workspaceId);
+
+    if (recentlyProcessedRow) {
+      return rowToQueueItem(recentlyProcessedRow);
+    }
+  }
+
+  // Step 3: LIFO fallback - most recently updated queued item
+  const lifoRow = db
+    .query<TaskQueueRow, [string]>(
+      `SELECT tq.*
+       FROM task_queue tq
+       JOIN tasks t ON tq.task_id = t.id
+       WHERE tq.workspace_id = ?
+       AND tq.status = 'queued'
+       AND t.status IN ('todo', 'in_progress')
+       ORDER BY tq.updated_at DESC
+       LIMIT 1`,
+    )
+    .get(workspaceId);
+
+  return lifoRow ? rowToQueueItem(lifoRow) : null;
+}
+
+/**
+ * Atomically claim a queue item.
+ * Updates status from 'queued' to 'in_progress'.
+ * Returns the claimed item if successful, null if already claimed by another processor.
+ */
+export function claimQueueItem(queueId: string): TaskQueue | null {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  // Atomic update: only succeeds if status is still 'queued'
+  const result = db
+    .prepare(
+      `UPDATE task_queue
+       SET status = 'in_progress', updated_at = ?
+       WHERE id = ? AND status = 'queued'`,
+    )
+    .run(now, queueId);
+
+  // Check if we actually updated a row
+  if (result.changes === 0) {
+    return null; // Someone else claimed it
+  }
+
+  return findQueueItemById(queueId);
+}
+
+/**
+ * Update a queue item's status by ID.
+ * Returns true if updated, false if not found.
+ */
+export function updateQueueStatusById(
+  queueId: string,
+  status: TaskQueueStatus,
+): boolean {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+  const result = db
+    .prepare(`UPDATE task_queue SET status = ?, updated_at = ? WHERE id = ?`)
+    .run(status, now, queueId);
+  return result.changes > 0;
+}
+
+/**
+ * Find all comments for a task ordered ASC (oldest first).
+ * Used for generating CLI context.
+ */
+export function findAllCommentsByTaskId(taskId: string): TaskComment[] {
+  const db = getDatabase();
+  const rows = db
+    .query<
+      TaskCommentRow,
+      [string]
+    >(`SELECT * FROM task_comments WHERE task_id = ? ORDER BY created_at ASC`)
+    .all(taskId);
+  return rows.map(rowToComment);
+}
+
+/**
+ * Find all logs for a task ordered ASC (oldest first).
+ * Used for generating CLI context.
+ */
+export function findAllLogsByTaskId(taskId: string): TaskLog[] {
+  const db = getDatabase();
+  const rows = db
+    .query<
+      TaskLogRow,
+      [string]
+    >(`SELECT * FROM task_logs WHERE task_id = ? ORDER BY created_at ASC`)
+    .all(taskId);
+  return rows.map(rowToLog);
+}
+
+/**
+ * Demote other in-progress tasks to todo for a workspace.
+ * Excludes the given task ID.
+ * Per spec: only one task per workspace should be "In Progress" at a time.
+ */
+export function demoteOtherInProgressTasks(
+  workspaceId: string,
+  excludeTaskId: string,
+): void {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  db.prepare(
+    `UPDATE tasks
+     SET status = 'todo', updated_at = ?
+     WHERE workspace_id = ?
+     AND status = 'in_progress'
+     AND id != ?`,
+  ).run(now, workspaceId, excludeTaskId);
+}
+
+/**
+ * Reset in-progress queue items to queued.
+ * Called on startup for crash recovery.
+ */
+export function resetInProgressQueueItems(): void {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  const result = db
+    .prepare(
+      `UPDATE task_queue SET status = 'queued', updated_at = ? WHERE status = 'in_progress'`,
+    )
+    .run(now);
+
+  if (result.changes > 0) {
+    console.log(
+      `[TaskRepository] Reset ${result.changes} in-progress queue items to queued`,
+    );
+  }
+}

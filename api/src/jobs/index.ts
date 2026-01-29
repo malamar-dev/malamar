@@ -1,14 +1,20 @@
 import { killAllChatProcesses, runChatProcessor } from "./chat-processor";
 import { runCliHealthCheck } from "./cli-health-check";
+import { killAllTaskProcesses, runTaskProcessor } from "./task-processor";
 
 const CLI_HEALTH_CHECK_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 const CHAT_PROCESSOR_INTERVAL_MS = parseInt(
   process.env.MALAMAR_RUNNER_POLL_INTERVAL ?? "1000",
   10,
 );
+const TASK_PROCESSOR_INTERVAL_MS = parseInt(
+  process.env.MALAMAR_RUNNER_POLL_INTERVAL ?? "1000",
+  10,
+);
 
 let healthCheckIntervalId: Timer | null = null;
 let chatProcessorIntervalId: Timer | null = null;
+let taskProcessorIntervalId: Timer | null = null;
 let initialTimeoutId: Timer | null = null;
 let abortController: AbortController | null = null;
 let isRunning = false;
@@ -45,6 +51,13 @@ export function startBackgroundJobs(): void {
     }
   }, CHAT_PROCESSOR_INTERVAL_MS);
 
+  // Set up interval for task processor
+  taskProcessorIntervalId = setInterval(() => {
+    if (!signal.aborted) {
+      void runTaskProcessor(signal);
+    }
+  }, TASK_PROCESSOR_INTERVAL_MS);
+
   console.log("[Jobs] Background jobs started");
 }
 
@@ -73,12 +86,19 @@ export function stopBackgroundJobs(): void {
     chatProcessorIntervalId = null;
   }
 
-  // Kill all active chat CLI processes
+  if (taskProcessorIntervalId) {
+    clearInterval(taskProcessorIntervalId);
+    taskProcessorIntervalId = null;
+  }
+
+  // Kill all active CLI processes
   killAllChatProcesses();
+  killAllTaskProcesses();
 
   isRunning = false;
   console.log("[Jobs] Background jobs stopped");
 }
 
 export { killChatProcess } from "./chat-processor";
+export { killTaskProcess } from "./task-processor";
 export { runCliHealthCheck };

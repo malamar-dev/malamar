@@ -67,6 +67,33 @@ export const createCommentBodySchema = z.object({
 });
 
 // =============================================================================
+// CLI Output Schemas
+// =============================================================================
+
+/**
+ * Schema for task action in CLI output.
+ * Agents can return these actions:
+ * - skip: Agent has nothing to do
+ * - comment: Agent did meaningful work, content contains markdown summary
+ * - change_status: Agent requests to move task to "in_review"
+ */
+const taskActionSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("skip") }),
+  z.object({ type: z.literal("comment"), content: z.string().min(1) }),
+  z.object({
+    type: z.literal("change_status"),
+    status: z.literal("in_review"),
+  }),
+]);
+
+/**
+ * Schema for validating CLI output from task processing.
+ */
+export const taskCliOutputSchema = z.object({
+  actions: z.array(taskActionSchema),
+});
+
+// =============================================================================
 // Type Exports
 // =============================================================================
 
@@ -77,3 +104,5 @@ export type CreateTaskBody = z.infer<typeof createTaskBodySchema>;
 export type UpdateTaskBody = z.infer<typeof updateTaskBodySchema>;
 export type PrioritizeTaskBody = z.infer<typeof prioritizeTaskBodySchema>;
 export type CreateCommentBody = z.infer<typeof createCommentBodySchema>;
+export type TaskCliOutput = z.infer<typeof taskCliOutputSchema>;
+export type TaskAction = z.infer<typeof taskActionSchema>;

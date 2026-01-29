@@ -1,3 +1,4 @@
+import { killTaskProcess } from "../jobs";
 import { err, generateId, ok, type Result } from "../shared";
 import * as workspaceRepository from "../workspace/repository";
 import * as repository from "./repository";
@@ -197,10 +198,16 @@ export function cancelTask(id: string): Result<void> {
     return err("No active processing to cancel", "NOT_FOUND");
   }
 
+  // Kill the subprocess if running
+  killTaskProcess(id);
+
   // Mark queue item as failed
   repository.updateQueueItemStatus(id, "failed");
 
-  // Create activity log
+  // Move task to "in_review" (prevents immediate re-pickup per spec)
+  repository.update(id, { status: "in_review" });
+
+  // Create activity log for cancellation
   repository.createLog(
     generateId(),
     task.id,
@@ -209,6 +216,17 @@ export function cancelTask(id: string): Result<void> {
     "user",
     MOCK_USER_ID,
     null,
+  );
+
+  // Add system comment about cancellation
+  const commentId = generateId();
+  repository.createComment(
+    commentId,
+    id,
+    task.workspaceId,
+    "Task cancelled by user",
+    null, // no user
+    null, // no agent (system comment)
   );
 
   // Update workspace activity
@@ -334,4 +352,219 @@ export function listLogs(
  */
 export function getAgentName(agentId: string): string | null {
   return repository.getAgentName(agentId);
+}
+
+// =============================================================================
+// Task Processor Support
+// =============================================================================
+
+/**
+ * Create an agent comment on a task.
+ * Used by the task processor when agents add comments.
+ */
+export function createAgentComment(
+  taskId: string,
+  agentId: string,
+  content: string,
+): Result<TaskComment> {
+  const task = repository.findById(taskId);
+  if (!task) {
+    return err("Task not found", "NOT_FOUND");
+  }
+
+  const id = generateId();
+  const comment = repository.createComment(
+    id,
+    taskId,
+    task.workspaceId,
+    content,
+    null, // no user
+    agentId,
+  );
+
+  // Create activity log
+  repository.createLog(
+    generateId(),
+    taskId,
+    task.workspaceId,
+    "comment_added",
+    "agent",
+    agentId,
+    null,
+  );
+
+  // Update workspace activity
+  repository.updateWorkspaceActivity(task.workspaceId);
+
+  return ok(comment);
+}
+
+/**
+ * Create a system comment on a task.
+ * Used for error messages during processing.
+ */
+export function createSystemComment(
+  taskId: string,
+  content: string,
+): Result<TaskComment> {
+  const task = repository.findById(taskId);
+  if (!task) {
+    return err("Task not found", "NOT_FOUND");
+  }
+
+  const id = generateId();
+  const comment = repository.createComment(
+    id,
+    taskId,
+    task.workspaceId,
+    content,
+    null, // no user
+    null, // no agent
+  );
+
+  // Create activity log
+  repository.createLog(
+    generateId(),
+    taskId,
+    task.workspaceId,
+    "comment_added",
+    "system",
+    null,
+    null,
+  );
+
+  // System comment also triggers queue item creation for retry
+  const existingQueueItem = repository.findActiveQueueItemByTaskId(taskId);
+  if (!existingQueueItem) {
+    repository.createQueueItem(generateId(), taskId, task.workspaceId);
+  }
+
+  // Update workspace activity
+  repository.updateWorkspaceActivity(task.workspaceId);
+
+  return ok(comment);
+}
+
+/**
+ * Update task status by agent.
+ * Used by the processor for status transitions.
+ */
+export function updateTaskStatusByAgent(
+  taskId: string,
+  agentId: string,
+  newStatus: TaskStatus,
+): Result<Task> {
+  const task = repository.findById(taskId);
+  if (!task) {
+    return err("Task not found", "NOT_FOUND");
+  }
+
+  const oldStatus = task.status;
+
+  const updatedTask = repository.update(taskId, { status: newStatus });
+  if (!updatedTask) {
+    return err("Task not found", "NOT_FOUND");
+  }
+
+  // Log status change
+  repository.createLog(
+    generateId(),
+    taskId,
+    task.workspaceId,
+    "status_changed",
+    "agent",
+    agentId,
+    { oldStatus, newStatus },
+  );
+
+  // Update workspace activity
+  repository.updateWorkspaceActivity(task.workspaceId);
+
+  return ok(updatedTask);
+}
+
+/**
+ * Update task status by system.
+ * Used by the processor for automatic status transitions.
+ */
+export function updateTaskStatusBySystem(
+  taskId: string,
+  newStatus: TaskStatus,
+): Result<Task> {
+  const task = repository.findById(taskId);
+  if (!task) {
+    return err("Task not found", "NOT_FOUND");
+  }
+
+  const oldStatus = task.status;
+
+  const updatedTask = repository.update(taskId, { status: newStatus });
+  if (!updatedTask) {
+    return err("Task not found", "NOT_FOUND");
+  }
+
+  // Log status change
+  repository.createLog(
+    generateId(),
+    taskId,
+    task.workspaceId,
+    "status_changed",
+    "system",
+    null,
+    { oldStatus, newStatus },
+  );
+
+  // Update workspace activity
+  repository.updateWorkspaceActivity(task.workspaceId);
+
+  return ok(updatedTask);
+}
+
+/**
+ * Log agent started event.
+ */
+export function logAgentStarted(
+  taskId: string,
+  agentId: string,
+  agentName: string,
+): void {
+  const task = repository.findById(taskId);
+  if (!task) return;
+
+  repository.createLog(
+    generateId(),
+    taskId,
+    task.workspaceId,
+    "agent_started",
+    "agent",
+    agentId,
+    { agent_name: agentName },
+  );
+
+  repository.updateWorkspaceActivity(task.workspaceId);
+}
+
+/**
+ * Log agent finished event.
+ */
+export function logAgentFinished(
+  taskId: string,
+  agentId: string,
+  agentName: string,
+  actionType: "skip" | "comment" | "in_review",
+): void {
+  const task = repository.findById(taskId);
+  if (!task) return;
+
+  repository.createLog(
+    generateId(),
+    taskId,
+    task.workspaceId,
+    "agent_finished",
+    "agent",
+    agentId,
+    { agent_name: agentName, action_type: actionType },
+  );
+
+  repository.updateWorkspaceActivity(task.workspaceId);
 }
