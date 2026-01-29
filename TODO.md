@@ -306,8 +306,8 @@ Before testing, ensure:
 - [ ] Infinite scroll / load more pagination
 
 ### 8.4 Send Message
-- [ ] Input at bottom of chat
-- [ ] Send button or Ctrl/Cmd+Enter to submit
+- [x] Input at bottom of chat
+- [x] Send button or Ctrl/Cmd+Enter to submit
 - [ ] Message appears immediately (optimistic update)
 - [ ] Processing indicator shows while agent responds
 - [ ] Cannot send while processing (input disabled)
