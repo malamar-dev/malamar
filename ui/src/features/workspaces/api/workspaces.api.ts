@@ -41,4 +41,12 @@ export const workspacesApi = {
    */
   update: (id: string, input: UpdateWorkspaceInput) =>
     apiClient.put<Workspace>(`/workspaces/${id}`, input),
+
+  /**
+   * Validates a working directory path.
+   * @param path - The path to validate
+   * @returns Whether the path is valid (exists and is a directory)
+   */
+  validatePath: (path: string) =>
+    apiClient.post<{ valid: boolean }>("/workspaces/validate-path", { path }),
 };

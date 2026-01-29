@@ -346,24 +346,24 @@ describe("Workspace endpoints", () => {
     expect(body.workingDirectory).toBeNull();
   });
 
-  test("POST /api/workspaces returns 400 for non-existent workingDirectory", async () => {
+  test("POST /api/workspaces allows non-existent workingDirectory (warns but saves)", async () => {
     const response = await fetch(`${getBaseUrl()}/api/workspaces`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title: "Workspace with Invalid Path",
+        title: "Workspace with Non-existent Path",
         workingDirectory: "/nonexistent/path/abc123",
       }),
     });
 
-    expect(response.status).toBe(400);
-    const body = (await response.json()) as ErrorResponse;
-    expect(body.error.message).toBe(
-      "The specified path does not exist or is not a valid directory",
-    );
+    // Non-existent paths are allowed (user may create directory later)
+    expect(response.status).toBe(201);
+    const body = (await response.json()) as WorkspaceResponse;
+    expect(body.title).toBe("Workspace with Non-existent Path");
+    expect(body.workingDirectory).toBe("/nonexistent/path/abc123");
   });
 
-  test("POST /api/workspaces returns 400 when workingDirectory is a file", async () => {
+  test("POST /api/workspaces allows file path as workingDirectory (warns but saves)", async () => {
     const response = await fetch(`${getBaseUrl()}/api/workspaces`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -373,11 +373,11 @@ describe("Workspace endpoints", () => {
       }),
     });
 
-    expect(response.status).toBe(400);
-    const body = (await response.json()) as ErrorResponse;
-    expect(body.error.message).toBe(
-      "The specified path does not exist or is not a valid directory",
-    );
+    // File paths are allowed at save time (validation is a warning, not blocking)
+    expect(response.status).toBe(201);
+    const body = (await response.json()) as WorkspaceResponse;
+    expect(body.title).toBe("Workspace with File Path");
+    expect(body.workingDirectory).toBe("/etc/passwd");
   });
 
   test("PUT /api/workspaces/:id updates workingDirectory", async () => {
@@ -420,7 +420,7 @@ describe("Workspace endpoints", () => {
     expect(body.workingDirectory).toBeNull();
   });
 
-  test("PUT /api/workspaces/:id returns 400 for invalid workingDirectory", async () => {
+  test("PUT /api/workspaces/:id allows non-existent workingDirectory (warns but saves)", async () => {
     const response = await fetch(
       `${getBaseUrl()}/api/workspaces/${createdWorkspaceId}`,
       {
@@ -434,10 +434,61 @@ describe("Workspace endpoints", () => {
       },
     );
 
-    expect(response.status).toBe(400);
-    const body = (await response.json()) as ErrorResponse;
-    expect(body.error.message).toBe(
-      "The specified path does not exist or is not a valid directory",
+    // Non-existent paths are allowed (user may create directory later)
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as WorkspaceResponse;
+    expect(body.title).toBe("Valid Title");
+    expect(body.workingDirectory).toBe("/nonexistent/path/xyz789");
+  });
+
+  test("POST /api/workspaces/validate-path returns valid=true for existing directory", async () => {
+    const response = await fetch(
+      `${getBaseUrl()}/api/workspaces/validate-path`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: "/tmp",
+        }),
+      },
     );
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { valid: boolean };
+    expect(body.valid).toBe(true);
+  });
+
+  test("POST /api/workspaces/validate-path returns valid=false for non-existent path", async () => {
+    const response = await fetch(
+      `${getBaseUrl()}/api/workspaces/validate-path`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: "/nonexistent/path/xyz789",
+        }),
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { valid: boolean };
+    expect(body.valid).toBe(false);
+  });
+
+  test("POST /api/workspaces/validate-path returns valid=true for empty path", async () => {
+    const response = await fetch(
+      `${getBaseUrl()}/api/workspaces/validate-path`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: "",
+        }),
+      },
+    );
+
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as { valid: boolean };
+    expect(body.valid).toBe(true);
   });
 });

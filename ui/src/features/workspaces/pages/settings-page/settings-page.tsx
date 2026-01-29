@@ -1,5 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircleIcon, CheckIcon, LoaderIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  CheckIcon,
+  LoaderIcon,
+} from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router";
@@ -26,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea.tsx";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
 import { useUpdateWorkspace } from "../../hooks/use-update-workspace.ts";
+import { useValidatePath } from "../../hooks/use-validate-path.ts";
 import { useWorkspace } from "../../hooks/use-workspace.ts";
 
 const workspaceSchema = z.object({
@@ -52,7 +58,9 @@ const SettingsPage = () => {
     error,
   } = useWorkspace(workspaceId ?? "");
   const updateWorkspace = useUpdateWorkspace(workspaceId ?? "");
+  const validatePath = useValidatePath();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [pathWarning, setPathWarning] = useState<string | null>(null);
 
   const {
     register,
@@ -80,7 +88,23 @@ const SettingsPage = () => {
 
   const onSubmit = async (data: WorkspaceFormData) => {
     setShowSuccess(false);
+    setPathWarning(null);
     updateWorkspace.reset();
+
+    // Validate path and set warning if it doesn't exist (but still allow saving)
+    if (data.workingDirectory) {
+      try {
+        const result = await validatePath.mutateAsync(data.workingDirectory);
+        if (!result.valid) {
+          setPathWarning(
+            "The specified path does not exist or is not a valid directory. You can still save, but the path should exist before running tasks.",
+          );
+        }
+      } catch {
+        // Ignore validation errors - proceed with save
+      }
+    }
+
     try {
       await updateWorkspace.mutateAsync({
         ...data,
@@ -149,7 +173,15 @@ const SettingsPage = () => {
             </Alert>
           )}
 
-          {showSuccess && (
+          {showSuccess && pathWarning && (
+            <Alert variant="warning" className="mb-4">
+              <AlertTriangleIcon className="h-4 w-4" />
+              <AlertTitle>Saved with warning</AlertTitle>
+              <AlertDescription>{pathWarning}</AlertDescription>
+            </Alert>
+          )}
+
+          {showSuccess && !pathWarning && (
             <Alert className="mb-4">
               <CheckIcon className="h-4 w-4" />
               <AlertTitle>Success</AlertTitle>

@@ -91,6 +91,22 @@ workspaceRouter.post("/", async (c) => {
 });
 
 /**
+ * POST /validate-path - Validate a working directory path
+ * Returns whether the path exists and is a valid directory
+ */
+workspaceRouter.post("/validate-path", async (c) => {
+  const body = await c.req.json();
+  const path = body?.path;
+
+  if (typeof path !== "string" || !path) {
+    return c.json({ valid: true }); // Empty path is valid (temp folder mode)
+  }
+
+  const valid = service.isValidWorkingDirectory(path);
+  return c.json({ valid });
+});
+
+/**
  * PUT /:id - Update a workspace
  */
 workspaceRouter.put("/:id", async (c) => {

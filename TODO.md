@@ -50,12 +50,12 @@ Before testing, ensure:
 - [x] Empty state shows "No workspaces yet" with CTA
 
 ### 2.3 Update Workspace
-- [ ] Navigate to workspace settings page
-- [ ] Can update title, description
-- [ ] Can change working directory mode (static vs temp)
-- [ ] Can set static directory path
-- [ ] Validation: warn if static path doesn't exist (but allow saving)
-- [ ] Changes persist after page refresh
+- [x] Navigate to workspace settings page
+- [x] Can update title, description
+- [x] Can change working directory mode (static vs temp)
+- [x] Can set static directory path
+- [x] Validation: warn if static path doesn't exist (but allow saving)
+- [x] Changes persist after page refresh
 
 ### 2.4 Delete Workspace
 - [ ] Delete requires typing workspace name to confirm

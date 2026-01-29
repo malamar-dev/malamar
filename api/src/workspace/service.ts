@@ -9,26 +9,23 @@ import type {
 } from "./types";
 
 /**
- * Validates that a working directory path exists and is a directory.
- * Returns an error message if invalid, null if valid.
+ * Checks if a working directory path exists and is a directory.
+ * Returns true if the path is valid (exists and is a directory), false otherwise.
+ * Note: Non-existent paths are allowed (user may create the directory later).
  */
-function validateWorkingDirectory(
+export function isValidWorkingDirectory(
   path: string | null | undefined,
-): string | null {
+): boolean {
   if (!path) {
-    return null; // null/undefined is allowed
+    return true; // null/undefined is valid (temp folder mode)
   }
 
   if (!existsSync(path)) {
-    return "The specified path does not exist or is not a valid directory";
+    return false; // Path doesn't exist, but we allow saving
   }
 
   const stat = statSync(path);
-  if (!stat.isDirectory()) {
-    return "The specified path does not exist or is not a valid directory";
-  }
-
-  return null;
+  return stat.isDirectory();
 }
 
 /**
@@ -51,15 +48,11 @@ export function getWorkspace(id: string): Result<Workspace> {
 
 /**
  * Create a new workspace.
+ * Note: Working directory validation is intentionally not blocking - paths may be created later.
  */
 export function createWorkspace(
   input: CreateWorkspaceInput,
 ): Result<Workspace> {
-  const validationError = validateWorkingDirectory(input.workingDirectory);
-  if (validationError) {
-    return err(validationError, "VALIDATION_ERROR");
-  }
-
   const now = new Date();
   const workspace: Workspace = {
     id: generateId(),
@@ -75,16 +68,12 @@ export function createWorkspace(
 
 /**
  * Update an existing workspace.
+ * Note: Working directory validation is intentionally not blocking - paths may be created later.
  */
 export function updateWorkspace(
   id: string,
   input: UpdateWorkspaceInput,
 ): Result<Workspace> {
-  const validationError = validateWorkingDirectory(input.workingDirectory);
-  if (validationError) {
-    return err(validationError, "VALIDATION_ERROR");
-  }
-
   const now = new Date();
   const workspace = repository.update(
     id,
