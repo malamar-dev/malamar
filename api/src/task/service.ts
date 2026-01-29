@@ -122,8 +122,11 @@ export function updateTask(id: string, params: UpdateTaskBody): Result<Task> {
       { oldStatus, newStatus: params.status },
     );
 
-    // If task moved from 'done' to another status, create a queue item
-    if (oldStatus === "done" && params.status !== "done") {
+    // If task moved to 'todo' from 'done' or 'in_review', create a queue item
+    if (
+      (oldStatus === "done" || oldStatus === "in_review") &&
+      params.status === "todo"
+    ) {
       const existingQueueItem = repository.findActiveQueueItemByTaskId(id);
       if (!existingQueueItem) {
         repository.createQueueItem(generateId(), task.id, task.workspaceId);

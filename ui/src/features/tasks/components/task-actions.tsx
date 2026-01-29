@@ -4,6 +4,7 @@ import {
   CheckCircleIcon,
   LoaderIcon,
   StarIcon,
+  StarOffIcon,
   Trash2Icon,
 } from "lucide-react";
 
@@ -34,7 +35,7 @@ export function TaskActions({
   };
 
   const handlePrioritize = () => {
-    prioritizeTask.mutate(task.id);
+    prioritizeTask.mutate({ taskId: task.id, isPriority: !task.isPriority });
   };
 
   const handleCancel = () => {
@@ -73,10 +74,12 @@ export function TaskActions({
         >
           {prioritizeTask.isPending ? (
             <LoaderIcon className="h-4 w-4 animate-spin" />
+          ) : task.isPriority ? (
+            <StarOffIcon className="h-4 w-4" />
           ) : (
             <StarIcon className="h-4 w-4" />
           )}
-          Prioritize
+          {task.isPriority ? "Remove Priority" : "Prioritize"}
         </Button>
       )}
 
@@ -116,10 +119,12 @@ export function TaskActions({
           >
             {prioritizeTask.isPending ? (
               <LoaderIcon className="h-4 w-4 animate-spin" />
+            ) : task.isPriority ? (
+              <StarOffIcon className="h-4 w-4" />
             ) : (
               <StarIcon className="h-4 w-4" />
             )}
-            Prioritize
+            {task.isPriority ? "Remove Priority" : "Prioritize"}
           </Button>
         </>
       )}

@@ -163,11 +163,11 @@ Before testing, ensure:
 - [ ] Tasks in other statuses unaffected
 
 ### 4.9 Task Prioritization
-- [ ] "Prioritize" button in task detail
-- [ ] Prioritized task shows badge on card
-- [ ] Prioritized tasks picked up first by runner
-- [ ] "Remove Priority" toggle available
-- [ ] Activity log: `task_prioritized` / `task_deprioritized` events
+- [x] "Prioritize" button in task detail
+- [x] Prioritized task shows badge on card
+- [x] Prioritized tasks picked up first by runner
+- [x] "Remove Priority" toggle available
+- [x] Activity log: `task_prioritized` / `task_deprioritized` events
 
 ### 4.10 Task Cancellation
 - [ ] "Cancel" button available for In Progress tasks

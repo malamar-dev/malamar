@@ -54,12 +54,15 @@ export const tasksApi = {
     apiClient.delete<{ success: boolean }>(`/tasks/${id}`),
 
   /**
-   * Prioritizes a task (moves it to front of queue).
+   * Prioritizes or deprioritizes a task.
    * @param id - The task ID
-   * @returns The updated task
+   * @param isPriority - Whether to prioritize (true) or deprioritize (false)
+   * @returns Success status
    */
-  prioritize: (id: string) =>
-    apiClient.post<Task>(`/tasks/${id}/prioritize`, {}),
+  prioritize: (id: string, isPriority: boolean) =>
+    apiClient.post<{ success: boolean }>(`/tasks/${id}/prioritize`, {
+      isPriority,
+    }),
 
   /**
    * Cancels a running task (kills CLI subprocess, moves to In Review).

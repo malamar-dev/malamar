@@ -478,6 +478,7 @@ export function findQueueItemById(id: string): TaskQueue | null {
 
 /**
  * Update a queue item's priority.
+ * Updates the most recent queue item for the task, regardless of status.
  * Returns true if updated, false if not found.
  */
 export function updateQueueItemPriority(
@@ -486,9 +487,11 @@ export function updateQueueItemPriority(
 ): boolean {
   const db = getDatabase();
   const now = new Date().toISOString();
+  // Find the most recent queue item and update its priority
   const result = db
     .prepare(
-      `UPDATE task_queue SET is_priority = ?, updated_at = ? WHERE task_id = ? AND status IN ('queued', 'in_progress')`,
+      `UPDATE task_queue SET is_priority = ?, updated_at = ?
+       WHERE id = (SELECT id FROM task_queue WHERE task_id = ? ORDER BY created_at DESC LIMIT 1)`,
     )
     .run(isPriority ? 1 : 0, now, taskId);
   return result.changes > 0;
