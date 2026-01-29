@@ -260,7 +260,7 @@ Before testing, ensure:
 ### 6.4 Comment Display
 - [x] Comments ordered by created_at (oldest first for reading flow)
 - [x] Each shows: author, content (rendered markdown), timestamp
-- [ ] Deleted agent comments show "(Deleted Agent)"
+- [x] Deleted agent comments show "(Deleted Agent)"
 
 ---
 
