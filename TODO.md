@@ -280,7 +280,7 @@ Before testing, ensure:
 - [x] Logs ordered by created_at (ascending)
 - [x] Each shows: icon, description, actor, timestamp
 - [x] Actor: "User", agent name, or "System"
-- [ ] Hover tooltip shows full timestamp
+- [x] Hover tooltip shows full timestamp
 
 ---
 

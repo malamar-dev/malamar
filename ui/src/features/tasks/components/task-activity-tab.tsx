@@ -13,7 +13,12 @@ import type { ReactNode } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import { formatRelativeTime } from "@/lib/date-utils.ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip.tsx";
+import { formatFullTimestamp, formatRelativeTime } from "@/lib/date-utils.ts";
 import { cn } from "@/lib/utils.ts";
 
 import { useLogs } from "../hooks/use-logs.ts";
@@ -96,9 +101,16 @@ function ActivityItem({ log }: { log: TaskLog }) {
       <div className={cn("mt-0.5", colorClass)}>{icon}</div>
       <div className="flex-1">
         <p className="text-sm">{description}</p>
-        <p className="text-muted-foreground text-xs">
-          {formatRelativeTime(log.createdAt)}
-        </p>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p className="text-muted-foreground cursor-default text-xs">
+              {formatRelativeTime(log.createdAt)}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{formatFullTimestamp(log.createdAt)}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );

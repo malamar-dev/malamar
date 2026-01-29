@@ -21,3 +21,18 @@ export function formatRelativeTime(date: Date | string | null): string {
   });
   return formatter.format(d);
 }
+
+export function formatFullTimestamp(date: Date | string | null): string {
+  if (!date) return "Never";
+
+  const d = new Date(date);
+  const formatter = new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  return formatter.format(d);
+}
