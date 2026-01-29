@@ -293,7 +293,7 @@ Before testing, ensure:
 - [x] Chat appears in sidebar list
 
 ### 8.2 List Chats
-- [ ] Chats listed in sidebar
+- [x] Chats listed in sidebar
 - [x] Search by title works (`?q=` parameter)
 - [x] Most recently updated first
 - [x] Empty state: "No conversations yet" with CTA
