@@ -309,18 +309,18 @@ Before testing, ensure:
 - [x] Input at bottom of chat
 - [x] Send button or Ctrl/Cmd+Enter to submit
 - [ ] Message appears immediately (optimistic update)
-- [ ] Processing indicator shows while agent responds
-- [ ] Cannot send while processing (input disabled)
+- [x] Processing indicator shows while agent responds
+- [x] Cannot send while processing (input disabled)
 
 ### 8.5 Cancel Processing
-- [ ] "Stop" button appears while processing
+- [x] "Stop" button appears while processing
 - [ ] Cancelling kills CLI subprocess
 - [ ] System message added about cancellation
 - [ ] Can resume by sending another message
 
 ### 8.6 Chat Title
 - [x] Default: "Untitled chat"
-- [ ] Agent can rename on first response only
+- [x] Agent can rename on first response only
 - [ ] After first response, `rename_chat` action ignored
 - [ ] User can edit title anytime via UI
 
