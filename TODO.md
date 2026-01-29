@@ -109,9 +109,9 @@ Before testing, ensure:
 - [x] "Create Task" button opens dialog
 - [x] Summary is required
 - [x] Description is optional (markdown supported)
-- [ ] New task appears in "Todo" column
-- [ ] Queue item created (visible via database inspection)
-- [ ] Activity log: `task_created` event logged
+- [x] New task appears in "Todo" column
+- [x] Queue item created (visible via database inspection)
+- [x] Activity log: `task_created` event logged
 
 ### 4.2 Kanban Board Display
 - [x] Four columns: Todo, In Progress, In Review, Done
