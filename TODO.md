@@ -319,7 +319,7 @@ Before testing, ensure:
 - [ ] Can resume by sending another message
 
 ### 8.6 Chat Title
-- [ ] Default: "Untitled chat"
+- [x] Default: "Untitled chat"
 - [ ] Agent can rename on first response only
 - [ ] After first response, `rename_chat` action ignored
 - [ ] User can edit title anytime via UI
