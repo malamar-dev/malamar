@@ -1,8 +1,9 @@
 import {
   AlertCircleIcon,
+  ChevronDownIcon,
   MessageSquareIcon,
-  MoreVerticalIcon,
   PlusIcon,
+  SparklesIcon,
 } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
@@ -10,11 +11,11 @@ import { useNavigate, useParams } from "react-router";
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { ButtonGroup } from "@/components/ui/button-group.tsx";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
@@ -100,22 +101,22 @@ const ChatsPage = () => {
         </div>
 
         <div className="ml-auto">
-          {agents.length > 0 ? (
-            <ButtonGroup>
-              <Button
-                variant="outline"
-                onClick={() => handleCreateChat()}
-                disabled={createChat.isPending}
-              >
-                <PlusIcon /> Chat
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" disabled={createChat.isPending}>
+                <PlusIcon className="h-4 w-4" />
+                Chat
+                <ChevronDownIcon className="ml-1 h-4 w-4" />
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" disabled={createChat.isPending}>
-                    <MoreVerticalIcon className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => handleCreateChat()}>
+                <SparklesIcon className="mr-2 h-4 w-4" />
+                Malamar
+              </DropdownMenuItem>
+              {agents.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
                   {agents.map((agent) => (
                     <DropdownMenuItem
                       key={agent.id}
@@ -124,17 +125,10 @@ const ChatsPage = () => {
                       {agent.name}
                     </DropdownMenuItem>
                   ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </ButtonGroup>
-          ) : (
-            <Button
-              onClick={() => handleCreateChat()}
-              disabled={createChat.isPending}
-            >
-              <PlusIcon /> Chat
-            </Button>
-          )}
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

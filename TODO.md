@@ -287,10 +287,10 @@ Before testing, ensure:
 ## 8. Chat Feature
 
 ### 8.1 Create Chat
-- [ ] "New Chat" dropdown with agent list + Malamar option
-- [ ] Can select specific agent or Malamar agent
-- [ ] New chat has title "Untitled chat"
-- [ ] Chat appears in sidebar list
+- [x] "New Chat" dropdown with agent list + Malamar option
+- [x] Can select specific agent or Malamar agent
+- [x] New chat has title "Untitled chat"
+- [x] Chat appears in sidebar list
 
 ### 8.2 List Chats
 - [ ] Chats listed in sidebar
