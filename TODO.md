@@ -106,18 +106,18 @@ Before testing, ensure:
 ## 4. Task Management
 
 ### 4.1 Create Task
-- [ ] "Create Task" button opens dialog
-- [ ] Summary is required
-- [ ] Description is optional (markdown supported)
+- [x] "Create Task" button opens dialog
+- [x] Summary is required
+- [x] Description is optional (markdown supported)
 - [ ] New task appears in "Todo" column
 - [ ] Queue item created (visible via database inspection)
 - [ ] Activity log: `task_created` event logged
 
 ### 4.2 Kanban Board Display
-- [ ] Four columns: Todo, In Progress, In Review, Done
-- [ ] Tasks sorted by most recently updated within each column
-- [ ] Empty column shows no message (not "no tasks")
-- [ ] Empty board (all columns) shows "No tasks yet" with CTA
+- [x] Four columns: Todo, In Progress, In Review, Done
+- [x] Tasks sorted by most recently updated within each column
+- [x] Empty column shows no message (not "no tasks")
+- [x] Empty board (all columns) shows "No tasks yet" with CTA
 
 ### 4.3 Task Card Display
 - [ ] Shows summary (truncated with ellipsis if long)

@@ -42,19 +42,13 @@ export function TaskColumn({
       </div>
 
       <div className="flex flex-1 flex-col gap-2 overflow-y-auto">
-        {tasks.length === 0 ? (
-          <div className="text-muted-foreground flex flex-1 items-center justify-center text-sm">
-            No tasks
-          </div>
-        ) : (
-          tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onClick={() => onTaskClick(task)}
-            />
-          ))
-        )}
+        {tasks.map((task) => (
+          <TaskCard
+            key={task.id}
+            task={task}
+            onClick={() => onTaskClick(task)}
+          />
+        ))}
       </div>
     </div>
   );
