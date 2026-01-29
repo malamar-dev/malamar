@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
@@ -17,6 +18,14 @@ export function getDataDir(): string {
  */
 export function getDatabasePath(): string {
   return join(getDataDir(), DB_FILENAME);
+}
+
+/**
+ * Check if the data directory exists.
+ * Used to detect first launch - if directory doesn't exist, it's first launch.
+ */
+export function dataDirectoryExists(): boolean {
+  return existsSync(getDataDir());
 }
 
 /**

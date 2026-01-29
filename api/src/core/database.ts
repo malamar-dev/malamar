@@ -1,6 +1,11 @@
 import { Database } from "bun:sqlite";
 
-import { ensureDataDirectory, getDatabasePath } from "./helpers/data-dir";
+import { createSampleWorkspace } from "./bootstrap";
+import {
+  dataDirectoryExists,
+  ensureDataDirectory,
+  getDatabasePath,
+} from "./helpers/data-dir";
 import { runMigrations } from "./migrations";
 
 let db: Database | null = null;
@@ -25,6 +30,9 @@ export async function initDatabase(): Promise<Database> {
     return db;
   }
 
+  // Check if this is first launch BEFORE creating the directory
+  const isFirstLaunch = !dataDirectoryExists();
+
   await ensureDataDirectory();
   const dbPath = getDatabasePath();
 
@@ -38,6 +46,12 @@ export async function initDatabase(): Promise<Database> {
 
   // Run migrations
   runMigrations(db);
+
+  // On first launch, create sample workspace with agents
+  if (isFirstLaunch) {
+    console.log("[Database] First launch detected - bootstrapping...");
+    createSampleWorkspace();
+  }
 
   console.log("[Database] Initialization complete");
   return db;
