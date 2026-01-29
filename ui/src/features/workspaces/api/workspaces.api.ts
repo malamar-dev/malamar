@@ -9,10 +9,14 @@ import type {
 
 export const workspacesApi = {
   /**
-   * Fetches all workspaces.
-   * @returns List of all workspaces
+   * Fetches all workspaces, optionally filtered by search query.
+   * @param query - Optional search query to filter by title
+   * @returns List of workspaces
    */
-  list: () => apiClient.get<WorkspacesResponse>("/workspaces"),
+  list: (query?: string) =>
+    apiClient.get<WorkspacesResponse>(
+      query ? `/workspaces?q=${encodeURIComponent(query)}` : "/workspaces",
+    ),
 
   /**
    * Fetches a single workspace by its ID.

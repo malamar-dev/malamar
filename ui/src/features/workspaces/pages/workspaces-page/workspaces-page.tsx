@@ -1,6 +1,6 @@
-import { AlertCircleIcon, InboxIcon, PlusIcon } from "lucide-react";
+import { AlertCircleIcon, InboxIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
@@ -12,7 +12,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDebounce } from "@/hooks/use-debounce.ts";
 import { formatRelativeTime } from "@/lib/date-utils.ts";
 
 import { CreateWorkspaceDialog } from "../../components/create-workspace-dialog.tsx";
@@ -53,13 +55,48 @@ function EmptyState() {
 }
 
 const WorkspacesPage = () => {
-  const { data, isLoading, isError, error } = useWorkspaces();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get("q") ?? "";
+  const [inputValue, setInputValue] = useState(searchQuery);
+  const debouncedQuery = useDebounce(inputValue, 300);
+
+  // Update URL when debounced query changes
+  useState(() => {
+    if (debouncedQuery) {
+      setSearchParams({ q: debouncedQuery });
+    } else {
+      setSearchParams({});
+    }
+  });
+
+  const { data, isLoading, isError, error } = useWorkspaces(
+    debouncedQuery || undefined,
+  );
 
   const [open, setOpen] = useState(false);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value) {
+      setSearchParams({ q: value });
+    } else {
+      setSearchParams({});
+    }
+  };
+
   return (
     <AppLayout breadcrumbItems={[{ label: "Workspaces" }]}>
-      <div className="mb-4 flex justify-end">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="relative max-w-sm flex-1">
+          <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Input
+            placeholder="Search workspaces..."
+            value={inputValue}
+            onChange={handleSearchChange}
+            className="pl-9"
+          />
+        </div>
         <Button onClick={() => setOpen(true)}>
           <PlusIcon /> Workspace
         </Button>
