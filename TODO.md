@@ -93,7 +93,7 @@ Before testing, ensure:
 
 ### 3.5 Delete Agent
 - [x] Confirm dialog before deletion
-- [ ] Deleting agent preserves old comments (shows "(Deleted Agent)")
+- [x] Deleting agent preserves old comments (shows "(Deleted Agent)")
 - [ ] Deleting agent preserves old chats (switches to Malamar agent)
 
 ### 3.6 Workspace with No Agents

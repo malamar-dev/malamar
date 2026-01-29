@@ -46,14 +46,20 @@ function serializeTask(task: Task, includeCommentCount = false) {
  */
 function serializeComment(comment: TaskComment) {
   let authorName: string;
-  let authorType: "user" | "agent";
+  let authorType: "user" | "agent" | "system";
 
   if (comment.agentId) {
-    authorName = service.getAgentName(comment.agentId) ?? "Agent";
+    // Agent comment - show agent name or "(Deleted Agent)" if agent was deleted
+    authorName = service.getAgentName(comment.agentId) ?? "(Deleted Agent)";
     authorType = "agent";
-  } else {
+  } else if (comment.userId) {
+    // User comment
     authorName = "User";
     authorType = "user";
+  } else {
+    // System comment (no user or agent)
+    authorName = "System";
+    authorType = "system";
   }
 
   return {
