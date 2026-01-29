@@ -601,14 +601,14 @@ Before testing, ensure:
 - [ ] Agent delete: preserves references in comments/chats
 
 ### 18.2 Foreign Key Integrity
-- [ ] Cannot create agent without valid workspace_id
-- [ ] Cannot create task without valid workspace_id
-- [ ] Cannot create chat without valid workspace_id
-- [ ] Cannot create comment without valid task_id
+- [x] Cannot create agent without valid workspace_id
+- [x] Cannot create task without valid workspace_id
+- [x] Cannot create chat without valid workspace_id
+- [x] Cannot create comment without valid task_id
 
 ### 18.3 Unique Constraints
-- [ ] Agent name unique within workspace
-- [ ] Agent order unique within workspace (handled by reorder logic)
+- [x] Agent name unique within workspace
+- [x] Agent order unique within workspace (handled by reorder logic)
 
 ---
 
