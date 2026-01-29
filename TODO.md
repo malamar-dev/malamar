@@ -127,8 +127,8 @@ Before testing, ensure:
 - [x] Shows processing indicator (pulsing/spinner) when agent is working
 
 ### 4.4 Task Detail Dialog
-- [ ] Opens on card click
-- [ ] Three tabs: Details, Comments, Activity
+- [x] Opens on card click
+- [x] Three tabs: Details, Comments, Activity
 - [ ] Details tab: edit summary/description, see status, take actions
 - [ ] Comments tab: view all comments, add new comment
 - [ ] Activity tab: timeline of events with icons
