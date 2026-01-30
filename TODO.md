@@ -457,7 +457,7 @@ Before testing, ensure:
 - [ ] Comment while processing: agent sees it next iteration
 
 ### 12.4 CLI Unavailable
-- [ ] Zero CLIs healthy: warning in header
+- [x] Zero CLIs healthy: warning in header
 - [ ] Agent's CLI unhealthy: warning banner on workspace
 - [ ] Chat with no CLI: error preventing send
 
