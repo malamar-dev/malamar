@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
 import { useUpdateWorkspace } from "../../hooks/use-update-workspace.ts";
@@ -53,6 +54,8 @@ const SettingsPage = () => {
   } = useWorkspace(workspaceId ?? "");
   const updateWorkspace = useUpdateWorkspace(workspaceId ?? "");
   const [showSuccess, setShowSuccess] = useState(false);
+
+  useDocumentTitle(workspace?.title ? `Settings - ${workspace.title}` : "Settings");
 
   const {
     register,

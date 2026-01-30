@@ -11,6 +11,7 @@ import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 
@@ -37,6 +38,8 @@ const TasksPage = () => {
   const { id: workspaceId } = useParams<{ id: string }>();
   const { data: workspace } = useWorkspace(workspaceId ?? "");
   const { data, isLoading, isError, error } = useTasks(workspaceId ?? "");
+
+  useDocumentTitle(workspace?.title ? `Tasks - ${workspace.title}` : "Tasks");
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteDoneDialogOpen, setDeleteDoneDialogOpen] = useState(false);

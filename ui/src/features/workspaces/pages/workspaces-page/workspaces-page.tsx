@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 import { formatRelativeTime } from "@/lib/date-utils.ts";
 
 import { CreateWorkspaceDialog } from "../../components/create-workspace-dialog.tsx";
@@ -53,6 +54,8 @@ function EmptyState() {
 }
 
 const WorkspacesPage = () => {
+  useDocumentTitle("Workspaces");
+
   const { data, isLoading, isError, error } = useWorkspaces();
 
   const [open, setOpen] = useState(false);

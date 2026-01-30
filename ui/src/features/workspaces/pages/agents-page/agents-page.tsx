@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 import { useCreateChat } from "@/features/chats";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
@@ -33,6 +34,8 @@ const AgentsPage = () => {
   const { data, isLoading, isError, error } = useAgents(workspaceId ?? "");
   const reorderAgents = useReorderAgents(workspaceId ?? "");
   const createChat = useCreateChat(workspaceId ?? "");
+
+  useDocumentTitle(workspace?.title ? `Agents - ${workspace.title}` : "Agents");
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editAgent, setEditAgent] = useState<Agent | null>(null);

@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 import { useCreateChat } from "@/features/chats";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 import { useAgents } from "@/features/workspaces/hooks/use-agents.ts";
@@ -44,6 +45,8 @@ const ChatsPage = () => {
   const { data: workspace } = useWorkspace(workspaceId ?? "");
   const { data: agentsData } = useAgents(workspaceId ?? "");
   const createChat = useCreateChat(workspaceId ?? "");
+
+  useDocumentTitle(workspace?.title ? `Chats - ${workspace.title}` : "Chats");
 
   // Fetch chats with infinite query (handles accumulation automatically)
   const {

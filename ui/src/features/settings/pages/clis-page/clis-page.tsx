@@ -12,6 +12,7 @@ import {
 import { Dot } from "@/components/ui/dot.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 
 import { useHealth } from "../../hooks/use-health.ts";
 import type { CliHealth } from "../../types/health.types.ts";
@@ -60,6 +61,8 @@ function CliCard({
 }
 
 export const ClisPage = () => {
+  useDocumentTitle("CLIs - Settings");
+
   const { data, isLoading, isError, error } = useHealth();
 
   const claudeCli = data?.clis.find((cli) => cli.type === "claude");

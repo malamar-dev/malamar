@@ -5,6 +5,7 @@ import { useParams } from "react-router";
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useDocumentTitle } from "@/hooks/use-document-title.ts";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 
 import { ChatInput } from "../../components/chat-input.tsx";
@@ -23,6 +24,18 @@ const ChatPage = () => {
   // Queries
   const { data: chat, isLoading, isError, error } = useChat(chatId ?? "");
   const { data: workspace } = useWorkspace(chat?.workspaceId ?? "");
+
+  // Dynamic page title: "{chat.title} - {workspace.title}" or fallback
+  useDocumentTitle(
+    (() => {
+      if (chat?.title && workspace?.title) {
+        return `${chat.title} - ${workspace.title}`;
+      } else if (chat?.title) {
+        return chat.title;
+      }
+      return "Chat";
+    })()
+  );
 
   const isProcessing = chat?.isProcessing ?? false;
 
