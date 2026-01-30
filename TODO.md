@@ -581,14 +581,14 @@ Before testing, ensure:
 - [x] Invocation with schema in prompt
 
 ### 17.3 Codex CLI (if available)
-- [ ] Binary detection works
-- [ ] Health check works
-- [ ] Invocation with schema in prompt
+- [x] Binary detection works
+- [N/A] Health check works (binary not available)
+- [N/A] Invocation with schema in prompt (binary not available)
 
 ### 17.4 OpenCode (if available)
-- [ ] Binary detection works
-- [ ] Health check works
-- [ ] Invocation with schema in prompt
+- [x] Binary detection works
+- [N/A] Health check works (binary not available)
+- [N/A] Invocation with schema in prompt (binary not available)
 
 ---
 
