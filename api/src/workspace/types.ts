@@ -6,6 +6,7 @@ export interface Workspace {
   title: string;
   description: string;
   workingDirectory: string | null;
+  retentionDays: number;
   lastActivityAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -19,6 +20,7 @@ export interface WorkspaceRow {
   title: string;
   description: string;
   working_directory: string | null;
+  retention_days: number;
   last_activity_at: string;
   created_at: string;
   updated_at: string;
@@ -40,4 +42,5 @@ export interface UpdateWorkspaceInput {
   title: string;
   description?: string;
   workingDirectory?: string | null;
+  retentionDays?: number;
 }

@@ -491,10 +491,10 @@ Before testing, ensure:
 - [x] Deletes completed/failed items > 7 days old
 
 ### 14.3 Done Task Cleanup (Workspace Retention)
-- [ ] Respects workspace `retention_days` setting
-- [ ] Default: 7 days
-- [ ] 0 = disable auto-cleanup
-- [ ] Only affects "Done" status tasks
+- [x] Respects workspace `retention_days` setting
+- [x] Default: 7 days
+- [x] 0 = disable auto-cleanup
+- [x] Only affects "Done" status tasks
 
 ---
 

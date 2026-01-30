@@ -10,6 +10,7 @@ function rowToWorkspace(row: WorkspaceRow): Workspace {
     title: row.title,
     description: row.description,
     workingDirectory: row.working_directory,
+    retentionDays: row.retention_days,
     lastActivityAt: new Date(row.last_activity_at),
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
@@ -61,14 +62,15 @@ export function create(workspace: Workspace): Workspace {
   const db = getDatabase();
   db.prepare(
     `
-    INSERT INTO workspaces (id, title, description, working_directory, last_activity_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO workspaces (id, title, description, working_directory, retention_days, last_activity_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     workspace.id,
     workspace.title,
     workspace.description,
     workspace.workingDirectory,
+    workspace.retentionDays,
     workspace.lastActivityAt.toISOString(),
     workspace.createdAt.toISOString(),
     workspace.updatedAt.toISOString(),
@@ -85,6 +87,7 @@ export function update(
   title: string,
   description: string,
   workingDirectory: string | null,
+  retentionDays: number,
   updatedAt: Date,
 ): Workspace | null {
   const db = getDatabase();
@@ -92,11 +95,18 @@ export function update(
     .prepare(
       `
     UPDATE workspaces
-    SET title = ?, description = ?, working_directory = ?, updated_at = ?
+    SET title = ?, description = ?, working_directory = ?, retention_days = ?, updated_at = ?
     WHERE id = ?
   `,
     )
-    .run(title, description, workingDirectory, updatedAt.toISOString(), id);
+    .run(
+      title,
+      description,
+      workingDirectory,
+      retentionDays,
+      updatedAt.toISOString(),
+      id,
+    );
 
   if (result.changes === 0) {
     return null;
@@ -114,4 +124,19 @@ export function remove(id: string): boolean {
   const db = getDatabase();
   const result = db.prepare(`DELETE FROM workspaces WHERE id = ?`).run(id);
   return result.changes > 0;
+}
+
+/**
+ * Find all workspaces that have auto-cleanup enabled (retention_days > 0).
+ * Used by the cleanup job to delete old done tasks.
+ */
+export function findWithRetentionEnabled(): Workspace[] {
+  const db = getDatabase();
+  const rows = db
+    .query<
+      WorkspaceRow,
+      []
+    >(`SELECT * FROM workspaces WHERE retention_days > 0`)
+    .all();
+  return rows.map(rowToWorkspace);
 }

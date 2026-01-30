@@ -53,6 +53,11 @@ export function getWorkspace(id: string): Result<Workspace> {
 }
 
 /**
+ * Default retention period for done tasks in days.
+ */
+const DEFAULT_RETENTION_DAYS = 7;
+
+/**
  * Create a new workspace.
  * Note: Working directory validation is intentionally not blocking - paths may be created later.
  */
@@ -65,6 +70,7 @@ export function createWorkspace(
     title: input.title,
     description: input.description ?? "",
     workingDirectory: input.workingDirectory ?? null,
+    retentionDays: DEFAULT_RETENTION_DAYS,
     lastActivityAt: now, // Initialize to created_at (never NULL)
     createdAt: now,
     updatedAt: now,
@@ -80,12 +86,19 @@ export function updateWorkspace(
   id: string,
   input: UpdateWorkspaceInput,
 ): Result<Workspace> {
+  // Get existing workspace to preserve retention_days if not provided
+  const existing = repository.findById(id);
+  if (!existing) {
+    return err("Workspace not found", "NOT_FOUND");
+  }
+
   const now = new Date();
   const workspace = repository.update(
     id,
     input.title,
     input.description ?? "",
     input.workingDirectory ?? null,
+    input.retentionDays ?? existing.retentionDays,
     now,
   );
 
