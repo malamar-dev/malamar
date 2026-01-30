@@ -1,3 +1,10 @@
+import {
+  emitAgentExecutionFinished,
+  emitAgentExecutionStarted,
+  emitTaskCommentAdded,
+  emitTaskErrorOccurred,
+  emitTaskStatusChanged,
+} from "../events";
 import { killTaskProcess } from "../jobs";
 import { err, generateId, ok, type Result } from "../shared";
 import * as workspaceRepository from "../workspace/repository";
@@ -122,6 +129,15 @@ export function updateTask(id: string, params: UpdateTaskBody): Result<Task> {
       { oldStatus, newStatus: params.status },
     );
 
+    // Emit SSE event for status change
+    emitTaskStatusChanged({
+      taskId: task.id,
+      taskSummary: task.summary,
+      oldStatus,
+      newStatus: params.status,
+      workspaceId: task.workspaceId,
+    });
+
     // If task moved to 'todo' from 'done' or 'in_review', create a queue item
     if (
       (oldStatus === "done" || oldStatus === "in_review") &&
@@ -211,6 +227,8 @@ export function cancelTask(id: string): Result<void> {
   // Mark queue item as failed
   repository.updateQueueItemStatus(id, "failed");
 
+  const oldStatus = task.status;
+
   // Move task to "in_review" (prevents immediate re-pickup per spec)
   repository.update(id, { status: "in_review" });
 
@@ -225,6 +243,15 @@ export function cancelTask(id: string): Result<void> {
     null,
   );
 
+  // Emit SSE event for status change
+  emitTaskStatusChanged({
+    taskId: task.id,
+    taskSummary: task.summary,
+    oldStatus,
+    newStatus: "in_review",
+    workspaceId: task.workspaceId,
+  });
+
   // Add system comment about cancellation
   const commentId = generateId();
   repository.createComment(
@@ -235,6 +262,14 @@ export function cancelTask(id: string): Result<void> {
     null, // no user
     null, // no agent (system comment)
   );
+
+  // Emit SSE event for comment added
+  emitTaskCommentAdded({
+    taskId: task.id,
+    taskSummary: task.summary,
+    authorName: "System",
+    workspaceId: task.workspaceId,
+  });
 
   // Update workspace activity
   repository.updateWorkspaceActivity(task.workspaceId);
@@ -316,6 +351,14 @@ export function createComment(
     null,
   );
 
+  // Emit SSE event for comment added
+  emitTaskCommentAdded({
+    taskId,
+    taskSummary: task.summary,
+    authorName: "User",
+    workspaceId: task.workspaceId,
+  });
+
   // If task is in_review, move it back to todo for reprocessing
   if (task.status === "in_review") {
     repository.update(taskId, { status: "todo" });
@@ -330,6 +373,15 @@ export function createComment(
       MOCK_USER_ID,
       { oldStatus: "in_review", newStatus: "todo" },
     );
+
+    // Emit SSE event for status change
+    emitTaskStatusChanged({
+      taskId,
+      taskSummary: task.summary,
+      oldStatus: "in_review",
+      newStatus: "todo",
+      workspaceId: task.workspaceId,
+    });
   }
 
   // Create queue item to trigger agent loop (if no active queue item)
@@ -395,6 +447,9 @@ export function createAgentComment(
     return err("Task not found", "NOT_FOUND");
   }
 
+  // Get agent name for SSE event
+  const agentName = repository.getAgentName(agentId) || "Unknown Agent";
+
   const id = generateId();
   const comment = repository.createComment(
     id,
@@ -415,6 +470,14 @@ export function createAgentComment(
     agentId,
     null,
   );
+
+  // Emit SSE event for comment added
+  emitTaskCommentAdded({
+    taskId,
+    taskSummary: task.summary,
+    authorName: agentName,
+    workspaceId: task.workspaceId,
+  });
 
   // Update workspace activity
   repository.updateWorkspaceActivity(task.workspaceId);
@@ -455,6 +518,14 @@ export function createSystemComment(
     null,
     null,
   );
+
+  // Emit SSE event for error occurred (system comments are typically errors)
+  emitTaskErrorOccurred({
+    taskId,
+    taskSummary: task.summary,
+    errorMessage: content,
+    workspaceId: task.workspaceId,
+  });
 
   // System comment also triggers queue item creation for retry
   const existingQueueItem = repository.findActiveQueueItemByTaskId(taskId);
@@ -500,6 +571,15 @@ export function updateTaskStatusByAgent(
     { oldStatus, newStatus },
   );
 
+  // Emit SSE event for status change
+  emitTaskStatusChanged({
+    taskId,
+    taskSummary: task.summary,
+    oldStatus,
+    newStatus,
+    workspaceId: task.workspaceId,
+  });
+
   // Update workspace activity
   repository.updateWorkspaceActivity(task.workspaceId);
 
@@ -537,6 +617,15 @@ export function updateTaskStatusBySystem(
     { oldStatus, newStatus },
   );
 
+  // Emit SSE event for status change
+  emitTaskStatusChanged({
+    taskId,
+    taskSummary: task.summary,
+    oldStatus,
+    newStatus,
+    workspaceId: task.workspaceId,
+  });
+
   // Update workspace activity
   repository.updateWorkspaceActivity(task.workspaceId);
 
@@ -564,6 +653,14 @@ export function logAgentStarted(
     { agent_name: agentName },
   );
 
+  // Emit SSE event for agent execution started
+  emitAgentExecutionStarted({
+    taskId,
+    taskSummary: task.summary,
+    agentName,
+    workspaceId: task.workspaceId,
+  });
+
   repository.updateWorkspaceActivity(task.workspaceId);
 }
 
@@ -588,6 +685,14 @@ export function logAgentFinished(
     agentId,
     { agent_name: agentName, action_type: actionType },
   );
+
+  // Emit SSE event for agent execution finished
+  emitAgentExecutionFinished({
+    taskId,
+    taskSummary: task.summary,
+    agentName,
+    workspaceId: task.workspaceId,
+  });
 
   repository.updateWorkspaceActivity(task.workspaceId);
 }

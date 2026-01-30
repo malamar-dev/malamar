@@ -5,6 +5,10 @@ import { invokeChatCli } from "../chat/cli-invoke";
 import * as chatRepository from "../chat/repository";
 import * as chatService from "../chat/service";
 import type { ChatQueueItem } from "../chat/types";
+import {
+  emitChatProcessingFinished,
+  emitChatProcessingStarted,
+} from "../events";
 import * as workspaceRepository from "../workspace/repository";
 
 /**
@@ -99,21 +103,32 @@ async function processQueueItem(
 
   console.log(`[ChatProcessor] Starting processing for chat ${chatId}`);
 
-  try {
-    // Load chat
-    const chat = chatRepository.findById(chatId);
-    if (!chat) {
-      throw new Error("Chat not found");
-    }
+  // Load chat first for SSE events
+  const chat = chatRepository.findById(chatId);
+  if (!chat) {
+    console.error(`[ChatProcessor] Chat ${chatId} not found`);
+    chatRepository.updateQueueStatus(queueId, "failed");
+    return;
+  }
 
+  // Load agent (null for Malamar agent)
+  const agent = chat.agentId ? agentRepository.findById(chat.agentId) : null;
+  const agentName = agent?.name ?? "Malamar";
+
+  // Emit processing started event
+  emitChatProcessingStarted({
+    chatId,
+    chatTitle: chat.title,
+    agentName,
+    workspaceId,
+  });
+
+  try {
     // Load workspace
     const workspace = workspaceRepository.findById(workspaceId);
     if (!workspace) {
       throw new Error("Workspace not found");
     }
-
-    // Load agent (null for Malamar agent)
-    const agent = chat.agentId ? agentRepository.findById(chat.agentId) : null;
 
     // Load all messages for context
     const messages = chatRepository.findAllMessagesByChatId(chatId);
@@ -177,6 +192,14 @@ async function processQueueItem(
     // Mark queue item as failed
     chatRepository.updateQueueStatus(queueId, "failed");
   } finally {
+    // Emit processing finished event
+    emitChatProcessingFinished({
+      chatId,
+      chatTitle: chat.title,
+      agentName,
+      workspaceId,
+    });
+
     // Clean up subprocess from tracking map
     activeChatProcesses.delete(chatId);
   }

@@ -396,7 +396,7 @@ Before testing, ensure:
 
 - [x] SSE endpoint `/api/events` is accessible
 - [x] Events trigger React Query invalidation
-- [ ] UI updates without manual refresh
+- [x] UI updates without manual refresh
 - [ ] Reconnection works after connection loss
 
 ### 10.2 Polling Fallback

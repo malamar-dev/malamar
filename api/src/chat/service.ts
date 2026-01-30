@@ -1,6 +1,7 @@
 import * as agentRepository from "../agent/repository";
 import * as agentService from "../agent/service";
 import type { CliType } from "../agent/types";
+import { emitChatMessageAdded } from "../events";
 import { err, generateId, ok, type Result } from "../shared";
 import * as workspaceRepository from "../workspace/repository";
 import * as workspaceService from "../workspace/service";
@@ -268,6 +269,14 @@ export function createMessage(
     "user",
     message,
   );
+
+  // Emit SSE event for message added
+  emitChatMessageAdded({
+    chatId,
+    chatTitle: chat.title,
+    authorType: "user",
+    workspaceId: chat.workspaceId,
+  });
 
   // Create queue item
   const queueId = generateId();
@@ -540,7 +549,26 @@ export function createAgentMessage(
   actions?: ChatAction[] | null,
 ): ChatMessage {
   const messageId = generateId();
-  return repository.createMessage(messageId, chatId, "agent", message, actions);
+  const chatMessage = repository.createMessage(
+    messageId,
+    chatId,
+    "agent",
+    message,
+    actions,
+  );
+
+  // Emit SSE event for message added
+  const chat = repository.findById(chatId);
+  if (chat) {
+    emitChatMessageAdded({
+      chatId,
+      chatTitle: chat.title,
+      authorType: "agent",
+      workspaceId: chat.workspaceId,
+    });
+  }
+
+  return chatMessage;
 }
 
 /**
@@ -551,7 +579,25 @@ export function createSystemMessage(
   message: string,
 ): ChatMessage {
   const messageId = generateId();
-  return repository.createMessage(messageId, chatId, "system", message);
+  const chatMessage = repository.createMessage(
+    messageId,
+    chatId,
+    "system",
+    message,
+  );
+
+  // Emit SSE event for message added
+  const chat = repository.findById(chatId);
+  if (chat) {
+    emitChatMessageAdded({
+      chatId,
+      chatTitle: chat.title,
+      authorType: "system",
+      workspaceId: chat.workspaceId,
+    });
+  }
+
+  return chatMessage;
 }
 
 /**
