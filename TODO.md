@@ -395,7 +395,7 @@ Before testing, ensure:
 | `chat.processing_finished` | Chat processing ends |
 
 - [x] SSE endpoint `/api/events` is accessible
-- [ ] Events trigger React Query invalidation
+- [x] Events trigger React Query invalidation
 - [ ] UI updates without manual refresh
 - [ ] Reconnection works after connection loss
 
@@ -642,7 +642,7 @@ Before testing, ensure:
 - [x] CSS Grid
 - [x] CSS Flexbox
 - [x] CSS Variables
-- [ ] EventSource (SSE)
+- [x] EventSource (SSE)
 - [x] Fetch API
 - [x] localStorage
 
