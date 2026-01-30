@@ -541,7 +541,7 @@ Before testing, ensure:
 | Agents | Warning banner |
 
 ### 15.6 Keyboard Shortcuts
-- [ ] Ctrl/Cmd+Enter to send chat message
+- [x] Ctrl/Cmd+Enter to send chat message
 - [x] Escape to close dialogs
 
 ---

@@ -54,11 +54,14 @@ export const ChatInput = ({
   }, [message, isSending, disabled, onSend, onClearError]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Enter to send, Shift+Enter for new line
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (!isProcessing) {
-        handleSend();
+    // Ctrl/Cmd+Enter or plain Enter to send, Shift+Enter for new line
+    if (e.key === "Enter") {
+      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      if (isCmdOrCtrl || !e.shiftKey) {
+        e.preventDefault();
+        if (!isProcessing) {
+          handleSend();
+        }
       }
     }
   };
@@ -134,7 +137,7 @@ export const ChatInput = ({
           )}
         </div>
         <p className="text-muted-foreground mt-2 text-center text-xs">
-          Press Enter to send, Shift+Enter for new line
+          Press Enter or ⌘/Ctrl+Enter to send, Shift+Enter for new line
         </p>
       </div>
     </div>
