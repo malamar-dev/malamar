@@ -549,8 +549,8 @@ Before testing, ensure:
 ## 16. Performance & Limits
 
 ### 16.1 No Pagination (v1)
-- [ ] All items returned in list endpoints
-- [ ] Acceptable for single-user scale
+- [x] All items returned in list endpoints
+- [x] Acceptable for single-user scale
 
 ### 16.2 Comment/Log Volume
 - [x] No hard limits on comments per task
