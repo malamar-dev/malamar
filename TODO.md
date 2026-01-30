@@ -366,16 +366,16 @@ Before testing, ensure:
 | `update_workspace` | Update workspace settings |
 | `rename_chat` | Rename chat (first response only) |
 
-- [ ] Malamar agent can create agents
-- [ ] Malamar agent can update agents
-- [ ] Malamar agent can delete agents
-- [ ] Malamar agent can reorder agents
-- [ ] Malamar agent can update workspace settings
-- [ ] Actions execute immediately and reflected in UI
+- [x] Malamar agent can create agents
+- [x] Malamar agent can update agents
+- [x] Malamar agent can delete agents
+- [x] Malamar agent can reorder agents
+- [x] Malamar agent can update workspace settings
+- [x] Actions execute immediately and reflected in UI
 
 ### 9.2 Workspace Agents (No Actions)
-- [ ] Workspace agents (Planner, etc.) provide advice only
-- [ ] No workspace modification actions available
+- [x] Workspace agents (Planner, etc.) provide advice only
+- [x] No workspace modification actions available
 - [x] Can only rename chat on first response
 
 ---

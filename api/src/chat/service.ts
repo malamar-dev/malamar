@@ -1,14 +1,22 @@
 import * as agentRepository from "../agent/repository";
+import * as agentService from "../agent/service";
+import type { CliType } from "../agent/types";
 import { err, generateId, ok, type Result } from "../shared";
 import * as workspaceRepository from "../workspace/repository";
+import * as workspaceService from "../workspace/service";
 import * as repository from "./repository";
 import type {
   Chat,
   ChatAction,
   ChatMessage,
   ChatQueueItem,
+  CreateAgentAction,
+  DeleteAgentAction,
   PaginatedResult,
   RenameChatAction,
+  ReorderAgentsAction,
+  UpdateAgentAction,
+  UpdateWorkspaceAction,
 } from "./types";
 
 const DEFAULT_LIMIT = 10;
@@ -294,11 +302,31 @@ export function cancelProcessing(
 }
 
 /**
- * Execute actions returned by an agent.
- * Currently only supports rename_chat action.
- * Invalid or unsupported actions are silently ignored.
+ * Valid CLI types for agent creation/update.
  */
-export function executeActions(chatId: string, actions: ChatAction[]): void {
+const VALID_CLI_TYPES = new Set<string>([
+  "claude",
+  "gemini",
+  "codex",
+  "opencode",
+]);
+
+/**
+ * Execute actions returned by an agent.
+ * Supports rename_chat (all agents) and workspace modification actions (Malamar agent only).
+ * Invalid or unsupported actions are silently ignored.
+ *
+ * @param chatId - The chat ID
+ * @param actions - Array of actions to execute
+ * @param workspaceId - The workspace ID (required for Malamar agent actions)
+ * @param isMalamarAgent - Whether this is the Malamar agent (null agentId)
+ */
+export function executeActions(
+  chatId: string,
+  actions: ChatAction[],
+  workspaceId?: string,
+  isMalamarAgent?: boolean,
+): void {
   for (const action of actions) {
     if (action.type === "rename_chat") {
       // Only allow rename on first agent response
@@ -311,8 +339,177 @@ export function executeActions(chatId: string, actions: ChatAction[]): void {
         }
       }
       // Silently ignore if not first response or invalid title
+      continue;
     }
-    // Other action types are silently ignored for now
+
+    // Malamar agent only actions - require workspaceId and isMalamarAgent
+    if (!workspaceId || !isMalamarAgent) {
+      // Silently ignore workspace modification actions from non-Malamar agents
+      continue;
+    }
+
+    if (action.type === "create_agent") {
+      const createAction = action as CreateAgentAction;
+      const name = createAction.name?.trim();
+      const instruction = createAction.instruction?.trim();
+      const cliType = createAction.cliType?.toLowerCase();
+
+      if (!name || !instruction || !cliType || !VALID_CLI_TYPES.has(cliType)) {
+        // Invalid input, silently ignore
+        continue;
+      }
+
+      const result = agentService.createAgent(workspaceId, {
+        name,
+        instruction,
+        cliType: cliType as CliType,
+      });
+
+      if (!result.ok) {
+        console.warn(
+          `[Malamar] Failed to create agent: ${result.error?.message}`,
+        );
+      }
+      continue;
+    }
+
+    if (action.type === "update_agent") {
+      const updateAction = action as UpdateAgentAction;
+      const agentId = updateAction.agentId?.trim();
+
+      if (!agentId) {
+        continue;
+      }
+
+      // Validate agent belongs to workspace
+      const existingAgent = agentRepository.findById(agentId);
+      if (!existingAgent || existingAgent.workspaceId !== workspaceId) {
+        console.warn(
+          `[Malamar] Agent ${agentId} not found or not in workspace`,
+        );
+        continue;
+      }
+
+      const updates: {
+        name?: string;
+        instruction?: string;
+        cliType?: CliType;
+      } = {};
+      if (updateAction.name?.trim()) {
+        updates.name = updateAction.name.trim();
+      }
+      if (updateAction.instruction?.trim()) {
+        updates.instruction = updateAction.instruction.trim();
+      }
+      if (updateAction.cliType) {
+        const cliType = updateAction.cliType.toLowerCase();
+        if (VALID_CLI_TYPES.has(cliType)) {
+          updates.cliType = cliType as CliType;
+        }
+      }
+
+      if (Object.keys(updates).length === 0) {
+        continue;
+      }
+
+      const result = agentService.updateAgent(agentId, updates);
+      if (!result.ok) {
+        console.warn(
+          `[Malamar] Failed to update agent: ${result.error?.message}`,
+        );
+      }
+      continue;
+    }
+
+    if (action.type === "delete_agent") {
+      const deleteAction = action as DeleteAgentAction;
+      const agentId = deleteAction.agentId?.trim();
+
+      if (!agentId) {
+        continue;
+      }
+
+      // Validate agent belongs to workspace
+      const existingAgent = agentRepository.findById(agentId);
+      if (!existingAgent || existingAgent.workspaceId !== workspaceId) {
+        console.warn(
+          `[Malamar] Agent ${agentId} not found or not in workspace`,
+        );
+        continue;
+      }
+
+      const result = agentService.deleteAgent(agentId);
+      if (!result.ok) {
+        console.warn(
+          `[Malamar] Failed to delete agent: ${result.error?.message}`,
+        );
+      }
+      continue;
+    }
+
+    if (action.type === "reorder_agents") {
+      const reorderAction = action as ReorderAgentsAction;
+      const agentIds = reorderAction.agentIds;
+
+      if (!Array.isArray(agentIds) || agentIds.length === 0) {
+        continue;
+      }
+
+      // Clean up agent IDs
+      const cleanIds = agentIds
+        .filter((id): id is string => typeof id === "string")
+        .map((id) => id.trim())
+        .filter((id) => id.length > 0);
+
+      if (cleanIds.length === 0) {
+        continue;
+      }
+
+      const result = agentService.reorderAgents(workspaceId, cleanIds);
+      if (!result.ok) {
+        console.warn(
+          `[Malamar] Failed to reorder agents: ${result.error?.message}`,
+        );
+      }
+      continue;
+    }
+
+    if (action.type === "update_workspace") {
+      const updateAction = action as UpdateWorkspaceAction;
+
+      // Get current workspace for required title field
+      const workspace = workspaceRepository.findById(workspaceId);
+      if (!workspace) {
+        console.warn(`[Malamar] Workspace ${workspaceId} not found`);
+        continue;
+      }
+
+      const updates: {
+        title: string;
+        description?: string;
+        workingDirectory?: string | null;
+      } = {
+        title: updateAction.title?.trim() || workspace.title,
+      };
+
+      if (updateAction.description !== undefined) {
+        updates.description = updateAction.description?.trim() || "";
+      }
+      if (updateAction.workingDirectory !== undefined) {
+        updates.workingDirectory =
+          updateAction.workingDirectory?.trim() || null;
+      }
+
+      const result = workspaceService.updateWorkspace(workspaceId, updates);
+      if (!result.ok) {
+        console.warn(
+          `[Malamar] Failed to update workspace: ${result.error?.message}`,
+        );
+      }
+      continue;
+    }
+
+    // Unknown action type, silently ignore
   }
 }
 

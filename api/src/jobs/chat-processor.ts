@@ -131,8 +131,10 @@ async function processQueueItem(
 
     // Execute actions BEFORE creating agent message
     // This ensures hasAgentMessages() returns false for first response
+    // Pass workspaceId and isMalamarAgent for Malamar agent actions
     if (actions && actions.length > 0) {
-      chatService.executeActions(chatId, actions);
+      const isMalamarAgent = chat.agentId === null;
+      chatService.executeActions(chatId, actions, workspaceId, isMalamarAgent);
     }
 
     // Create agent message

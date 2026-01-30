@@ -120,6 +120,53 @@ export interface RenameChatAction extends ChatAction {
 }
 
 /**
+ * Create agent action type (Malamar agent only).
+ */
+export interface CreateAgentAction extends ChatAction {
+  type: "create_agent";
+  name: string;
+  instruction: string;
+  cliType: string;
+}
+
+/**
+ * Update agent action type (Malamar agent only).
+ */
+export interface UpdateAgentAction extends ChatAction {
+  type: "update_agent";
+  agentId: string;
+  name?: string;
+  instruction?: string;
+  cliType?: string;
+}
+
+/**
+ * Delete agent action type (Malamar agent only).
+ */
+export interface DeleteAgentAction extends ChatAction {
+  type: "delete_agent";
+  agentId: string;
+}
+
+/**
+ * Reorder agents action type (Malamar agent only).
+ */
+export interface ReorderAgentsAction extends ChatAction {
+  type: "reorder_agents";
+  agentIds: string[];
+}
+
+/**
+ * Update workspace action type (Malamar agent only).
+ */
+export interface UpdateWorkspaceAction extends ChatAction {
+  type: "update_workspace";
+  title?: string;
+  description?: string;
+  workingDirectory?: string | null;
+}
+
+/**
  * CLI output schema for chat responses.
  */
 export interface CliChatOutput {
