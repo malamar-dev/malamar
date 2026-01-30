@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { MarkdownRenderer } from "@/components/ui/markdown-renderer.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { formatRelativeTime } from "@/lib/date-utils.ts";
@@ -46,7 +47,7 @@ function CommentItem({ comment }: { comment: TaskComment }) {
           {formatRelativeTime(comment.createdAt)}
         </span>
       </div>
-      <div className="text-sm whitespace-pre-wrap">{comment.content}</div>
+      <MarkdownRenderer content={comment.content} />
     </div>
   );
 }
