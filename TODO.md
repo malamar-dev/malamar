@@ -459,7 +459,7 @@ Before testing, ensure:
 ### 12.4 CLI Unavailable
 - [x] Zero CLIs healthy: warning in header
 - [x] Agent's CLI unhealthy: warning banner on workspace
-- [ ] Chat with no CLI: error preventing send
+- [x] Chat with no CLI: error preventing send
 
 ---
 

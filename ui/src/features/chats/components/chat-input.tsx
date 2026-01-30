@@ -4,9 +4,11 @@ import {
   PaperclipIcon,
   SendIcon,
   SquareIcon,
+  TriangleAlertIcon,
   XIcon,
 } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
+import { Link } from "react-router";
 
 import { Alert, AlertDescription } from "@/components/ui/alert.tsx";
 import { Button } from "@/components/ui/button.tsx";
@@ -25,6 +27,7 @@ interface ChatInputProps {
   className?: string;
   error?: Error | null;
   onClearError?: () => void;
+  noCliError?: boolean;
 }
 
 export const ChatInput = ({
@@ -39,6 +42,7 @@ export const ChatInput = ({
   className,
   error,
   onClearError,
+  noCliError = false,
 }: ChatInputProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -96,8 +100,23 @@ export const ChatInput = ({
   return (
     <div className={cn("bg-background border-t p-4", className)}>
       <div className="mx-auto max-w-3xl">
+        {/* No CLI warning */}
+        {noCliError && (
+          <Alert variant="warning" className="mb-3">
+            <TriangleAlertIcon className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>
+                No CLI available.{" "}
+                <Link to="/settings/clis" className="underline">
+                  Configure in settings
+                </Link>
+              </span>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Error message */}
-        {error && (
+        {error && !noCliError && (
           <Alert variant="destructive" className="mb-3">
             <AlertCircleIcon className="h-4 w-4" />
             <AlertDescription className="flex items-center justify-between">

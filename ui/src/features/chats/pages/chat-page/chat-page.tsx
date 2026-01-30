@@ -128,6 +128,20 @@ const ChatPage = () => {
   const messages = messagesData?.messages ?? [];
   const hasMore = messagesData?.pagination.hasMore ?? false;
 
+  // Determine if there's a usable CLI available
+  const hasHealthyCli = healthData?.clis.some(
+    (cli) => cli.status === "healthy",
+  );
+  const effectiveCli =
+    chat?.cliType ??
+    agentsData?.agents.find((a) => a.id === chat?.agentId)?.cliType ??
+    null;
+  const effectiveCliIsHealthy = effectiveCli
+    ? healthData?.clis.find((c) => c.type === effectiveCli)?.status ===
+      "healthy"
+    : hasHealthyCli; // Malamar agent uses first healthy CLI
+  const noCli = !hasHealthyCli || !effectiveCliIsHealthy;
+
   return (
     <AppLayout
       breadcrumbItems={[
@@ -239,8 +253,10 @@ const ChatPage = () => {
             isSending={sendMessage.isPending}
             isCancelling={cancelProcessing.isPending}
             isUploading={uploadAttachment.isPending}
+            disabled={noCli}
             error={mutationError}
             onClearError={handleClearError}
+            noCliError={noCli}
           />
 
           {/* Delete chat dialog */}
