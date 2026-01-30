@@ -452,7 +452,7 @@ Before testing, ensure:
 - [x] Error toasts for failed operations
 
 ### 12.3 Race Conditions
-- [ ] Concurrent edits: last save wins
+- [x] Concurrent edits: last save wins
 - [x] Multiple tabs: SSE keeps all synchronized
 - [x] Comment while processing: agent sees it next iteration
 
