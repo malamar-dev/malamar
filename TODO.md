@@ -595,10 +595,10 @@ Before testing, ensure:
 ## 18. Data Integrity
 
 ### 18.1 Cascade Deletes
-- [ ] Workspace delete cascades: agents, tasks, comments, logs, queues, chats, messages
-- [ ] Task delete cascades: comments, logs, queue items
-- [ ] Chat delete cascades: messages, queue items
-- [ ] Agent delete: preserves references in comments/chats
+- [x] Workspace delete cascades: agents, tasks, comments, logs, queues, chats, messages
+- [x] Task delete cascades: comments, logs, queue items
+- [x] Chat delete cascades: messages, queue items
+- [x] Agent delete: preserves references in comments/chats
 
 ### 18.2 Foreign Key Integrity
 - [x] Cannot create agent without valid workspace_id
