@@ -13,6 +13,7 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5137,
     proxy: {
       "/api": {
         target: process.env.MALAMAR_API_BASE_URL || "http://localhost:3456",
