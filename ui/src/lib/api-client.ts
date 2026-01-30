@@ -26,11 +26,11 @@ export const apiClient = {
   get: <T>(path: string): Promise<T> =>
     fetch(`/api${path}`).then(handleResponse<T>),
 
-  post: <T>(path: string, data: unknown): Promise<T> =>
+  post: <T>(path: string, data?: unknown): Promise<T> =>
     fetch(`/api${path}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      headers: data !== undefined ? { "Content-Type": "application/json" } : {},
+      body: data !== undefined ? JSON.stringify(data) : undefined,
     }).then(handleResponse<T>),
 
   put: <T>(path: string, data: unknown): Promise<T> =>
