@@ -449,7 +449,7 @@ Before testing, ensure:
 ### 12.2 Network Errors
 - [ ] Offline state handled gracefully
 - [ ] Retry logic for failed mutations
-- [ ] Error toasts for failed operations
+- [x] Error toasts for failed operations
 
 ### 12.3 Race Conditions
 - [ ] Concurrent edits: last save wins
