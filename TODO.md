@@ -394,7 +394,7 @@ Before testing, ensure:
 | `chat.processing_started` | Chat processing begins |
 | `chat.processing_finished` | Chat processing ends |
 
-- [ ] SSE endpoint `/api/events` is accessible
+- [x] SSE endpoint `/api/events` is accessible
 - [ ] Events trigger React Query invalidation
 - [ ] UI updates without manual refresh
 - [ ] Reconnection works after connection loss

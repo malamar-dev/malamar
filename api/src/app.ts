@@ -6,6 +6,7 @@ import { Hono } from "hono";
 
 import { agentRouter } from "./agent";
 import { chatRouter } from "./chat";
+import { eventsRouter } from "./events";
 import { healthRouter } from "./health";
 import { taskRouter } from "./task";
 import { workspaceRouter } from "./workspace";
@@ -14,6 +15,7 @@ export const app = new Hono();
 
 // API routes (must come first)
 app.route("/api/health", healthRouter);
+app.route("/api/events", eventsRouter);
 app.route("/api/workspaces", workspaceRouter);
 app.route("/api", agentRouter);
 app.route("/api", chatRouter);
@@ -45,6 +47,11 @@ if (existsSync(UI_DIST_PATH)) {
   // Serve static files and SPA fallback
   app.get("*", async (c) => {
     const path = c.req.path;
+
+    // Skip API routes - they're handled by their own routers
+    if (path.startsWith("/api/")) {
+      return c.text("Not Found", 404);
+    }
 
     // Try to serve the requested file
     const filePath = join(UI_DIST_PATH, path === "/" ? "index.html" : path);
