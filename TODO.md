@@ -350,7 +350,7 @@ Before testing, ensure:
 ### 8.11 Delete Chat
 - [x] Confirm dialog before deletion
 - [x] Cascade deletes: messages, queue items
-- [ ] Attachment directory left for OS cleanup
+- [x] Attachment directory left for OS cleanup
 
 ---
 
