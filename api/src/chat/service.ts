@@ -133,12 +133,13 @@ export function createChat(
 }
 
 /**
- * Update a chat's title.
+ * Update a chat's title and/or agent.
  * Returns the updated chat, or an error if validation fails.
+ * When switching agents, a system message is added to the conversation.
  */
 export function updateChat(
   id: string,
-  params: { title: string },
+  params: { title?: string; agentId?: string | null },
 ): Result<Chat> {
   // Validate chat exists
   const existingChat = repository.findById(id);
@@ -146,13 +147,67 @@ export function updateChat(
     return err("Chat not found", "NOT_FOUND");
   }
 
-  // Update the chat title
-  const updatedChat = repository.updateTitle(id, params.title);
-  if (!updatedChat) {
-    return err("Failed to update chat", "INTERNAL_ERROR");
+  // Track updates made
+  let updatedChat: Chat | null = existingChat;
+
+  // Update title if provided
+  if (params.title !== undefined) {
+    updatedChat = repository.updateTitle(id, params.title);
+    if (!updatedChat) {
+      return err("Failed to update chat title", "INTERNAL_ERROR");
+    }
   }
 
-  return ok(updatedChat);
+  // Update agent if provided and different from current
+  if (params.agentId !== undefined && params.agentId !== existingChat.agentId) {
+    // Validate new agent if not null
+    if (params.agentId !== null) {
+      const agent = agentRepository.findById(params.agentId);
+      if (!agent) {
+        return err("Agent not found", "AGENT_NOT_FOUND");
+      }
+      if (agent.workspaceId !== existingChat.workspaceId) {
+        return err(
+          "Agent does not belong to this workspace",
+          "AGENT_NOT_IN_WORKSPACE",
+        );
+      }
+    }
+
+    // Check if chat is currently processing
+    const isProcessing = repository.hasActiveQueueItem(id);
+    if (isProcessing) {
+      return err(
+        "Cannot switch agent while chat is processing",
+        "CHAT_PROCESSING",
+      );
+    }
+
+    // Get agent names for system message
+    const oldAgentName = existingChat.agentId
+      ? (agentRepository.findById(existingChat.agentId)?.name ?? "Unknown")
+      : "Malamar";
+    const newAgentName = params.agentId
+      ? (agentRepository.findById(params.agentId)?.name ?? "Unknown")
+      : "Malamar";
+
+    // Update the agent
+    updatedChat = repository.updateAgent(id, params.agentId);
+    if (!updatedChat) {
+      return err("Failed to update chat agent", "INTERNAL_ERROR");
+    }
+
+    // Add system message about the switch
+    const messageId = generateId();
+    repository.createMessage(
+      messageId,
+      id,
+      "system",
+      `Switched from ${oldAgentName} to ${newAgentName}`,
+    );
+  }
+
+  return ok(updatedChat!);
 }
 
 // =============================================================================

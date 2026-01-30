@@ -9,6 +9,7 @@ import type {
   PaginationParams,
   SendMessageInput,
   SendMessageResponse,
+  UpdateChatInput,
 } from "../types/chat.types.ts";
 
 export const chatsApi = {
@@ -42,12 +43,12 @@ export const chatsApi = {
   get: (id: string) => apiClient.get<Chat>(`/chats/${id}`),
 
   /**
-   * Updates a chat's title.
+   * Updates a chat's title and/or agent.
    * @param id - The chat ID
-   * @param input - The update data
+   * @param input - The update data (title and/or agentId)
    * @returns The updated chat
    */
-  update: (id: string, input: { title: string }) =>
+  update: (id: string, input: UpdateChatInput) =>
     apiClient.patch<Chat>(`/chats/${id}`, input),
 
   /**

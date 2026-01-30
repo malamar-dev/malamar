@@ -21,6 +21,11 @@ export interface CreateChatInput {
   agentId?: string | null;
 }
 
+export interface UpdateChatInput {
+  title?: string;
+  agentId?: string | null;
+}
+
 // =============================================================================
 // Chat Messages
 // =============================================================================

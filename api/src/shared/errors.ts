@@ -6,7 +6,8 @@ export type ErrorCode =
   | "CONFLICT"
   | "INTERNAL_ERROR"
   | "AGENT_NOT_FOUND"
-  | "AGENT_NOT_IN_WORKSPACE";
+  | "AGENT_NOT_IN_WORKSPACE"
+  | "CHAT_PROCESSING";
 
 export interface ApiError {
   code: ErrorCode;
@@ -66,6 +67,7 @@ export function httpStatusFromCode(code: ErrorCode): ContentfulStatusCode {
     case "AGENT_NOT_IN_WORKSPACE":
       return 400;
     case "CONFLICT":
+    case "CHAT_PROCESSING":
       return 409;
     case "INTERNAL_ERROR":
       return 500;

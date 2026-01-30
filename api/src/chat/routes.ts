@@ -160,7 +160,9 @@ chatRouter.get("/chats/:id", (c) => {
 
 /**
  * PATCH /chats/:id - Update chat details
- * Body: { title: string }
+ * Body: { title?: string, agentId?: string | null }
+ * At least one of title or agentId must be provided.
+ * Switching agent adds a system message and is blocked while processing.
  */
 chatRouter.patch("/chats/:id", async (c) => {
   const id = c.req.param("id");

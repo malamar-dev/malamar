@@ -325,10 +325,10 @@ Before testing, ensure:
 - [x] User can edit title anytime via UI
 
 ### 8.7 Agent Switching
-- [ ] Can change agent mid-conversation
-- [ ] Full history preserved
-- [ ] System message: "Switched from [A] to [B]"
-- [ ] New agent sees entire conversation
+- [x] Can change agent mid-conversation
+- [x] Full history preserved
+- [x] System message: "Switched from [A] to [B]"
+- [x] New agent sees entire conversation
 
 ### 8.8 CLI Override
 - [ ] Can override CLI for the chat

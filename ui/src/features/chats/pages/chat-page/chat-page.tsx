@@ -5,8 +5,10 @@ import { useParams } from "react-router";
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useAgents } from "@/features/workspaces/hooks/use-agents.ts";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 
+import { ChatAgentSwitcher } from "../../components/chat-agent-switcher.tsx";
 import { ChatInput } from "../../components/chat-input.tsx";
 import { ChatMessagesList } from "../../components/chat-messages-list.tsx";
 import { EditableChatTitle } from "../../components/editable-chat-title.tsx";
@@ -25,6 +27,7 @@ const ChatPage = () => {
   // Queries
   const { data: chat, isLoading, isError, error } = useChat(chatId ?? "");
   const { data: workspace } = useWorkspace(chat?.workspaceId ?? "");
+  const { data: agentsData } = useAgents(chat?.workspaceId ?? "");
 
   const isProcessing = chat?.isProcessing ?? false;
 
@@ -69,6 +72,13 @@ const ChatPage = () => {
   const handleUpdateTitle = useCallback(
     async (newTitle: string) => {
       await updateChat.mutateAsync({ title: newTitle });
+    },
+    [updateChat],
+  );
+
+  const handleSwitchAgent = useCallback(
+    (agentId: string | null) => {
+      updateChat.mutate({ agentId });
     },
     [updateChat],
   );
@@ -120,6 +130,22 @@ const ChatPage = () => {
         </div>
       ) : (
         <>
+          {/* Agent switcher header */}
+          <div className="border-b px-4 py-2">
+            <div className="mx-auto flex max-w-3xl items-center gap-2">
+              <span className="text-muted-foreground text-sm">
+                Chatting with
+              </span>
+              <ChatAgentSwitcher
+                currentAgentId={chat?.agentId ?? null}
+                agents={agentsData?.agents ?? []}
+                onSwitch={handleSwitchAgent}
+                isLoading={updateChat.isPending}
+                disabled={isProcessing}
+              />
+            </div>
+          </div>
+
           {/* Messages area */}
           {isLoadingMessages && messages.length === 0 ? (
             <div className="flex flex-1 items-center justify-center">

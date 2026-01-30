@@ -37,10 +37,16 @@ export const createMessageBodySchema = z.object({
 
 /**
  * Schema for updating a chat request body.
+ * Supports updating title and/or switching agent.
  */
-export const updateChatBodySchema = z.object({
-  title: z.string().min(1).max(255),
-});
+export const updateChatBodySchema = z
+  .object({
+    title: z.string().min(1).max(255).optional(),
+    agentId: z.string().nullable().optional(),
+  })
+  .refine((data) => data.title !== undefined || data.agentId !== undefined, {
+    message: "At least one of title or agentId must be provided",
+  });
 
 /**
  * Schema for validating CLI output from chat processing.

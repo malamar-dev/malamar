@@ -242,6 +242,26 @@ export function updateTitle(chatId: string, title: string): Chat | null {
   return findById(chatId);
 }
 
+/**
+ * Update a chat's agent.
+ * Returns the updated Chat entity or null if not found.
+ */
+export function updateAgent(
+  chatId: string,
+  agentId: string | null,
+): Chat | null {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  db.prepare(`UPDATE chats SET agent_id = ?, updated_at = ? WHERE id = ?`).run(
+    agentId,
+    now,
+    chatId,
+  );
+
+  return findById(chatId);
+}
+
 // =============================================================================
 // Chat Queue Operations
 // =============================================================================
