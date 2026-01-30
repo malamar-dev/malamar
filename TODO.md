@@ -336,11 +336,11 @@ Before testing, ensure:
 - [x] Persists for all messages in chat
 
 ### 8.9 File Attachments
-- [ ] Can upload files to chat
-- [ ] Files stored in `/tmp/malamar_chat_{chat_id}_attachments/`
-- [ ] System message notes uploaded file path
-- [ ] Duplicate filenames overwrite existing
-- [ ] No file size/type restrictions
+- [x] Can upload files to chat
+- [x] Files stored in `/tmp/malamar_chat_{chat_id}_attachments/`
+- [x] System message notes uploaded file path
+- [x] Duplicate filenames overwrite existing
+- [x] No file size/type restrictions
 
 ### 8.10 Chat Working Directory
 - [x] Temp Folder mode: `/tmp/malamar_chat_{chat_id}`

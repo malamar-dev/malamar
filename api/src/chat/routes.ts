@@ -1,3 +1,6 @@
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { Hono } from "hono";
 
 import { killChatProcess } from "../jobs";
@@ -311,4 +314,64 @@ chatRouter.delete("/chats/:id", (c) => {
   }
 
   return c.json({ success: true });
+});
+
+/**
+ * POST /chats/:id/attachments - Upload file attachment
+ * Accepts multipart form data with a single file.
+ * Files are stored at /tmp/malamar_chat_{chat_id}_attachments/{filename}.
+ * Duplicate filenames overwrite existing files.
+ * A system message is added to the chat noting the uploaded file path.
+ */
+chatRouter.post("/chats/:id/attachments", async (c) => {
+  const chatId = c.req.param("id");
+
+  // Verify chat exists
+  const chatResult = service.getChat(chatId);
+  if (!chatResult.ok) {
+    return c.json(
+      createErrorResponse(chatResult.code, chatResult.error),
+      httpStatusFromCode(chatResult.code),
+    );
+  }
+
+  // Parse multipart form data
+  const formData = await c.req.formData().catch(() => null);
+  if (!formData) {
+    return c.json(
+      createErrorResponse("VALIDATION_ERROR", "Invalid form data"),
+      400,
+    );
+  }
+
+  const file = formData.get("file");
+  if (!file || !(file instanceof File)) {
+    return c.json(
+      createErrorResponse("VALIDATION_ERROR", "No file provided"),
+      400,
+    );
+  }
+
+  // Create attachment directory if it doesn't exist
+  const attachmentDir = `/tmp/malamar_chat_${chatId}_attachments`;
+  if (!existsSync(attachmentDir)) {
+    mkdirSync(attachmentDir, { recursive: true });
+  }
+
+  // Write file to disk (overwrites if exists)
+  const filePath = join(attachmentDir, file.name);
+  const arrayBuffer = await file.arrayBuffer();
+  writeFileSync(filePath, Buffer.from(arrayBuffer));
+
+  // Add system message about the uploaded file
+  service.createSystemMessage(chatId, `User has uploaded ${filePath}`);
+
+  return c.json(
+    {
+      filename: file.name,
+      path: filePath,
+      size: file.size,
+    },
+    201,
+  );
 });

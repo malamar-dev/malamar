@@ -51,4 +51,14 @@ export const apiClient = {
     fetch(`/api${path}`, {
       method: "DELETE",
     }).then(handleResponse<T>),
+
+  /**
+   * Upload a file using multipart form data.
+   * Note: Content-Type header is not set to allow the browser to set it with boundary.
+   */
+  upload: <T>(path: string, formData: FormData): Promise<T> =>
+    fetch(`/api${path}`, {
+      method: "POST",
+      body: formData,
+    }).then(handleResponse<T>),
 };

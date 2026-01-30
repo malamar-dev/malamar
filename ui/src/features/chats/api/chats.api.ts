@@ -103,4 +103,20 @@ export const chatsApi = {
    */
   delete: (chatId: string) =>
     apiClient.delete<{ success: boolean }>(`/chats/${chatId}`),
+
+  /**
+   * Uploads a file attachment to a chat.
+   * A system message will be added noting the uploaded file path.
+   * @param chatId - The chat ID to upload the file to
+   * @param file - The file to upload
+   * @returns The uploaded file details
+   */
+  uploadAttachment: (chatId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiClient.upload<{ filename: string; path: string; size: number }>(
+      `/chats/${chatId}/attachments`,
+      formData,
+    );
+  },
 };

@@ -28,6 +28,7 @@ import { useChat } from "../../hooks/use-chat.ts";
 import { useMessages } from "../../hooks/use-messages.ts";
 import { useSendMessage } from "../../hooks/use-send-message.ts";
 import { useUpdateChat } from "../../hooks/use-update-chat.ts";
+import { useUploadAttachment } from "../../hooks/use-upload-attachment.ts";
 
 const MESSAGES_PER_PAGE = 50;
 
@@ -56,9 +57,11 @@ const ChatPage = () => {
   const sendMessage = useSendMessage(chatId ?? "");
   const cancelProcessing = useCancelProcessing(chatId ?? "");
   const updateChat = useUpdateChat(chatId ?? "");
+  const uploadAttachment = useUploadAttachment(chatId ?? "");
 
-  // Combine errors from both mutations
-  const mutationError = sendMessage.error || cancelProcessing.error;
+  // Combine errors from all mutations
+  const mutationError =
+    sendMessage.error || cancelProcessing.error || uploadAttachment.error;
 
   // Handlers
   const handleSend = useCallback(
@@ -81,7 +84,15 @@ const ChatPage = () => {
   const handleClearError = useCallback(() => {
     sendMessage.reset();
     cancelProcessing.reset();
-  }, [sendMessage, cancelProcessing]);
+    uploadAttachment.reset();
+  }, [sendMessage, cancelProcessing, uploadAttachment]);
+
+  const handleUploadFile = useCallback(
+    (file: File) => {
+      uploadAttachment.mutate(file);
+    },
+    [uploadAttachment],
+  );
 
   const handleUpdateTitle = useCallback(
     async (newTitle: string) => {
@@ -223,9 +234,11 @@ const ChatPage = () => {
           <ChatInput
             onSend={handleSend}
             onCancel={handleCancel}
+            onUploadFile={handleUploadFile}
             isProcessing={isProcessing}
             isSending={sendMessage.isPending}
             isCancelling={cancelProcessing.isPending}
+            isUploading={uploadAttachment.isPending}
             error={mutationError}
             onClearError={handleClearError}
           />

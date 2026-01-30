@@ -1,6 +1,7 @@
 import {
   AlertCircleIcon,
   Loader2Icon,
+  PaperclipIcon,
   SendIcon,
   SquareIcon,
   XIcon,
@@ -15,9 +16,11 @@ import { cn } from "@/lib/utils.ts";
 interface ChatInputProps {
   onSend: (message: string) => void;
   onCancel: () => void;
+  onUploadFile: (file: File) => void;
   isProcessing: boolean;
   isSending: boolean;
   isCancelling: boolean;
+  isUploading: boolean;
   disabled?: boolean;
   className?: string;
   error?: Error | null;
@@ -27,9 +30,11 @@ interface ChatInputProps {
 export const ChatInput = ({
   onSend,
   onCancel,
+  onUploadFile,
   isProcessing,
   isSending,
   isCancelling,
+  isUploading,
   disabled = false,
   className,
   error,
@@ -37,6 +42,7 @@ export const ChatInput = ({
 }: ChatInputProps) => {
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = useCallback(() => {
     const trimmed = message.trim();
@@ -66,9 +72,26 @@ export const ChatInput = ({
     }
   };
 
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        onUploadFile(file);
+        // Reset the input so the same file can be uploaded again
+        e.target.value = "";
+      }
+    },
+    [onUploadFile],
+  );
+
+  const handleAttachClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
   const canSend = message.trim().length > 0 && !isSending && !disabled;
   const showCancelButton = isProcessing;
   const showSendButton = !isProcessing;
+  const canAttach = !disabled && !isProcessing && !isUploading;
 
   return (
     <div className={cn("bg-background border-t p-4", className)}>
@@ -94,6 +117,31 @@ export const ChatInput = ({
         )}
 
         <div className="flex items-end gap-2">
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+
+          {/* Attachment button */}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleAttachClick}
+            disabled={!canAttach}
+            className="shrink-0"
+            title="Attach file"
+          >
+            {isUploading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <PaperclipIcon />
+            )}
+          </Button>
+
           <Textarea
             ref={textareaRef}
             value={message}
