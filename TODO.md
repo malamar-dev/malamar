@@ -454,7 +454,7 @@ Before testing, ensure:
 ### 12.3 Race Conditions
 - [ ] Concurrent edits: last save wins
 - [x] Multiple tabs: SSE keeps all synchronized
-- [ ] Comment while processing: agent sees it next iteration
+- [x] Comment while processing: agent sees it next iteration
 
 ### 12.4 CLI Unavailable
 - [x] Zero CLIs healthy: warning in header
