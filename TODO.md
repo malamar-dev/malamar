@@ -448,7 +448,7 @@ Before testing, ensure:
 
 ### 12.2 Network Errors
 - [ ] Offline state handled gracefully
-- [ ] Retry logic for failed mutations
+- [x] Retry logic for failed mutations
 - [x] Error toasts for failed operations
 
 ### 12.3 Race Conditions
