@@ -576,8 +576,8 @@ Before testing, ensure:
 - [x] JSON schema enforcement via `--json-schema` flag
 
 ### 17.2 Gemini CLI (if available)
-- [ ] Binary detection works
-- [ ] Health check works
+- [x] Binary detection works
+- [x] Health check works
 - [ ] Invocation with schema in prompt
 
 ### 17.3 Codex CLI (if available)

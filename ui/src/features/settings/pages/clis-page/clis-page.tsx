@@ -1,5 +1,5 @@
 import { AlertCircleIcon, RefreshCwIcon, SaveIcon } from "lucide-react";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
@@ -145,14 +145,21 @@ function CliCard({
   );
 }
 
+/**
+ * CLI configuration with display names and types.
+ */
+const CLI_CONFIGS: Array<{ type: CliType; displayName: string }> = [
+  { type: "claude", displayName: "Claude Code" },
+  { type: "gemini", displayName: "Gemini CLI" },
+  { type: "codex", displayName: "Codex CLI" },
+  { type: "opencode", displayName: "OpenCode" },
+];
+
 export const ClisPage = () => {
   const { data, isLoading, isError, error } = useHealth();
   const { data: settingsData, isLoading: isLoadingSettings } = useCliSettings();
   const refreshHealth = useRefreshHealth();
   const updateCliSettings = useUpdateCliSettings();
-
-  const claudeCli = data?.clis.find((cli) => cli.type === "claude");
-  const claudeSettings = settingsData?.settings.claude;
 
   const handleRefresh = () => {
     refreshHealth.mutate();
@@ -204,15 +211,18 @@ export const ClisPage = () => {
           </AlertDescription>
         </Alert>
       ) : (
-        <Fragment>
-          <CliCard
-            displayName="Claude Code"
-            cli={claudeCli}
-            customBinaryPath={claudeSettings?.binaryPath}
-            onSave={(binaryPath) => handleSaveCliSettings("claude", binaryPath)}
-            isSaving={updateCliSettings.isPending}
-          />
-        </Fragment>
+        <div className="flex flex-col gap-4">
+          {CLI_CONFIGS.map(({ type, displayName }) => (
+            <CliCard
+              key={type}
+              displayName={displayName}
+              cli={data?.clis.find((cli) => cli.type === type)}
+              customBinaryPath={settingsData?.settings[type]?.binaryPath}
+              onSave={(binaryPath) => handleSaveCliSettings(type, binaryPath)}
+              isSaving={updateCliSettings.isPending}
+            />
+          ))}
+        </div>
       )}
     </AppLayout>
   );

@@ -1,6 +1,6 @@
 export type CliHealthStatus = "healthy" | "unhealthy";
 
-export type CliType = "claude";
+export type CliType = "claude" | "gemini" | "codex" | "opencode";
 
 export interface CliHealthResult {
   type: CliType;
