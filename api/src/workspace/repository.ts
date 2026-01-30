@@ -11,6 +11,8 @@ function rowToWorkspace(row: WorkspaceRow): Workspace {
     description: row.description,
     workingDirectory: row.working_directory,
     retentionDays: row.retention_days,
+    notifyOnError: row.notify_on_error === 1,
+    notifyOnInReview: row.notify_on_in_review === 1,
     lastActivityAt: new Date(row.last_activity_at),
     createdAt: new Date(row.created_at),
     updatedAt: new Date(row.updated_at),
@@ -62,8 +64,8 @@ export function create(workspace: Workspace): Workspace {
   const db = getDatabase();
   db.prepare(
     `
-    INSERT INTO workspaces (id, title, description, working_directory, retention_days, last_activity_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO workspaces (id, title, description, working_directory, retention_days, notify_on_error, notify_on_in_review, last_activity_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     workspace.id,
@@ -71,6 +73,8 @@ export function create(workspace: Workspace): Workspace {
     workspace.description,
     workspace.workingDirectory,
     workspace.retentionDays,
+    workspace.notifyOnError ? 1 : 0,
+    workspace.notifyOnInReview ? 1 : 0,
     workspace.lastActivityAt.toISOString(),
     workspace.createdAt.toISOString(),
     workspace.updatedAt.toISOString(),
@@ -88,6 +92,8 @@ export function update(
   description: string,
   workingDirectory: string | null,
   retentionDays: number,
+  notifyOnError: boolean,
+  notifyOnInReview: boolean,
   updatedAt: Date,
 ): Workspace | null {
   const db = getDatabase();
@@ -95,7 +101,7 @@ export function update(
     .prepare(
       `
     UPDATE workspaces
-    SET title = ?, description = ?, working_directory = ?, retention_days = ?, updated_at = ?
+    SET title = ?, description = ?, working_directory = ?, retention_days = ?, notify_on_error = ?, notify_on_in_review = ?, updated_at = ?
     WHERE id = ?
   `,
     )
@@ -104,6 +110,8 @@ export function update(
       description,
       workingDirectory,
       retentionDays,
+      notifyOnError ? 1 : 0,
+      notifyOnInReview ? 1 : 0,
       updatedAt.toISOString(),
       id,
     );

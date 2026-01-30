@@ -23,10 +23,12 @@ export const listWorkspacesQuerySchema = z.object({
 
 /**
  * Schema for updating an existing workspace.
- * Includes optional retentionDays for task cleanup settings.
+ * Includes optional retentionDays for task cleanup settings and notification toggles.
  */
 export const updateWorkspaceSchema = workspaceBaseSchema.extend({
   retentionDays: z.number().int().min(0).max(365).optional(),
+  notifyOnError: z.boolean().optional(),
+  notifyOnInReview: z.boolean().optional(),
 });
 
 export type CreateWorkspaceBody = z.infer<typeof createWorkspaceSchema>;

@@ -3,6 +3,9 @@ export interface Workspace {
   title: string;
   description: string;
   workingDirectory: string | null;
+  retentionDays: number;
+  notifyOnError: boolean;
+  notifyOnInReview: boolean;
   lastActivityAt: string;
   createdAt: string;
   updatedAt: string;
@@ -22,4 +25,7 @@ export interface UpdateWorkspaceInput {
   title: string;
   description?: string;
   workingDirectory?: string | null;
+  retentionDays?: number;
+  notifyOnError?: boolean;
+  notifyOnInReview?: boolean;
 }

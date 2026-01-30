@@ -5,4 +5,5 @@ export { default as m1737643200 } from "./1737643200_create_chat_tables";
 export { default as m1738200000 } from "./1738200000_create_task_tables";
 export { default as m1738300000 } from "./1738300000_add_retention_days_to_workspaces";
 export { default as m1738400000 } from "./1738400000_create_settings_table";
+export { default as m1738500000 } from "./1738500000_add_notification_settings_to_workspaces";
 // Add new migrations here (one line each)

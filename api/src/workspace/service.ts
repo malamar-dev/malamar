@@ -71,6 +71,8 @@ export function createWorkspace(
     description: input.description ?? "",
     workingDirectory: input.workingDirectory ?? null,
     retentionDays: DEFAULT_RETENTION_DAYS,
+    notifyOnError: true, // Default to enabled
+    notifyOnInReview: true, // Default to enabled
     lastActivityAt: now, // Initialize to created_at (never NULL)
     createdAt: now,
     updatedAt: now,
@@ -86,7 +88,7 @@ export function updateWorkspace(
   id: string,
   input: UpdateWorkspaceInput,
 ): Result<Workspace> {
-  // Get existing workspace to preserve retention_days if not provided
+  // Get existing workspace to preserve settings if not provided
   const existing = repository.findById(id);
   if (!existing) {
     return err("Workspace not found", "NOT_FOUND");
@@ -99,6 +101,8 @@ export function updateWorkspace(
     input.description ?? "",
     input.workingDirectory ?? null,
     input.retentionDays ?? existing.retentionDays,
+    input.notifyOnError ?? existing.notifyOnError,
+    input.notifyOnInReview ?? existing.notifyOnInReview,
     now,
   );
 

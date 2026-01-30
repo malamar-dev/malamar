@@ -426,7 +426,7 @@ Before testing, ensure:
 - [x] Description editable
 - [x] Working Directory Mode: static vs temp toggle
 - [x] Static Directory Path input (with validation warning)
-- [ ] Notification settings (per workspace)
+- [x] Notification settings (per workspace)
 
 ### 11.3 Notification Settings
 - [x] Mailgun API key (global)
@@ -434,7 +434,7 @@ Before testing, ensure:
 - [x] From email (global)
 - [x] To email (global)
 - [x] "Test Email" button sends test
-- [ ] Per-workspace toggles: On error, On In Review
+- [x] Per-workspace toggles: On error, On In Review
 
 ---
 

@@ -7,6 +7,8 @@ export interface Workspace {
   description: string;
   workingDirectory: string | null;
   retentionDays: number;
+  notifyOnError: boolean;
+  notifyOnInReview: boolean;
   lastActivityAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -21,6 +23,8 @@ export interface WorkspaceRow {
   description: string;
   working_directory: string | null;
   retention_days: number;
+  notify_on_error: number; // SQLite stores boolean as 0/1
+  notify_on_in_review: number; // SQLite stores boolean as 0/1
   last_activity_at: string;
   created_at: string;
   updated_at: string;
@@ -43,4 +47,6 @@ export interface UpdateWorkspaceInput {
   description?: string;
   workingDirectory?: string | null;
   retentionDays?: number;
+  notifyOnError?: boolean;
+  notifyOnInReview?: boolean;
 }
