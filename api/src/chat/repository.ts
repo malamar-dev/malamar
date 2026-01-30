@@ -262,6 +262,26 @@ export function updateAgent(
   return findById(chatId);
 }
 
+/**
+ * Update a chat's CLI type override.
+ * Returns the updated Chat entity or null if not found.
+ */
+export function updateCliType(
+  chatId: string,
+  cliType: CliType | null,
+): Chat | null {
+  const db = getDatabase();
+  const now = new Date().toISOString();
+
+  db.prepare(`UPDATE chats SET cli_type = ?, updated_at = ? WHERE id = ?`).run(
+    cliType,
+    now,
+    chatId,
+  );
+
+  return findById(chatId);
+}
+
 // =============================================================================
 // Chat Queue Operations
 // =============================================================================

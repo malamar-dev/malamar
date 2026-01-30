@@ -24,6 +24,7 @@ export interface CreateChatInput {
 export interface UpdateChatInput {
   title?: string;
   agentId?: string | null;
+  cliType?: CliType | null;
 }
 
 // =============================================================================

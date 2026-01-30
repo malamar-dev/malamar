@@ -331,9 +331,9 @@ Before testing, ensure:
 - [x] New agent sees entire conversation
 
 ### 8.8 CLI Override
-- [ ] Can override CLI for the chat
-- [ ] Overrides agent's default CLI
-- [ ] Persists for all messages in chat
+- [x] Can override CLI for the chat
+- [x] Overrides agent's default CLI
+- [x] Persists for all messages in chat
 
 ### 8.9 File Attachments
 - [ ] Can upload files to chat

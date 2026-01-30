@@ -12,10 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useHealth } from "@/features/settings/hooks/use-health.ts";
+import type { CliType } from "@/features/settings/types/health.types.ts";
 import { useAgents } from "@/features/workspaces/hooks/use-agents.ts";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 
 import { ChatAgentSwitcher } from "../../components/chat-agent-switcher.tsx";
+import { ChatCliSwitcher } from "../../components/chat-cli-switcher.tsx";
 import { ChatInput } from "../../components/chat-input.tsx";
 import { ChatMessagesList } from "../../components/chat-messages-list.tsx";
 import { DeleteChatDialog } from "../../components/delete-chat-dialog.tsx";
@@ -38,6 +41,7 @@ const ChatPage = () => {
   const { data: chat, isLoading, isError, error } = useChat(chatId ?? "");
   const { data: workspace } = useWorkspace(chat?.workspaceId ?? "");
   const { data: agentsData } = useAgents(chat?.workspaceId ?? "");
+  const { data: healthData } = useHealth();
 
   const isProcessing = chat?.isProcessing ?? false;
 
@@ -89,6 +93,13 @@ const ChatPage = () => {
   const handleSwitchAgent = useCallback(
     (agentId: string | null) => {
       updateChat.mutate({ agentId });
+    },
+    [updateChat],
+  );
+
+  const handleSwitchCli = useCallback(
+    (cliType: CliType | null) => {
+      updateChat.mutate({ cliType });
     },
     [updateChat],
   );
@@ -146,20 +157,32 @@ const ChatPage = () => {
         </div>
       ) : (
         <>
-          {/* Agent switcher header */}
+          {/* Agent and CLI switcher header */}
           <div className="border-b px-4 py-2">
             <div className="mx-auto flex max-w-3xl items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">
-                  Chatting with
-                </span>
-                <ChatAgentSwitcher
-                  currentAgentId={chat?.agentId ?? null}
-                  agents={agentsData?.agents ?? []}
-                  onSwitch={handleSwitchAgent}
-                  isLoading={updateChat.isPending}
-                  disabled={isProcessing}
-                />
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground text-sm">
+                    Chatting with
+                  </span>
+                  <ChatAgentSwitcher
+                    currentAgentId={chat?.agentId ?? null}
+                    agents={agentsData?.agents ?? []}
+                    onSwitch={handleSwitchAgent}
+                    isLoading={updateChat.isPending}
+                    disabled={isProcessing}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground text-sm">using</span>
+                  <ChatCliSwitcher
+                    currentCliType={chat?.cliType ?? null}
+                    clis={healthData?.clis ?? []}
+                    onSwitch={handleSwitchCli}
+                    isLoading={updateChat.isPending}
+                    disabled={isProcessing}
+                  />
+                </div>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

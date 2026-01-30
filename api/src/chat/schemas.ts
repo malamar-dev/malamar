@@ -36,17 +36,29 @@ export const createMessageBodySchema = z.object({
 });
 
 /**
+ * Valid CLI types for chat CLI override.
+ */
+export const cliTypeSchema = z.enum(["claude", "gemini", "codex", "opencode"]);
+
+/**
  * Schema for updating a chat request body.
- * Supports updating title and/or switching agent.
+ * Supports updating title, switching agent, and/or overriding CLI.
  */
 export const updateChatBodySchema = z
   .object({
     title: z.string().min(1).max(255).optional(),
     agentId: z.string().nullable().optional(),
+    cliType: cliTypeSchema.nullable().optional(),
   })
-  .refine((data) => data.title !== undefined || data.agentId !== undefined, {
-    message: "At least one of title or agentId must be provided",
-  });
+  .refine(
+    (data) =>
+      data.title !== undefined ||
+      data.agentId !== undefined ||
+      data.cliType !== undefined,
+    {
+      message: "At least one of title, agentId, or cliType must be provided",
+    },
+  );
 
 /**
  * Schema for validating CLI output from chat processing.

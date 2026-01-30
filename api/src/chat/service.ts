@@ -141,13 +141,13 @@ export function createChat(
 }
 
 /**
- * Update a chat's title and/or agent.
+ * Update a chat's title, agent, and/or CLI override.
  * Returns the updated chat, or an error if validation fails.
  * When switching agents, a system message is added to the conversation.
  */
 export function updateChat(
   id: string,
-  params: { title?: string; agentId?: string | null },
+  params: { title?: string; agentId?: string | null; cliType?: CliType | null },
 ): Result<Chat> {
   // Validate chat exists
   const existingChat = repository.findById(id);
@@ -213,6 +213,24 @@ export function updateChat(
       "system",
       `Switched from ${oldAgentName} to ${newAgentName}`,
     );
+  }
+
+  // Update CLI type override if provided and different from current
+  if (params.cliType !== undefined && params.cliType !== existingChat.cliType) {
+    // Check if chat is currently processing
+    const isProcessing = repository.hasActiveQueueItem(id);
+    if (isProcessing) {
+      return err(
+        "Cannot change CLI while chat is processing",
+        "CHAT_PROCESSING",
+      );
+    }
+
+    // Update the CLI type
+    updatedChat = repository.updateCliType(id, params.cliType);
+    if (!updatedChat) {
+      return err("Failed to update chat CLI type", "INTERNAL_ERROR");
+    }
   }
 
   return ok(updatedChat!);
