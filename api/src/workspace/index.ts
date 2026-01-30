@@ -1,2 +1,6 @@
 export { workspaceRouter } from "./routes";
-export type { CreateWorkspaceInput, Workspace } from "./types";
+export type {
+  CreateWorkspaceInput,
+  CreateWorkspaceOptions,
+  Workspace,
+} from "./types";

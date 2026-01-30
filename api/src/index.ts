@@ -1,11 +1,19 @@
 import { app } from "./app";
-import { closeDatabase, initDatabase, loadConfig } from "./core";
+import {
+  closeDatabase,
+  initDatabase,
+  loadConfig,
+  runInitialization,
+} from "./core";
 import { startBackgroundJobs, stopBackgroundJobs } from "./jobs";
 import { resetInProgressQueueItems } from "./task/repository";
 
 const config = loadConfig();
 
 await initDatabase();
+
+// Run first-time initialization (creates sample workspace if new installation)
+await runInitialization();
 
 // Startup recovery: reset any in_progress queue items to queued
 // This handles crash recovery where processing was interrupted

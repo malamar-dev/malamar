@@ -41,3 +41,11 @@ export interface UpdateWorkspaceInput {
   description?: string;
   workingDirectory?: string | null;
 }
+
+/**
+ * Options for workspace creation.
+ */
+export interface CreateWorkspaceOptions {
+  /** Skip creating default agents (Planner, Implementer, Reviewer, Approver) */
+  skipDefaultAgents?: boolean;
+}

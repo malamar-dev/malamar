@@ -1,9 +1,12 @@
 import { existsSync, statSync } from "node:fs";
 
+import * as agentService from "../agent/service";
+import { DEFAULT_AGENTS } from "../prompts/defaults";
 import { err, generateId, ok, type Result } from "../shared";
 import * as repository from "./repository";
 import type {
   CreateWorkspaceInput,
+  CreateWorkspaceOptions,
   UpdateWorkspaceInput,
   Workspace,
 } from "./types";
@@ -51,9 +54,12 @@ export function getWorkspace(id: string): Result<Workspace> {
 
 /**
  * Create a new workspace.
+ * By default, creates default agents (Planner, Implementer, Reviewer, Approver).
+ * Pass `options.skipDefaultAgents: true` to skip agent creation.
  */
 export function createWorkspace(
   input: CreateWorkspaceInput,
+  options?: CreateWorkspaceOptions,
 ): Result<Workspace> {
   const validationError = validateWorkingDirectory(input.workingDirectory);
   if (validationError) {
@@ -70,7 +76,16 @@ export function createWorkspace(
     createdAt: now,
     updatedAt: now,
   };
-  return ok(repository.create(workspace));
+  const created = repository.create(workspace);
+
+  // Create default agents unless explicitly skipped
+  if (!options?.skipDefaultAgents) {
+    for (const agentInput of DEFAULT_AGENTS) {
+      agentService.createAgent(created.id, agentInput);
+    }
+  }
+
+  return ok(created);
 }
 
 /**
