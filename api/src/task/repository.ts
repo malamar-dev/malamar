@@ -120,6 +120,21 @@ export function countByWorkspaceId(workspaceId: string): number {
 }
 
 /**
+ * Get all task IDs for a workspace.
+ * Used for killing processes when deleting a workspace.
+ */
+export function findAllIdsByWorkspaceId(workspaceId: string): string[] {
+  const db = getDatabase();
+  const rows = db
+    .query<
+      { id: string },
+      [string]
+    >(`SELECT id FROM tasks WHERE workspace_id = ?`)
+    .all(workspaceId);
+  return rows.map((row) => row.id);
+}
+
+/**
  * Find tasks for a workspace with pagination.
  * Returns tasks sorted by updated_at DESC (newest first).
  */

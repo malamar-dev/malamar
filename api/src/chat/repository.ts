@@ -102,6 +102,21 @@ export function countByWorkspaceId(workspaceId: string, q?: string): number {
 }
 
 /**
+ * Get all chat IDs for a workspace.
+ * Used for killing processes when deleting a workspace.
+ */
+export function findAllIdsByWorkspaceId(workspaceId: string): string[] {
+  const db = getDatabase();
+  const rows = db
+    .query<
+      { id: string },
+      [string]
+    >(`SELECT id FROM chats WHERE workspace_id = ?`)
+    .all(workspaceId);
+  return rows.map((row) => row.id);
+}
+
+/**
  * Find chats for a workspace with pagination and optional search.
  * Returns chats sorted by updated_at DESC (newest first).
  */

@@ -56,6 +56,21 @@ export function getActiveTaskProcessCount(): number {
 }
 
 /**
+ * Kill all active task processes for a list of task IDs.
+ * Used when deleting a workspace to clean up running processes.
+ * Returns the number of processes killed.
+ */
+export function killTaskProcessesForTaskIds(taskIds: string[]): number {
+  let killed = 0;
+  for (const taskId of taskIds) {
+    if (killTaskProcess(taskId)) {
+      killed++;
+    }
+  }
+  return killed;
+}
+
+/**
  * Main task processor function.
  * Finds workspaces with queued items and spawns workers.
  */

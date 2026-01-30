@@ -47,6 +47,21 @@ export function getActiveChatProcessCount(): number {
 }
 
 /**
+ * Kill all active chat processes for a list of chat IDs.
+ * Used when deleting a workspace to clean up running processes.
+ * Returns the number of processes killed.
+ */
+export function killChatProcessesForChatIds(chatIds: string[]): number {
+  let killed = 0;
+  for (const chatId of chatIds) {
+    if (killChatProcess(chatId)) {
+      killed++;
+    }
+  }
+  return killed;
+}
+
+/**
  * Main chat processor function.
  * Finds all queued chat items and processes them in parallel.
  */

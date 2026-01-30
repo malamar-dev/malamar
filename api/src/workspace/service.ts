@@ -1,6 +1,12 @@
 import { existsSync, statSync } from "node:fs";
 
+import * as chatRepository from "../chat/repository";
+import {
+  killChatProcessesForChatIds,
+  killTaskProcessesForTaskIds,
+} from "../jobs";
 import { err, generateId, ok, type Result } from "../shared";
+import * as taskRepository from "../task/repository";
 import * as repository from "./repository";
 import type {
   CreateWorkspaceInput,
@@ -93,8 +99,17 @@ export function updateWorkspace(
 /**
  * Delete a workspace by ID.
  * This will cascade delete all related entities (agents, tasks, chats, etc.).
+ * Any in-progress CLI subprocesses for tasks/chats are killed first.
  */
 export function deleteWorkspace(id: string): Result<void> {
+  // First, kill any running CLI subprocesses for this workspace
+  const taskIds = taskRepository.findAllIdsByWorkspaceId(id);
+  const chatIds = chatRepository.findAllIdsByWorkspaceId(id);
+
+  killTaskProcessesForTaskIds(taskIds);
+  killChatProcessesForChatIds(chatIds);
+
+  // Now perform the cascade delete
   const deleted = repository.remove(id);
 
   if (!deleted) {

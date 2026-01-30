@@ -99,6 +99,6 @@ export function stopBackgroundJobs(): void {
   console.log("[Jobs] Background jobs stopped");
 }
 
-export { killChatProcess } from "./chat-processor";
-export { killTaskProcess } from "./task-processor";
+export { killChatProcess, killChatProcessesForChatIds } from "./chat-processor";
+export { killTaskProcess, killTaskProcessesForTaskIds } from "./task-processor";
 export { runCliHealthCheck };

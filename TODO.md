@@ -60,7 +60,7 @@ Before testing, ensure:
 ### 2.4 Delete Workspace
 - [x] Delete requires typing workspace name to confirm
 - [x] Deleting workspace cascades: agents, tasks, comments, logs, chats, messages
-- [ ] Any in-progress task/chat CLI subprocess is killed first
+- [x] Any in-progress task/chat CLI subprocess is killed first
 - [x] Workspace disappears from list after deletion
 
 ---
