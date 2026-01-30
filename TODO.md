@@ -567,10 +567,10 @@ Before testing, ensure:
 ## 17. CLI Adapter Verification
 
 ### 17.1 Claude Code
-- [ ] Binary detection in PATH
+- [x] Binary detection in PATH
 - [ ] Custom path via settings works
-- [ ] Version detection works
-- [ ] Health check prompt succeeds
+- [x] Version detection works
+- [x] Health check prompt succeeds
 - [ ] Task invocation succeeds
 - [ ] Chat invocation succeeds
 - [ ] JSON schema enforcement via `--json-schema` flag
