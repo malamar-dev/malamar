@@ -453,7 +453,7 @@ Before testing, ensure:
 
 ### 12.3 Race Conditions
 - [ ] Concurrent edits: last save wins
-- [ ] Multiple tabs: SSE keeps all synchronized
+- [x] Multiple tabs: SSE keeps all synchronized
 - [ ] Comment while processing: agent sees it next iteration
 
 ### 12.4 CLI Unavailable
