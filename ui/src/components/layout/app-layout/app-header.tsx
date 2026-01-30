@@ -2,6 +2,7 @@ import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { Fragment } from "react";
 
 import { CliHealthWarning } from "@/components/layout/app-layout/cli-health-warning.tsx";
+import { NetworkStatusIndicator } from "@/components/layout/app-layout/network-status-indicator.tsx";
 import type { BreadcrumbItemType } from "@/components/layout/app-layout/types.ts";
 import {
   Breadcrumb,
@@ -70,6 +71,8 @@ export const AppHeader = ({
       </div>
 
       {actions && <div className="flex items-center gap-2">{actions}</div>}
+
+      <NetworkStatusIndicator />
 
       <CliHealthWarning />
 

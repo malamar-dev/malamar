@@ -51,8 +51,12 @@ export const queryClient = new QueryClient({
       gcTime: 5 * 60 * 1000,
       refetchOnWindowFocus: true,
       retry: 1,
+      // Pause refetches when offline, resume when online
+      networkMode: "offlineFirst",
     },
     mutations: {
+      // Pause mutations when offline, resume when online
+      networkMode: "offlineFirst",
       retry: (failureCount, error) => {
         // Only retry up to 2 times for retryable errors
         if (failureCount >= 2) {

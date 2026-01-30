@@ -447,7 +447,7 @@ Before testing, ensure:
 - [x] 500 Server errors show generic error
 
 ### 12.2 Network Errors
-- [ ] Offline state handled gracefully
+- [x] Offline state handled gracefully
 - [x] Retry logic for failed mutations
 - [x] Error toasts for failed operations
 
