@@ -572,7 +572,7 @@ Before testing, ensure:
 - [x] Version detection works
 - [x] Health check prompt succeeds
 - [ ] Task invocation succeeds
-- [ ] Chat invocation succeeds
+- [x] Chat invocation succeeds
 - [ ] JSON schema enforcement via `--json-schema` flag
 
 ### 17.2 Gemini CLI (if available)
