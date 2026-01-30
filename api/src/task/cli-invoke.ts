@@ -9,7 +9,11 @@ import { resolveBinaryPath } from "../cli/adapters/claude";
 import { createTaskTemporaryDir, removeTemporaryPath } from "../core";
 import { generateId } from "../shared";
 import type { Workspace } from "../workspace/types";
-import { type TaskCliOutput, taskCliOutputSchema } from "./schemas";
+import {
+  taskCliJsonSchema,
+  type TaskCliOutput,
+  taskCliOutputSchema,
+} from "./schemas";
 import type { TaskComment, TaskLog } from "./types";
 
 /**
@@ -92,10 +96,11 @@ function formatLogForJsonl(log: TaskLog): string {
  * Generate the input file content for the CLI.
  * Contains the workspace instruction, agent instruction, task details,
  * comments (as JSONL), and activity logs (as JSONL).
+ *
+ * Note: Output instructions are minimal since --json-schema enforces the structure.
  */
 function generateInputFileContent(
   options: TaskCliOptions,
-  outputPath: string,
   getAgentName: (agentId: string) => string | null,
 ): string {
   const {
@@ -169,18 +174,7 @@ ${logsJsonl}
 
 # Output Instruction
 
-Write your response as JSON to: ${outputPath}
-
-The JSON must have this structure:
-\`\`\`json
-{
-  "actions": [
-    { "type": "skip" },
-    { "type": "comment", "content": "Your markdown content here" },
-    { "type": "change_status", "status": "in_review" }
-  ]
-}
-\`\`\`
+Your JSON response will be captured via --json-schema. Return an "actions" array with your decisions.
 
 ## Available Actions
 
@@ -207,6 +201,7 @@ Only "in_review" is allowed as the target status. Agents cannot move tasks to ot
 
 /**
  * Invoke the CLI for task processing.
+ * Uses --json-schema flag for structured output validation by Claude CLI.
  */
 export async function invokeTaskCli(
   options: TaskCliOptions,
@@ -241,16 +236,10 @@ export async function invokeTaskCli(
   // when multiple agents process the same task sequentially
   const inputId = generateId();
   const inputPath = join(tmpdir(), `malamar_input_${inputId}.md`);
-  const outputId = generateId();
-  const outputPath = join(tmpdir(), `malamar_output_${outputId}.json`);
 
   try {
     // Write input file
-    const inputContent = generateInputFileContent(
-      options,
-      outputPath,
-      getAgentName,
-    );
+    const inputContent = generateInputFileContent(options, getAgentName);
     await Bun.write(inputPath, inputContent);
 
     // Check if aborted before starting
@@ -258,13 +247,17 @@ export async function invokeTaskCli(
       return { success: false, error: "Processing was cancelled" };
     }
 
-    // Spawn CLI process
+    // Spawn CLI process with --json-schema for structured output
     const proc = Bun.spawn(
       [
         binaryPath,
         "--dangerously-skip-permissions",
         "--print",
-        `Read the file at ${inputPath} and follow the instruction autonomously. Write your JSON response to ${outputPath}.`,
+        "--output-format",
+        "json",
+        "--json-schema",
+        taskCliJsonSchema,
+        `Read the file at ${inputPath} and follow the instruction autonomously.`,
       ],
       {
         cwd,
@@ -301,36 +294,31 @@ export async function invokeTaskCli(
         return { success: false, error: errorDetail };
       }
 
-      // Read and parse output file
-      const outputFile = Bun.file(outputPath);
-      const exists = await outputFile.exists();
-      if (!exists) {
+      // Read stdout for JSON output (--output-format json sends to stdout)
+      const stdoutText = await new Response(proc.stdout).text();
+      if (!stdoutText.trim()) {
         return {
           success: false,
-          error: `CLI completed but output file was not created at ${outputPath}`,
+          error: "CLI completed but no output was produced",
         };
       }
 
-      const outputText = await outputFile.text();
-      if (!outputText.trim()) {
-        return {
-          success: false,
-          error: "CLI completed but output file was empty",
-        };
-      }
-
-      // Parse JSON
+      // Parse JSON from stdout
+      // With --output-format json and --json-schema, the output is a JSON object
+      // with a "structured_output" field containing the validated schema result
       let parsedJson: unknown;
       try {
-        parsedJson = JSON.parse(outputText);
+        const outputWrapper = JSON.parse(stdoutText);
+        // When using --json-schema, the result is in structured_output
+        parsedJson = outputWrapper.structured_output ?? outputWrapper;
       } catch {
         return {
           success: false,
-          error: `CLI output was not valid JSON: ${outputText.slice(0, 200)}`,
+          error: `CLI output was not valid JSON: ${stdoutText.slice(0, 200)}`,
         };
       }
 
-      // Validate against schema
+      // Validate against schema (additional safety layer)
       const validated = taskCliOutputSchema.safeParse(parsedJson);
       if (!validated.success) {
         return {
@@ -354,7 +342,6 @@ export async function invokeTaskCli(
   } finally {
     // Clean up temporary files
     removeTemporaryPath(inputPath);
-    removeTemporaryPath(outputPath);
     // Note: We don't clean up the task working directory as it may be reused
   }
 }

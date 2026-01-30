@@ -93,6 +93,51 @@ export const taskCliOutputSchema = z.object({
   actions: z.array(taskActionSchema),
 });
 
+/**
+ * JSON Schema string for CLI --json-schema flag.
+ * This must match the taskCliOutputSchema above.
+ */
+export const taskCliJsonSchema = JSON.stringify({
+  type: "object",
+  properties: {
+    actions: {
+      type: "array",
+      items: {
+        oneOf: [
+          {
+            type: "object",
+            properties: {
+              type: { const: "skip" },
+            },
+            required: ["type"],
+            additionalProperties: false,
+          },
+          {
+            type: "object",
+            properties: {
+              type: { const: "comment" },
+              content: { type: "string", minLength: 1 },
+            },
+            required: ["type", "content"],
+            additionalProperties: false,
+          },
+          {
+            type: "object",
+            properties: {
+              type: { const: "change_status" },
+              status: { const: "in_review" },
+            },
+            required: ["type", "status"],
+            additionalProperties: false,
+          },
+        ],
+      },
+    },
+  },
+  required: ["actions"],
+  additionalProperties: false,
+});
+
 // =============================================================================
 // Type Exports
 // =============================================================================

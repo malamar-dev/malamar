@@ -573,7 +573,7 @@ Before testing, ensure:
 - [x] Health check prompt succeeds
 - [x] Task invocation succeeds
 - [x] Chat invocation succeeds
-- [ ] JSON schema enforcement via `--json-schema` flag
+- [x] JSON schema enforcement via `--json-schema` flag
 
 ### 17.2 Gemini CLI (if available)
 - [ ] Binary detection works
