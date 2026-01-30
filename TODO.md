@@ -405,11 +405,11 @@ Before testing, ensure:
 - [x] Refetch on window focus
 
 ### 10.3 Toast Notifications
-- [ ] Important events trigger toast
-- [ ] Duration: 5 seconds auto-dismiss
-- [ ] Max 3 visible at once
-- [ ] Position: bottom-right
-- [ ] Clickable (navigates to item)
+- [x] Important events trigger toast
+- [x] Duration: 5 seconds auto-dismiss
+- [x] Max 3 visible at once
+- [x] Position: bottom-right
+- [x] Clickable (navigates to item)
 
 ---
 

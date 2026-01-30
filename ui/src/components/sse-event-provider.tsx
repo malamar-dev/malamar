@@ -1,11 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 import type {
+  AgentExecutionFinishedEvent,
+  AgentExecutionStartedEvent,
   ChatMessageAddedEvent,
   ChatProcessingFinishedEvent,
   ChatProcessingStartedEvent,
-  SSEEventType,
   TaskCommentAddedEvent,
   TaskErrorOccurredEvent,
   TaskStatusChangedEvent,
@@ -15,8 +17,16 @@ const SSE_ENDPOINT = "/api/events";
 const RECONNECT_DELAY_MS = 3000;
 
 /**
- * Provider component that manages SSE connection and triggers
- * React Query invalidation when events are received.
+ * Truncate a string to maxLength, adding "..." if truncated.
+ */
+function truncate(str: string, maxLength: number): string {
+  if (str.length <= maxLength) return str;
+  return str.slice(0, maxLength - 3) + "...";
+}
+
+/**
+ * Provider component that manages SSE connection, triggers
+ * React Query invalidation, and shows toast notifications.
  */
 export const SSEEventProvider = ({
   children,
@@ -55,7 +65,7 @@ export const SSEEventProvider = ({
         }, RECONNECT_DELAY_MS);
       };
 
-      // Handle task events
+      // Handle task status changed
       eventSource.addEventListener("task.status_changed", (event) => {
         const data = JSON.parse(event.data) as TaskStatusChangedEvent;
         queryClient.invalidateQueries({
@@ -65,8 +75,22 @@ export const SSEEventProvider = ({
         queryClient.invalidateQueries({
           queryKey: ["tasks", data.taskId, "logs"],
         });
+
+        // Show toast for status change to in_review (task needs attention)
+        if (data.newStatus === "in_review") {
+          toast.info(`Task moved to review`, {
+            description: truncate(data.taskSummary, 50),
+            action: {
+              label: "View",
+              onClick: () => {
+                window.location.href = `/workspaces/${data.workspaceId}/tasks`;
+              },
+            },
+          });
+        }
       });
 
+      // Handle task comment added
       eventSource.addEventListener("task.comment_added", (event) => {
         const data = JSON.parse(event.data) as TaskCommentAddedEvent;
         queryClient.invalidateQueries({
@@ -78,8 +102,22 @@ export const SSEEventProvider = ({
         queryClient.invalidateQueries({
           queryKey: ["tasks", data.workspaceId],
         });
+
+        // Show toast for agent comments (user might want to see)
+        if (data.authorName !== "User" && data.authorName !== "System") {
+          toast.info(`${data.authorName} commented`, {
+            description: truncate(data.taskSummary, 50),
+            action: {
+              label: "View",
+              onClick: () => {
+                window.location.href = `/workspaces/${data.workspaceId}/tasks`;
+              },
+            },
+          });
+        }
       });
 
+      // Handle task error occurred
       eventSource.addEventListener("task.error_occurred", (event) => {
         const data = JSON.parse(event.data) as TaskErrorOccurredEvent;
         queryClient.invalidateQueries({
@@ -89,29 +127,44 @@ export const SSEEventProvider = ({
         queryClient.invalidateQueries({
           queryKey: ["tasks", data.taskId, "logs"],
         });
+
+        // Show error toast
+        toast.error(`Task error`, {
+          description: truncate(data.errorMessage, 80),
+          action: {
+            label: "View",
+            onClick: () => {
+              window.location.href = `/workspaces/${data.workspaceId}/tasks`;
+            },
+          },
+        });
       });
 
-      // Handle agent events - refresh task data
-      const handleAgentEvent = (eventType: SSEEventType) => {
-        eventSource.addEventListener(eventType, (event) => {
-          const data = JSON.parse(event.data) as {
-            taskId: string;
-            workspaceId: string;
-          };
-          queryClient.invalidateQueries({
-            queryKey: ["tasks", data.workspaceId],
-          });
-          queryClient.invalidateQueries({ queryKey: ["tasks", data.taskId] });
-          queryClient.invalidateQueries({
-            queryKey: ["tasks", data.taskId, "logs"],
-          });
+      // Handle agent execution started
+      eventSource.addEventListener("agent.execution_started", (event) => {
+        const data = JSON.parse(event.data) as AgentExecutionStartedEvent;
+        queryClient.invalidateQueries({
+          queryKey: ["tasks", data.workspaceId],
         });
-      };
+        queryClient.invalidateQueries({ queryKey: ["tasks", data.taskId] });
+        queryClient.invalidateQueries({
+          queryKey: ["tasks", data.taskId, "logs"],
+        });
+      });
 
-      handleAgentEvent("agent.execution_started");
-      handleAgentEvent("agent.execution_finished");
+      // Handle agent execution finished
+      eventSource.addEventListener("agent.execution_finished", (event) => {
+        const data = JSON.parse(event.data) as AgentExecutionFinishedEvent;
+        queryClient.invalidateQueries({
+          queryKey: ["tasks", data.workspaceId],
+        });
+        queryClient.invalidateQueries({ queryKey: ["tasks", data.taskId] });
+        queryClient.invalidateQueries({
+          queryKey: ["tasks", data.taskId, "logs"],
+        });
+      });
 
-      // Handle chat events
+      // Handle chat message added
       eventSource.addEventListener("chat.message_added", (event) => {
         const data = JSON.parse(event.data) as ChatMessageAddedEvent;
         queryClient.invalidateQueries({
@@ -120,6 +173,7 @@ export const SSEEventProvider = ({
         queryClient.invalidateQueries({ queryKey: ["chat", data.chatId] });
       });
 
+      // Handle chat processing started
       eventSource.addEventListener("chat.processing_started", (event) => {
         const data = JSON.parse(event.data) as ChatProcessingStartedEvent;
         queryClient.invalidateQueries({ queryKey: ["chat", data.chatId] });
@@ -128,6 +182,7 @@ export const SSEEventProvider = ({
         });
       });
 
+      // Handle chat processing finished
       eventSource.addEventListener("chat.processing_finished", (event) => {
         const data = JSON.parse(event.data) as ChatProcessingFinishedEvent;
         queryClient.invalidateQueries({ queryKey: ["chat", data.chatId] });

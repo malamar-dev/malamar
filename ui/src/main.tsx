@@ -8,6 +8,7 @@ import { RouterProvider } from "react-router";
 import { ServerPropsProvider } from "@/components/server-props-provider.tsx";
 import { SSEEventProvider } from "@/components/sse-event-provider.tsx";
 import { ThemeProvider } from "@/components/theme-provider.tsx";
+import { Toaster } from "@/components/ui/sonner.tsx";
 import { queryClient } from "@/lib/query-client.ts";
 
 import { router } from "./routes";
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
         <ServerPropsProvider>
           <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
             <RouterProvider router={router} />
+            <Toaster />
           </ThemeProvider>
         </ServerPropsProvider>
       </SSEEventProvider>
