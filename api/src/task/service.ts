@@ -142,12 +142,16 @@ export function updateTask(id: string, params: UpdateTaskBody): Result<Task> {
 
 /**
  * Delete a task by ID.
+ * If the task is in progress, kills the CLI subprocess first.
  */
 export function deleteTask(id: string): Result<void> {
   const task = repository.findById(id);
   if (!task) {
     return err("Task not found", "NOT_FOUND");
   }
+
+  // Kill the CLI subprocess if running
+  killTaskProcess(id);
 
   repository.deleteById(id);
 

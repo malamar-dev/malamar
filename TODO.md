@@ -154,7 +154,7 @@ Before testing, ensure:
 ### 4.7 Delete Task
 - [x] Confirm dialog before deletion
 - [x] Cascade deletes: comments, logs, queue items
-- [ ] If in progress, kills CLI subprocess first
+- [x] If in progress, kills CLI subprocess first
 
 ### 4.8 Delete All Done Tasks
 - [x] Button in workspace settings or task view
