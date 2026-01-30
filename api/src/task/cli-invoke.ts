@@ -5,11 +5,8 @@ import { join } from "node:path";
 import type { Subprocess } from "bun";
 
 import type { Agent } from "../agent/types";
-import {
-  createTaskTemporaryDir,
-  loadConfig,
-  removeTemporaryPath,
-} from "../core";
+import { resolveBinaryPath } from "../cli/adapters/claude";
+import { createTaskTemporaryDir, removeTemporaryPath } from "../core";
 import { generateId } from "../shared";
 import type { Workspace } from "../workspace/types";
 import { type TaskCliOutput, taskCliOutputSchema } from "./schemas";
@@ -37,20 +34,6 @@ export interface TaskCliResult {
   success: boolean;
   output?: TaskCliOutput;
   error?: string;
-}
-
-/**
- * Resolve the Claude CLI binary path.
- * Currently only supports Claude Code; other CLIs can be added later.
- */
-function resolveBinaryPath(): string | null {
-  const config = loadConfig();
-
-  if (config.claudeCodePath) {
-    return config.claudeCodePath;
-  }
-
-  return Bun.which("claude");
 }
 
 /**

@@ -4,18 +4,30 @@ import {
   removeTemporaryPath,
 } from "../../core";
 import { CLI_HEALTH_CHECK_PROMPT } from "../../prompts";
+import { settingsRepository } from "../../settings";
 import type { CliAdapter, CliHealthResult } from "../types";
 
 const HEALTH_CHECK_TIMEOUT_MS = 60_000;
 const VERSION_CHECK_TIMEOUT_MS = 60_000;
 
-function resolveBinaryPath(): string | null {
-  const config = loadConfig();
+/**
+ * Resolve the Claude CLI binary path.
+ * Priority: 1. Database settings, 2. Environment variable, 3. PATH lookup
+ */
+export function resolveBinaryPath(): string | null {
+  // 1. Check database settings first
+  const cliSettings = settingsRepository.getCliSettings();
+  if (cliSettings.claude?.binaryPath) {
+    return cliSettings.claude.binaryPath;
+  }
 
+  // 2. Check environment variable
+  const config = loadConfig();
   if (config.claudeCodePath) {
     return config.claudeCodePath;
   }
 
+  // 3. Fallback to PATH lookup
   return Bun.which("claude");
 }
 

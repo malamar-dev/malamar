@@ -568,7 +568,7 @@ Before testing, ensure:
 
 ### 17.1 Claude Code
 - [x] Binary detection in PATH
-- [ ] Custom path via settings works
+- [x] Custom path via settings works
 - [x] Version detection works
 - [x] Health check prompt succeeds
 - [x] Task invocation succeeds

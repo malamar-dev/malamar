@@ -1,5 +1,5 @@
-import { AlertCircleIcon, RefreshCwIcon } from "lucide-react";
-import { Fragment } from "react";
+import { AlertCircleIcon, RefreshCwIcon, SaveIcon } from "lucide-react";
+import { Fragment, useState } from "react";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button.tsx";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
@@ -14,17 +15,40 @@ import { Dot } from "@/components/ui/dot.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
+import { useCliSettings } from "../../hooks/use-cli-settings.ts";
 import { useHealth } from "../../hooks/use-health.ts";
 import { useRefreshHealth } from "../../hooks/use-refresh-health.ts";
+import { useUpdateCliSettings } from "../../hooks/use-update-cli-settings.ts";
+import type { CliType } from "../../types/cli.types.ts";
 import type { CliHealth } from "../../types/health.types.ts";
 
-function CliCard({
+function CliCardInner({
   displayName,
   cli,
+  initialBinaryPath,
+  onSave,
+  isSaving,
 }: {
   displayName: string;
   cli?: CliHealth;
+  initialBinaryPath: string;
+  onSave: (binaryPath: string) => void;
+  isSaving: boolean;
 }) {
+  const [binaryPath, setBinaryPath] = useState(initialBinaryPath);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const handleBinaryPathChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setBinaryPath(newValue);
+    setHasChanges(newValue !== initialBinaryPath);
+  };
+
+  const handleSave = () => {
+    onSave(binaryPath);
+    setHasChanges(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -32,17 +56,48 @@ function CliCard({
           <Dot color={cli?.status === "healthy" ? "green" : "red"} pulse />
           {displayName}
         </CardTitle>
+        {cli?.error && (
+          <CardDescription className="text-destructive">
+            {cli.error}
+          </CardDescription>
+        )}
       </CardHeader>
 
       <CardContent>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
             <div className="text-muted-foreground text-xs font-medium">
-              Executable
+              Custom Binary Path
+            </div>
+            <div className="text-muted-foreground text-xs">
+              Leave empty to auto-detect from PATH
+            </div>
+
+            <div className="flex gap-2">
+              <Input
+                value={binaryPath}
+                onChange={handleBinaryPathChange}
+                placeholder="/usr/local/bin/claude"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleSave}
+                disabled={!hasChanges || isSaving}
+                title="Save custom path"
+              >
+                <SaveIcon className={isSaving ? "animate-pulse" : ""} />
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <div className="text-muted-foreground text-xs font-medium">
+              Detected Executable
             </div>
 
             <div>
-              <Input value={cli?.binaryPath ?? "Unknown"} readOnly />
+              <Input value={cli?.binaryPath ?? "Not detected"} readOnly />
             </div>
           </div>
 
@@ -61,15 +116,64 @@ function CliCard({
   );
 }
 
+/**
+ * Wrapper component that uses key to reset internal state when customBinaryPath changes.
+ */
+function CliCard({
+  displayName,
+  cli,
+  customBinaryPath,
+  onSave,
+  isSaving,
+}: {
+  displayName: string;
+  cli?: CliHealth;
+  customBinaryPath?: string;
+  onSave: (binaryPath: string) => void;
+  isSaving: boolean;
+}) {
+  // Use key to force re-mount when customBinaryPath changes from API
+  return (
+    <CliCardInner
+      key={customBinaryPath ?? ""}
+      displayName={displayName}
+      cli={cli}
+      initialBinaryPath={customBinaryPath ?? ""}
+      onSave={onSave}
+      isSaving={isSaving}
+    />
+  );
+}
+
 export const ClisPage = () => {
   const { data, isLoading, isError, error } = useHealth();
+  const { data: settingsData, isLoading: isLoadingSettings } = useCliSettings();
   const refreshHealth = useRefreshHealth();
+  const updateCliSettings = useUpdateCliSettings();
 
   const claudeCli = data?.clis.find((cli) => cli.type === "claude");
+  const claudeSettings = settingsData?.settings.claude;
 
   const handleRefresh = () => {
     refreshHealth.mutate();
   };
+
+  const handleSaveCliSettings = (type: CliType, binaryPath: string) => {
+    updateCliSettings.mutate(
+      {
+        type,
+        data: { binaryPath: binaryPath || undefined },
+      },
+      {
+        onSuccess: () => {
+          // Refresh health status after saving to pick up the new binary path
+          refreshHealth.mutate();
+        },
+      },
+    );
+  };
+
+  const isLoadingAll = isLoading || isLoadingSettings;
 
   return (
     <AppLayout
@@ -89,7 +193,7 @@ export const ClisPage = () => {
         </Button>
       }
     >
-      {isLoading ? (
+      {isLoadingAll ? (
         <Skeleton className="h-32" />
       ) : isError ? (
         <Alert variant="destructive">
@@ -101,7 +205,13 @@ export const ClisPage = () => {
         </Alert>
       ) : (
         <Fragment>
-          <CliCard displayName="Claude Code" cli={claudeCli} />
+          <CliCard
+            displayName="Claude Code"
+            cli={claudeCli}
+            customBinaryPath={claudeSettings?.binaryPath}
+            onSave={(binaryPath) => handleSaveCliSettings("claude", binaryPath)}
+            isSaving={updateCliSettings.isPending}
+          />
         </Fragment>
       )}
     </AppLayout>

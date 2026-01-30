@@ -5,11 +5,8 @@ import { join } from "node:path";
 import type { Subprocess } from "bun";
 
 import type { Agent } from "../agent/types";
-import {
-  createChatTemporaryDir,
-  loadConfig,
-  removeTemporaryPath,
-} from "../core";
+import { resolveBinaryPath } from "../cli/adapters/claude";
+import { createChatTemporaryDir, removeTemporaryPath } from "../core";
 import { MALAMAR_AGENT_INSTRUCTION } from "../prompts";
 import { generateId } from "../shared";
 import type { Workspace } from "../workspace/types";
@@ -34,19 +31,6 @@ export interface ChatCliResult {
   success: boolean;
   output?: CliChatOutput;
   error?: string;
-}
-
-/**
- * Resolve the Claude CLI binary path.
- */
-function resolveBinaryPath(): string | null {
-  const config = loadConfig();
-
-  if (config.claudeCodePath) {
-    return config.claudeCodePath;
-  }
-
-  return Bun.which("claude");
 }
 
 /**

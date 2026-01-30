@@ -8,6 +8,7 @@ import { agentRouter } from "./agent";
 import { chatRouter } from "./chat";
 import { eventsRouter } from "./events";
 import { healthRouter } from "./health";
+import { settingsRouter } from "./settings";
 import { taskRouter } from "./task";
 import { workspaceRouter } from "./workspace";
 
@@ -16,6 +17,7 @@ export const app = new Hono();
 // API routes (must come first)
 app.route("/api/health", healthRouter);
 app.route("/api/events", eventsRouter);
+app.route("/api/settings", settingsRouter);
 app.route("/api/workspaces", workspaceRouter);
 app.route("/api", agentRouter);
 app.route("/api", chatRouter);
