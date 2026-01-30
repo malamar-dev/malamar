@@ -504,7 +504,7 @@ Before testing, ensure:
 - [x] Desktop: Dialog for forms
 - [x] Mobile: Drawer for forms
 - [x] Sidebar collapses on mobile
-- [ ] Kanban columns stack or scroll on mobile
+- [x] Kanban columns stack or scroll on mobile
 
 ### 15.2 Theme Support
 - [x] Light mode
