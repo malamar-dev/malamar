@@ -33,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useCreateChat } from "@/features/chats";
 import { WorkspaceTabs } from "@/features/workspaces/components/workspace-tabs.tsx";
 
+import { AgentCliWarning } from "../../components/agent-cli-warning.tsx";
 import { AgentDialog } from "../../components/agent-dialog.tsx";
 import { DeleteAgentDialog } from "../../components/delete-agent-dialog.tsx";
 import { SortableAgentItem } from "../../components/sortable-agent-item.tsx";
@@ -199,34 +200,37 @@ const AgentsPage = () => {
           onChatWithMalamar={handleChatWithMalamar}
         />
       ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={data?.agents.map((a) => a.id) ?? []}
-            strategy={verticalListSortingStrategy}
+        <>
+          <AgentCliWarning agents={data?.agents ?? []} />
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+            onDragEnd={handleDragEnd}
           >
-            <div className="space-y-3">
-              {data?.agents.map((agent, index) => (
-                <SortableAgentItem
-                  key={agent.id}
-                  id={agent.id}
-                  agent={agent}
-                  isFirst={index === 0}
-                  isLast={index === data.agents.length - 1}
-                  onEdit={setEditAgent}
-                  onDelete={setDeleteAgent}
-                  onMoveUp={handleMoveUp}
-                  onMoveDown={handleMoveDown}
-                  onChat={handleChat}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
+            <SortableContext
+              items={data?.agents.map((a) => a.id) ?? []}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-3">
+                {data?.agents.map((agent, index) => (
+                  <SortableAgentItem
+                    key={agent.id}
+                    id={agent.id}
+                    agent={agent}
+                    isFirst={index === 0}
+                    isLast={index === data.agents.length - 1}
+                    onEdit={setEditAgent}
+                    onDelete={setDeleteAgent}
+                    onMoveUp={handleMoveUp}
+                    onMoveDown={handleMoveDown}
+                    onChat={handleChat}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </>
       )}
 
       <AgentDialog
