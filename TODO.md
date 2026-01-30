@@ -578,7 +578,7 @@ Before testing, ensure:
 ### 17.2 Gemini CLI (if available)
 - [x] Binary detection works
 - [x] Health check works
-- [ ] Invocation with schema in prompt
+- [x] Invocation with schema in prompt
 
 ### 17.3 Codex CLI (if available)
 - [ ] Binary detection works

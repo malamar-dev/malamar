@@ -4,8 +4,8 @@ import { join } from "node:path";
 
 import type { Subprocess } from "bun";
 
-import type { Agent } from "../agent/types";
-import { resolveBinaryPath } from "../cli/adapters/claude";
+import type { Agent, CliType } from "../agent/types";
+import { getAllCliHealth, resolveBinaryPathForCli } from "../cli";
 import { createChatTemporaryDir, removeTemporaryPath } from "../core";
 import { MALAMAR_AGENT_INSTRUCTION } from "../prompts";
 import { generateId } from "../shared";
@@ -20,6 +20,7 @@ export interface ChatCliOptions {
   chatId: string;
   workspace: Workspace;
   agent: Agent | null;
+  cliTypeOverride: CliType | null;
   messages: ChatMessage[];
   onProcess?: (proc: Subprocess) => void;
 }
@@ -31,6 +32,57 @@ export interface ChatCliResult {
   success: boolean;
   output?: CliChatOutput;
   error?: string;
+}
+
+/**
+ * Determine the CLI type to use for chat invocation.
+ * Priority: 1. Chat-level override, 2. Agent's cliType, 3. First healthy CLI
+ */
+function determineCliType(
+  cliTypeOverride: CliType | null,
+  agent: Agent | null,
+): CliType {
+  // 1. Chat-level override takes priority
+  if (cliTypeOverride) {
+    return cliTypeOverride;
+  }
+
+  // 2. Agent's cliType
+  if (agent?.cliType) {
+    return agent.cliType;
+  }
+
+  // 3. First healthy CLI (priority: claude > codex > gemini > opencode)
+  const healthyCliOrder: CliType[] = ["claude", "codex", "gemini", "opencode"];
+  const cliHealth = getAllCliHealth();
+
+  for (const cli of healthyCliOrder) {
+    const health = cliHealth.find((h) => h.type === cli);
+    if (health?.status === "healthy") {
+      return cli;
+    }
+  }
+
+  // Fallback to Claude if no healthy CLI found
+  return "claude";
+}
+
+/**
+ * Get CLI display name for error messages.
+ */
+function getCliDisplayName(cliType: CliType): string {
+  switch (cliType) {
+    case "claude":
+      return "Claude Code";
+    case "gemini":
+      return "Gemini CLI";
+    case "codex":
+      return "Codex CLI";
+    case "opencode":
+      return "OpenCode";
+    default:
+      return cliType;
+  }
 }
 
 /**
@@ -103,6 +155,8 @@ Guidelines:
 - Use sentence case
 - Describe the main topic or task
 - Examples: "Setting up authentication", "Debug API timeout issue", "Refactor payment module"
+
+CRITICAL: Write ONLY valid JSON to the output file. No other text.
 `;
 }
 
@@ -147,21 +201,52 @@ Guidelines for renaming:
 }
 
 /**
- * Invoke the Claude CLI for chat processing.
+ * Build CLI arguments based on CLI type.
+ * All chat CLIs use the output file approach (no --json-schema for chat).
+ */
+function buildCliArgs(
+  cliType: CliType,
+  inputPath: string,
+  outputPath: string,
+): string[] {
+  const prompt = `Read the file at ${inputPath} and follow the instruction autonomously. Write your JSON response to ${outputPath}.`;
+
+  switch (cliType) {
+    case "claude":
+      return ["--dangerously-skip-permissions", "--print", prompt];
+    case "gemini":
+      // Gemini CLI uses positional prompt and --yolo for auto-approve
+      return ["--yolo", prompt];
+    case "codex":
+      // Codex CLI uses --prompt flag
+      return ["--prompt", prompt];
+    case "opencode":
+      // OpenCode uses --prompt flag
+      return ["--prompt", prompt];
+    default:
+      return [];
+  }
+}
+
+/**
+ * Invoke the CLI for chat processing.
+ * Supports multiple CLI types with automatic fallback.
  */
 export async function invokeChatCli(
   options: ChatCliOptions,
   signal: AbortSignal,
 ): Promise<ChatCliResult> {
-  const { chatId, workspace } = options;
+  const { chatId, workspace, agent, cliTypeOverride } = options;
 
-  // Resolve binary path
-  const binaryPath = resolveBinaryPath();
+  // Determine which CLI to use
+  const cliType = determineCliType(cliTypeOverride, agent);
+
+  // Resolve binary path for the determined CLI type
+  const binaryPath = resolveBinaryPathForCli(cliType);
   if (!binaryPath) {
     return {
       success: false,
-      error:
-        "Claude CLI binary not found. Please install Claude Code or set MALAMAR_CLAUDE_CODE_PATH.",
+      error: `${getCliDisplayName(cliType)} binary not found. Please install it or configure its path in Settings.`,
     };
   }
 
@@ -203,20 +288,15 @@ export async function invokeChatCli(
       return { success: false, error: "Processing was cancelled" };
     }
 
+    // Build CLI arguments based on CLI type
+    const args = buildCliArgs(cliType, inputPath, outputPath);
+
     // Spawn CLI process
-    const proc = Bun.spawn(
-      [
-        binaryPath,
-        "--dangerously-skip-permissions",
-        "--print",
-        `Read the file at ${inputPath} and follow the instruction autonomously. Write your JSON response to ${outputPath}.`,
-      ],
-      {
-        cwd,
-        stdout: "pipe",
-        stderr: "pipe",
-      },
-    );
+    const proc = Bun.spawn([binaryPath, ...args], {
+      cwd,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
 
     // Track subprocess via callback
     options.onProcess?.(proc);

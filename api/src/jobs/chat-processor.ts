@@ -139,6 +139,7 @@ async function processQueueItem(
         chatId,
         workspace,
         agent,
+        cliTypeOverride: chat.cliType,
         messages,
         onProcess: (proc) => activeChatProcesses.set(chatId, proc),
       },

@@ -4,8 +4,8 @@ import { join } from "node:path";
 
 import type { Subprocess } from "bun";
 
-import type { Agent } from "../agent/types";
-import { resolveBinaryPath } from "../cli/adapters/claude";
+import type { Agent, CliType } from "../agent/types";
+import { resolveBinaryPathForCli } from "../cli";
 import { createTaskTemporaryDir, removeTemporaryPath } from "../core";
 import { generateId } from "../shared";
 import type { Workspace } from "../workspace/types";
@@ -93,13 +93,9 @@ function formatLogForJsonl(log: TaskLog): string {
 }
 
 /**
- * Generate the input file content for the CLI.
- * Contains the workspace instruction, agent instruction, task details,
- * comments (as JSONL), and activity logs (as JSONL).
- *
- * Note: Output instructions are minimal since --json-schema enforces the structure.
+ * Generate the base context content (shared between all CLIs).
  */
-function generateInputFileContent(
+function generateBaseContextContent(
   options: TaskCliOptions,
   getAgentName: (agentId: string) => string | null,
 ): string {
@@ -170,9 +166,14 @@ ${commentsJsonl}
 
 \`\`\`json
 ${logsJsonl}
-\`\`\`
+\`\`\``;
+}
 
-# Output Instruction
+/**
+ * Generate output instructions for Claude CLI (uses --json-schema).
+ */
+function generateClaudeOutputInstructions(): string {
+  return `# Output Instruction
 
 Your JSON response will be captured via --json-schema. Return an "actions" array with your decisions.
 
@@ -195,28 +196,233 @@ Move the task to "in_review" when:
 - Requirements are unclear and you have questions
 - Work is complete and ready for human verification
 
+Only "in_review" is allowed as the target status. Agents cannot move tasks to other statuses.`;
+}
+
+/**
+ * Generate output instructions for non-Claude CLIs (schema embedded in prompt).
+ */
+function generateOtherCliOutputInstructions(outputPath: string): string {
+  return `# Output Instruction
+
+Write your response as JSON to: ${outputPath}
+
+The JSON must follow this exact structure:
+\`\`\`json
+{
+  "actions": [
+    { "type": "skip" }
+  ]
+}
+\`\`\`
+
+## Available Actions
+
+### skip
+Take no action and pass control to the next agent. Use this when you have nothing meaningful to add.
+IMPORTANT: Never comment just to say you have nothing to do - use skip instead.
+
+Example:
+\`\`\`json
+{ "type": "skip" }
+\`\`\`
+
+### comment
+Add a markdown comment to the task. Use this to:
+- Report findings or progress
+- Ask questions (task will move to "In Review" if you also use change_status)
+- Provide feedback or suggestions
+- Document what you've done
+
+Example:
+\`\`\`json
+{ "type": "comment", "content": "Your markdown comment here" }
+\`\`\`
+
+### change_status
+Move the task to "in_review" when:
+- You believe human attention is needed
+- Requirements are unclear and you have questions
+- Work is complete and ready for human verification
+
+Example:
+\`\`\`json
+{ "type": "change_status", "status": "in_review" }
+\`\`\`
+
 Only "in_review" is allowed as the target status. Agents cannot move tasks to other statuses.
+
+## Complete Output Example
+
+\`\`\`json
+{
+  "actions": [
+    { "type": "comment", "content": "I analyzed the code and found the issue." },
+    { "type": "change_status", "status": "in_review" }
+  ]
+}
+\`\`\`
+
+CRITICAL: Write ONLY valid JSON to the output file. No other text.`;
+}
+
+/**
+ * Generate the input file content based on CLI type.
+ */
+function generateInputFileContent(
+  options: TaskCliOptions,
+  getAgentName: (agentId: string) => string | null,
+  cliType: CliType,
+  outputPath: string,
+): string {
+  const baseContent = generateBaseContextContent(options, getAgentName);
+  const outputInstructions =
+    cliType === "claude"
+      ? generateClaudeOutputInstructions()
+      : generateOtherCliOutputInstructions(outputPath);
+
+  return `${baseContent}
+
+${outputInstructions}
 `;
 }
 
 /**
+ * Get CLI display name for error messages.
+ */
+function getCliDisplayName(cliType: CliType): string {
+  switch (cliType) {
+    case "claude":
+      return "Claude Code";
+    case "gemini":
+      return "Gemini CLI";
+    case "codex":
+      return "Codex CLI";
+    case "opencode":
+      return "OpenCode";
+    default:
+      return cliType;
+  }
+}
+
+/**
+ * Build CLI arguments based on CLI type.
+ * Claude uses --json-schema, other CLIs use output file approach.
+ */
+function buildCliArgs(
+  cliType: CliType,
+  inputPath: string,
+  outputPath: string,
+): string[] {
+  const prompt = `Read the file at ${inputPath} and follow the instruction autonomously.`;
+  const promptWithOutput = `${prompt} Write your JSON response to ${outputPath}.`;
+
+  switch (cliType) {
+    case "claude":
+      return [
+        "--dangerously-skip-permissions",
+        "--print",
+        "--output-format",
+        "json",
+        "--json-schema",
+        taskCliJsonSchema,
+        prompt,
+      ];
+    case "gemini":
+      // Gemini CLI uses positional prompt and --yolo for auto-approve
+      return ["--yolo", promptWithOutput];
+    case "codex":
+      // Codex CLI uses --prompt flag (based on typical CLI patterns)
+      return ["--prompt", promptWithOutput];
+    case "opencode":
+      // OpenCode uses --prompt flag
+      return ["--prompt", promptWithOutput];
+    default:
+      return [];
+  }
+}
+
+/**
+ * Parse CLI output based on CLI type.
+ * Claude outputs to stdout with --output-format json, other CLIs write to a file.
+ */
+async function parseCliOutput(
+  cliType: CliType,
+  proc: Subprocess,
+  outputPath: string,
+): Promise<{ success: boolean; data?: unknown; error?: string }> {
+  if (cliType === "claude") {
+    // Claude outputs to stdout with --output-format json
+    const stdoutText = await new Response(proc.stdout).text();
+    if (!stdoutText.trim()) {
+      return {
+        success: false,
+        error: "CLI completed but no output was produced",
+      };
+    }
+
+    try {
+      const outputWrapper = JSON.parse(stdoutText);
+      // When using --json-schema, the result is in structured_output
+      const data = outputWrapper.structured_output ?? outputWrapper;
+      return { success: true, data };
+    } catch {
+      return {
+        success: false,
+        error: `CLI output was not valid JSON: ${stdoutText.slice(0, 200)}`,
+      };
+    }
+  } else {
+    // Other CLIs write to output file
+    const outputFile = Bun.file(outputPath);
+    const exists = await outputFile.exists();
+    if (!exists) {
+      return {
+        success: false,
+        error: "CLI completed but output file was not created",
+      };
+    }
+
+    const outputText = await outputFile.text();
+    if (!outputText.trim()) {
+      return {
+        success: false,
+        error: "CLI completed but output file was empty",
+      };
+    }
+
+    try {
+      const data = JSON.parse(outputText);
+      return { success: true, data };
+    } catch {
+      return {
+        success: false,
+        error: `CLI output was not valid JSON: ${outputText.slice(0, 200)}`,
+      };
+    }
+  }
+}
+
+/**
  * Invoke the CLI for task processing.
- * Uses --json-schema flag for structured output validation by Claude CLI.
+ * Supports multiple CLI types with different invocation patterns:
+ * - Claude: Uses --json-schema flag for structured output validation
+ * - Gemini/Codex/OpenCode: Schema embedded in prompt, output written to file
  */
 export async function invokeTaskCli(
   options: TaskCliOptions,
   signal: AbortSignal,
   getAgentName: (agentId: string) => string | null,
 ): Promise<TaskCliResult> {
-  const { taskId, workspace } = options;
+  const { taskId, workspace, agent } = options;
+  const cliType = agent.cliType;
 
-  // Resolve binary path
-  const binaryPath = resolveBinaryPath();
+  // Resolve binary path for the agent's CLI type
+  const binaryPath = resolveBinaryPathForCli(cliType);
   if (!binaryPath) {
     return {
       success: false,
-      error:
-        "Claude CLI binary not found. Please install Claude Code or set MALAMAR_CLAUDE_CODE_PATH.",
+      error: `${getCliDisplayName(cliType)} binary not found. Please install it or configure its path in Settings.`,
     };
   }
 
@@ -236,10 +442,16 @@ export async function invokeTaskCli(
   // when multiple agents process the same task sequentially
   const inputId = generateId();
   const inputPath = join(tmpdir(), `malamar_input_${inputId}.md`);
+  const outputPath = join(tmpdir(), `malamar_output_${inputId}.json`);
 
   try {
-    // Write input file
-    const inputContent = generateInputFileContent(options, getAgentName);
+    // Write input file based on CLI type
+    const inputContent = generateInputFileContent(
+      options,
+      getAgentName,
+      cliType,
+      outputPath,
+    );
     await Bun.write(inputPath, inputContent);
 
     // Check if aborted before starting
@@ -247,24 +459,15 @@ export async function invokeTaskCli(
       return { success: false, error: "Processing was cancelled" };
     }
 
-    // Spawn CLI process with --json-schema for structured output
-    const proc = Bun.spawn(
-      [
-        binaryPath,
-        "--dangerously-skip-permissions",
-        "--print",
-        "--output-format",
-        "json",
-        "--json-schema",
-        taskCliJsonSchema,
-        `Read the file at ${inputPath} and follow the instruction autonomously.`,
-      ],
-      {
-        cwd,
-        stdout: "pipe",
-        stderr: "pipe",
-      },
-    );
+    // Build CLI arguments based on CLI type
+    const args = buildCliArgs(cliType, inputPath, outputPath);
+
+    // Spawn CLI process
+    const proc = Bun.spawn([binaryPath, ...args], {
+      cwd,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
 
     // Track subprocess via callback
     options.onProcess?.(proc);
@@ -294,32 +497,14 @@ export async function invokeTaskCli(
         return { success: false, error: errorDetail };
       }
 
-      // Read stdout for JSON output (--output-format json sends to stdout)
-      const stdoutText = await new Response(proc.stdout).text();
-      if (!stdoutText.trim()) {
-        return {
-          success: false,
-          error: "CLI completed but no output was produced",
-        };
-      }
-
-      // Parse JSON from stdout
-      // With --output-format json and --json-schema, the output is a JSON object
-      // with a "structured_output" field containing the validated schema result
-      let parsedJson: unknown;
-      try {
-        const outputWrapper = JSON.parse(stdoutText);
-        // When using --json-schema, the result is in structured_output
-        parsedJson = outputWrapper.structured_output ?? outputWrapper;
-      } catch {
-        return {
-          success: false,
-          error: `CLI output was not valid JSON: ${stdoutText.slice(0, 200)}`,
-        };
+      // Parse output based on CLI type
+      const parseResult = await parseCliOutput(cliType, proc, outputPath);
+      if (!parseResult.success) {
+        return { success: false, error: parseResult.error };
       }
 
       // Validate against schema (additional safety layer)
-      const validated = taskCliOutputSchema.safeParse(parsedJson);
+      const validated = taskCliOutputSchema.safeParse(parseResult.data);
       if (!validated.success) {
         return {
           success: false,
@@ -342,6 +527,9 @@ export async function invokeTaskCli(
   } finally {
     // Clean up temporary files
     removeTemporaryPath(inputPath);
+    if (cliType !== "claude") {
+      removeTemporaryPath(outputPath);
+    }
     // Note: We don't clean up the task working directory as it may be reused
   }
 }
