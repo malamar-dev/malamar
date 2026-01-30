@@ -21,6 +21,10 @@ export const eventsRouter = new Hono();
  */
 eventsRouter.get("/", async (c) => {
   return streamSSE(c, async (stream) => {
+    // Create abort controller for this connection
+    const abortController = new AbortController();
+    sseEmitter.registerConnection(abortController);
+
     // Send initial connection acknowledgment with retry hint
     await stream.writeSSE({
       event: "connected",
@@ -36,6 +40,8 @@ eventsRouter.get("/", async (c) => {
       eventType: SSEEventType;
       data: SSEEventData;
     }) => {
+      if (abortController.signal.aborted) return;
+
       try {
         // Convert camelCase to snake_case for JSON payload
         const snakeCaseData = Object.fromEntries(
@@ -59,6 +65,11 @@ eventsRouter.get("/", async (c) => {
 
     // Keep connection alive with periodic heartbeats
     const heartbeatInterval = setInterval(async () => {
+      if (abortController.signal.aborted) {
+        clearInterval(heartbeatInterval);
+        return;
+      }
+
       try {
         await stream.writeSSE({
           event: "heartbeat",
@@ -70,16 +81,28 @@ eventsRouter.get("/", async (c) => {
       }
     }, 30000); // Every 30 seconds
 
-    // Clean up on disconnect
-    stream.onAbort(() => {
+    // Cleanup function
+    const cleanup = () => {
       sseEmitter.off("sse", handler);
+      sseEmitter.unregisterConnection(abortController);
       clearInterval(heartbeatInterval);
+    };
+
+    // Clean up on client disconnect
+    stream.onAbort(() => {
+      cleanup();
     });
 
-    // Keep the connection open
-    // The stream will be closed when the client disconnects
-    await new Promise(() => {
-      // This promise never resolves - connection stays open until client disconnects
+    // Clean up on server-initiated abort (graceful shutdown)
+    abortController.signal.addEventListener("abort", () => {
+      cleanup();
+    });
+
+    // Keep the connection open until aborted
+    await new Promise<void>((resolve) => {
+      abortController.signal.addEventListener("abort", () => {
+        resolve();
+      });
     });
   });
 });

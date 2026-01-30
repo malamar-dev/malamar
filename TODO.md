@@ -475,7 +475,7 @@ Before testing, ensure:
 - [x] SIGTERM/SIGINT handled
 - [x] Stops accepting new queue pickups
 - [x] Kills active CLI subprocesses
-- [ ] Closes SSE connections
+- [x] Closes SSE connections
 - [x] Closes database connection
 
 ---

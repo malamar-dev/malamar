@@ -1,5 +1,6 @@
 import { app } from "./app";
 import { closeDatabase, initDatabase, loadConfig } from "./core";
+import { closeSSEConnections } from "./events";
 import { startBackgroundJobs, stopBackgroundJobs } from "./jobs";
 import { resetInProgressQueueItems } from "./task/repository";
 
@@ -16,6 +17,7 @@ startBackgroundJobs();
 function shutdown() {
   console.log("Shutting down...");
   stopBackgroundJobs();
+  closeSSEConnections();
   closeDatabase();
   process.exit(0);
 }

@@ -8,6 +8,7 @@ import type { SSEEventData, SSEEventType } from "./types";
  */
 class SSEEventEmitter extends EventEmitter {
   private static instance: SSEEventEmitter;
+  private abortControllers: Set<AbortController> = new Set();
 
   private constructor() {
     super();
@@ -27,6 +28,41 @@ class SSEEventEmitter extends EventEmitter {
    */
   emitSSE(eventType: SSEEventType, data: SSEEventData): void {
     this.emit("sse", { eventType, data });
+  }
+
+  /**
+   * Register an abort controller for an SSE connection.
+   * Called when a new SSE connection is established.
+   */
+  registerConnection(controller: AbortController): void {
+    this.abortControllers.add(controller);
+  }
+
+  /**
+   * Unregister an abort controller when connection closes.
+   */
+  unregisterConnection(controller: AbortController): void {
+    this.abortControllers.delete(controller);
+  }
+
+  /**
+   * Close all active SSE connections.
+   * Called during graceful shutdown.
+   */
+  closeAllConnections(): void {
+    for (const controller of this.abortControllers) {
+      controller.abort();
+    }
+    this.abortControllers.clear();
+    // Remove all listeners
+    this.removeAllListeners("sse");
+  }
+
+  /**
+   * Get count of active connections (for monitoring/debugging).
+   */
+  getConnectionCount(): number {
+    return this.abortControllers.size;
   }
 }
 

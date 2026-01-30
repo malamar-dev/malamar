@@ -1,3 +1,5 @@
+import { sseEmitter } from "./emitter";
+
 export {
   emitAgentExecutionFinished,
   emitAgentExecutionStarted,
@@ -22,3 +24,11 @@ export type {
   TaskErrorOccurredEvent,
   TaskStatusChangedEvent,
 } from "./types";
+
+/**
+ * Close all active SSE connections.
+ * Called during graceful shutdown.
+ */
+export function closeSSEConnections(): void {
+  sseEmitter.closeAllConnections();
+}
