@@ -463,3 +463,23 @@ export function hasAgentMessages(chatId: string): boolean {
     .get(chatId);
   return (result?.count ?? 0) > 0;
 }
+
+/**
+ * Delete a chat and all associated data (messages, queue items).
+ * Uses SQLite foreign key cascades for cleanup.
+ * Returns true if a chat was deleted, false if not found.
+ */
+export function remove(id: string): boolean {
+  const db = getDatabase();
+
+  // Delete associated messages first (no FK cascade defined)
+  db.prepare(`DELETE FROM chat_messages WHERE chat_id = ?`).run(id);
+
+  // Delete associated queue items (no FK cascade defined)
+  db.prepare(`DELETE FROM chat_queue WHERE chat_id = ?`).run(id);
+
+  // Delete the chat itself
+  const result = db.prepare(`DELETE FROM chats WHERE id = ?`).run(id);
+
+  return result.changes > 0;
+}

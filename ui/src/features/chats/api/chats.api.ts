@@ -95,4 +95,12 @@ export const chatsApi = {
    */
   cancelProcessing: (chatId: string) =>
     apiClient.post<{ success: boolean }>(`/chats/${chatId}/cancel`, {}),
+
+  /**
+   * Deletes a chat and all associated messages.
+   * @param chatId - The chat ID to delete
+   * @returns Success status
+   */
+  delete: (chatId: string) =>
+    apiClient.delete<{ success: boolean }>(`/chats/${chatId}`),
 };

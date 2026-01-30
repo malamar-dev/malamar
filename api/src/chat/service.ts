@@ -338,3 +338,23 @@ export function createSystemMessage(
   const messageId = generateId();
   return repository.createMessage(messageId, chatId, "system", message);
 }
+
+/**
+ * Delete a chat and all associated data.
+ * Returns an error if the chat is not found.
+ */
+export function deleteChat(id: string): Result<void> {
+  // Validate chat exists
+  const chat = repository.findById(id);
+  if (!chat) {
+    return err("Chat not found", "NOT_FOUND");
+  }
+
+  const deleted = repository.remove(id);
+
+  if (!deleted) {
+    return err("Chat not found", "NOT_FOUND");
+  }
+
+  return ok(undefined);
+}

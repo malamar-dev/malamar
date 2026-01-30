@@ -348,8 +348,8 @@ Before testing, ensure:
 - [ ] CLI invoked with appropriate `cwd`
 
 ### 8.11 Delete Chat
-- [ ] Confirm dialog before deletion
-- [ ] Cascade deletes: messages, queue items
+- [x] Confirm dialog before deletion
+- [x] Cascade deletes: messages, queue items
 - [ ] Attachment directory left for OS cleanup
 
 ---

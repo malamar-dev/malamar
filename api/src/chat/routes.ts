@@ -293,3 +293,22 @@ chatRouter.post("/chats/:id/cancel", (c) => {
 
   return c.json({ success: true });
 });
+
+/**
+ * DELETE /chats/:id - Delete a chat
+ * Cascade deletes all related messages and queue items.
+ */
+chatRouter.delete("/chats/:id", (c) => {
+  const id = c.req.param("id");
+
+  const result = service.deleteChat(id);
+
+  if (!result.ok) {
+    return c.json(
+      createErrorResponse(result.code, result.error),
+      httpStatusFromCode(result.code),
+    );
+  }
+
+  return c.json({ success: true });
+});

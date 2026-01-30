@@ -1,9 +1,16 @@
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, MoreVerticalIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import { AppLayout } from "@/components/layout/app-layout/app-layout.tsx";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { useAgents } from "@/features/workspaces/hooks/use-agents.ts";
 import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
@@ -11,6 +18,7 @@ import { useWorkspace } from "@/features/workspaces/hooks/use-workspace.ts";
 import { ChatAgentSwitcher } from "../../components/chat-agent-switcher.tsx";
 import { ChatInput } from "../../components/chat-input.tsx";
 import { ChatMessagesList } from "../../components/chat-messages-list.tsx";
+import { DeleteChatDialog } from "../../components/delete-chat-dialog.tsx";
 import { EditableChatTitle } from "../../components/editable-chat-title.tsx";
 import { useCancelProcessing } from "../../hooks/use-cancel-processing.ts";
 import { useChat } from "../../hooks/use-chat.ts";
@@ -22,7 +30,9 @@ const MESSAGES_PER_PAGE = 50;
 
 const ChatPage = () => {
   const { id: chatId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [offset, setOffset] = useState(0);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   // Queries
   const { data: chat, isLoading, isError, error } = useChat(chatId ?? "");
@@ -83,6 +93,12 @@ const ChatPage = () => {
     [updateChat],
   );
 
+  const handleDeleteSuccess = useCallback(() => {
+    if (chat) {
+      navigate(`/workspaces/${chat.workspaceId}/chats`);
+    }
+  }, [chat, navigate]);
+
   const workspaceChatsHref = chat?.workspaceId
     ? `/workspaces/${chat.workspaceId}/chats`
     : "/workspaces";
@@ -132,17 +148,36 @@ const ChatPage = () => {
         <>
           {/* Agent switcher header */}
           <div className="border-b px-4 py-2">
-            <div className="mx-auto flex max-w-3xl items-center gap-2">
-              <span className="text-muted-foreground text-sm">
-                Chatting with
-              </span>
-              <ChatAgentSwitcher
-                currentAgentId={chat?.agentId ?? null}
-                agents={agentsData?.agents ?? []}
-                onSwitch={handleSwitchAgent}
-                isLoading={updateChat.isPending}
-                disabled={isProcessing}
-              />
+            <div className="mx-auto flex max-w-3xl items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-sm">
+                  Chatting with
+                </span>
+                <ChatAgentSwitcher
+                  currentAgentId={chat?.agentId ?? null}
+                  agents={agentsData?.agents ?? []}
+                  onSwitch={handleSwitchAgent}
+                  isLoading={updateChat.isPending}
+                  disabled={isProcessing}
+                />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <MoreVerticalIcon className="h-4 w-4" />
+                    <span className="sr-only">Chat options</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    <Trash2Icon className="mr-2 h-4 w-4" />
+                    Delete chat
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
@@ -170,6 +205,15 @@ const ChatPage = () => {
             isCancelling={cancelProcessing.isPending}
             error={mutationError}
             onClearError={handleClearError}
+          />
+
+          {/* Delete chat dialog */}
+          <DeleteChatDialog
+            open={showDeleteDialog}
+            setOpen={setShowDeleteDialog}
+            workspaceId={chat?.workspaceId ?? ""}
+            chat={chat ?? null}
+            onSuccess={handleDeleteSuccess}
           />
         </>
       )}
