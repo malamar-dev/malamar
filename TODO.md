@@ -483,12 +483,12 @@ Before testing, ensure:
 ## 14. Cleanup Jobs
 
 ### 14.1 Task Queue Cleanup
-- [ ] Runs daily
-- [ ] Deletes completed/failed items > 7 days old
+- [x] Runs daily
+- [x] Deletes completed/failed items > 7 days old
 
 ### 14.2 Chat Queue Cleanup
-- [ ] Runs daily
-- [ ] Deletes completed/failed items > 7 days old
+- [x] Runs daily
+- [x] Deletes completed/failed items > 7 days old
 
 ### 14.3 Done Task Cleanup (Workspace Retention)
 - [ ] Respects workspace `retention_days` setting

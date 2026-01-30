@@ -1,8 +1,10 @@
 import { killAllChatProcesses, runChatProcessor } from "./chat-processor";
+import { runCleanup } from "./cleanup";
 import { runCliHealthCheck } from "./cli-health-check";
 import { killAllTaskProcesses, runTaskProcessor } from "./task-processor";
 
 const CLI_HEALTH_CHECK_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const CHAT_PROCESSOR_INTERVAL_MS = parseInt(
   process.env.MALAMAR_RUNNER_POLL_INTERVAL ?? "1000",
   10,
@@ -15,6 +17,7 @@ const TASK_PROCESSOR_INTERVAL_MS = parseInt(
 let healthCheckIntervalId: Timer | null = null;
 let chatProcessorIntervalId: Timer | null = null;
 let taskProcessorIntervalId: Timer | null = null;
+let cleanupIntervalId: Timer | null = null;
 let initialTimeoutId: Timer | null = null;
 let abortController: AbortController | null = null;
 let isRunning = false;
@@ -58,6 +61,20 @@ export function startBackgroundJobs(): void {
     }
   }, TASK_PROCESSOR_INTERVAL_MS);
 
+  // Run cleanup immediately on startup (non-blocking)
+  setTimeout(() => {
+    if (!signal.aborted) {
+      runCleanup();
+    }
+  }, 0);
+
+  // Set up interval for cleanup job (daily)
+  cleanupIntervalId = setInterval(() => {
+    if (!signal.aborted) {
+      runCleanup();
+    }
+  }, CLEANUP_INTERVAL_MS);
+
   console.log("[Jobs] Background jobs started");
 }
 
@@ -89,6 +106,11 @@ export function stopBackgroundJobs(): void {
   if (taskProcessorIntervalId) {
     clearInterval(taskProcessorIntervalId);
     taskProcessorIntervalId = null;
+  }
+
+  if (cleanupIntervalId) {
+    clearInterval(cleanupIntervalId);
+    cleanupIntervalId = null;
   }
 
   // Kill all active CLI processes
