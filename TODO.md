@@ -502,7 +502,7 @@ Before testing, ensure:
 
 ### 15.1 Responsive Design
 - [x] Desktop: Dialog for forms
-- [ ] Mobile: Drawer for forms
+- [x] Mobile: Drawer for forms
 - [ ] Sidebar collapses on mobile
 - [ ] Kanban columns stack or scroll on mobile
 
