@@ -225,7 +225,7 @@ Before testing, ensure:
 ### 5.6 Working Directory
 - [x] Temp Folder mode: `/tmp/malamar_task_{task_id}` created
 - [x] Static Directory mode: uses workspace path as-is
-- [ ] Static mode: warning logged if directory doesn't exist
+- [x] Static mode: warning logged if directory doesn't exist
 - [x] Directory passed as `cwd` to CLI subprocess
 
 ### 5.7 Context Files

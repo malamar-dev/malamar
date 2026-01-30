@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -185,6 +186,10 @@ export async function invokeChatCli(
   let createdTempDir = false;
   if (workspace.workingDirectory) {
     cwd = workspace.workingDirectory;
+    // Warn if static directory doesn't exist
+    if (!existsSync(cwd)) {
+      console.warn(`[ChatCLI] Static working directory does not exist: ${cwd}`);
+    }
   } else {
     cwd = await createChatTemporaryDir(chatId);
     createdTempDir = true;

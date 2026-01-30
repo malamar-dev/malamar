@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -245,6 +246,10 @@ export async function invokeTaskCli(
   let cwd: string;
   if (workspace.workingDirectory) {
     cwd = workspace.workingDirectory;
+    // Warn if static directory doesn't exist
+    if (!existsSync(cwd)) {
+      console.warn(`[TaskCLI] Static working directory does not exist: ${cwd}`);
+    }
   } else {
     cwd = await createTaskTemporaryDir(taskId);
   }
