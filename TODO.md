@@ -571,7 +571,7 @@ Before testing, ensure:
 - [ ] Custom path via settings works
 - [x] Version detection works
 - [x] Health check prompt succeeds
-- [ ] Task invocation succeeds
+- [x] Task invocation succeeds
 - [x] Chat invocation succeeds
 - [ ] JSON schema enforcement via `--json-schema` flag
 
