@@ -343,9 +343,9 @@ Before testing, ensure:
 - [ ] No file size/type restrictions
 
 ### 8.10 Chat Working Directory
-- [ ] Temp Folder mode: `/tmp/malamar_chat_{chat_id}`
-- [ ] Static Directory mode: workspace path
-- [ ] CLI invoked with appropriate `cwd`
+- [x] Temp Folder mode: `/tmp/malamar_chat_{chat_id}`
+- [x] Static Directory mode: workspace path
+- [x] CLI invoked with appropriate `cwd`
 
 ### 8.11 Delete Chat
 - [x] Confirm dialog before deletion
