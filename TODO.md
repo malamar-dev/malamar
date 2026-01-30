@@ -503,7 +503,7 @@ Before testing, ensure:
 ### 15.1 Responsive Design
 - [x] Desktop: Dialog for forms
 - [x] Mobile: Drawer for forms
-- [ ] Sidebar collapses on mobile
+- [x] Sidebar collapses on mobile
 - [ ] Kanban columns stack or scroll on mobile
 
 ### 15.2 Theme Support
