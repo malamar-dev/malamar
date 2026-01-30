@@ -24,8 +24,21 @@ export interface CliSettings {
 export type AllCliSettings = Partial<Record<CliType, CliSettings>>;
 
 /**
+ * Notification settings stored in database.
+ */
+export interface NotificationSettings {
+  mailgunApiKey?: string;
+  mailgunDomain?: string;
+  mailgunFromEmail?: string;
+  mailgunToEmail?: string;
+  notifyOnError?: boolean;
+  notifyOnInReview?: boolean;
+}
+
+/**
  * Settings keys used in the database.
  */
 export const SETTINGS_KEYS = {
   CLI_SETTINGS: "cli_settings",
+  NOTIFICATION_SETTINGS: "notification_settings",
 } as const;

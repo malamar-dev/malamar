@@ -51,4 +51,8 @@ export const router = createBrowserRouter([
     path: "/settings/clis",
     lazy: lazy(() => import("@/features/settings/pages/clis-page")),
   },
+  {
+    path: "/settings/notifications",
+    lazy: lazy(() => import("@/features/settings/pages/notifications-page")),
+  },
 ]);

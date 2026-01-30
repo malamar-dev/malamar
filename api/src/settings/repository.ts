@@ -1,5 +1,5 @@
 import { getDatabase } from "../core";
-import type { AllCliSettings, SettingRow } from "./types";
+import type { AllCliSettings, NotificationSettings, SettingRow } from "./types";
 import { SETTINGS_KEYS } from "./types";
 
 /**
@@ -62,4 +62,33 @@ export function getCliSettings(): AllCliSettings {
  */
 export function setCliSettings(settings: AllCliSettings): void {
   set(SETTINGS_KEYS.CLI_SETTINGS, JSON.stringify(settings));
+}
+
+/**
+ * Get notification settings from the database.
+ * Returns default settings if not set.
+ */
+export function getNotificationSettings(): NotificationSettings {
+  const value = get(SETTINGS_KEYS.NOTIFICATION_SETTINGS);
+  if (!value) {
+    return {
+      notifyOnError: true,
+      notifyOnInReview: true,
+    };
+  }
+  try {
+    return JSON.parse(value) as NotificationSettings;
+  } catch {
+    return {
+      notifyOnError: true,
+      notifyOnInReview: true,
+    };
+  }
+}
+
+/**
+ * Save notification settings to the database.
+ */
+export function setNotificationSettings(settings: NotificationSettings): void {
+  set(SETTINGS_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(settings));
 }

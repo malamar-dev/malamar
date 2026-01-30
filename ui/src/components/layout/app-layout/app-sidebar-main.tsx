@@ -36,6 +36,10 @@ const items = [
         title: "CLIs",
         url: "/settings/clis",
       },
+      {
+        title: "Notifications",
+        url: "/settings/notifications",
+      },
     ],
   },
 ];

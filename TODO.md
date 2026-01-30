@@ -429,11 +429,11 @@ Before testing, ensure:
 - [ ] Notification settings (per workspace)
 
 ### 11.3 Notification Settings
-- [ ] Mailgun API key (global)
-- [ ] Mailgun domain (global)
-- [ ] From email (global)
-- [ ] To email (global)
-- [ ] "Test Email" button sends test
+- [x] Mailgun API key (global)
+- [x] Mailgun domain (global)
+- [x] From email (global)
+- [x] To email (global)
+- [x] "Test Email" button sends test
 - [ ] Per-workspace toggles: On error, On In Review
 
 ---
